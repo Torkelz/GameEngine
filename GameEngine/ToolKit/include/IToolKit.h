@@ -3,9 +3,7 @@
 class IToolKit
 {
 public:
-	virtual ~IToolKit(void){}
+	~IToolKit(void){}
 
 	__declspec(dllexport) static IToolKit *createToolKit(void);
-
-	virtual void hubbabubba(void) = 0;
 };

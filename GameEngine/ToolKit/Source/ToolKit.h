@@ -8,6 +8,4 @@ private:
 public:
 	ToolKit(void);
 	~ToolKit(void);
-
-	void hubbabubba(void);
 };

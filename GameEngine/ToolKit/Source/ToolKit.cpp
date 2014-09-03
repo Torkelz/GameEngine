@@ -10,11 +10,7 @@ ToolKit::~ToolKit(void)
 
 }
 
-void ToolKit::hubbabubba(void)
+IToolKit* IToolKit::createToolKit(void)
 {
-	int u = 1;
-	for (int j = 0; j < 5800; j++)
-	{
-		u *= j;
-	}
+	return nullptr;
 }
