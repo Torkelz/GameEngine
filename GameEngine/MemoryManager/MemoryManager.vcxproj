@@ -79,6 +79,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ToolKit\ToolKit.vcxproj">
+      <Project>{86e514d7-f7e0-4fdd-8c58-ff435319c1a3}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
