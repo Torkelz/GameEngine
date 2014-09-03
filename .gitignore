@@ -172,3 +172,10 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+
+# User defines
+*.lib
+*.exe
+*.dll
+*/Bin/
+*/Test/
