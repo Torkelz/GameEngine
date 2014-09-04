@@ -29,7 +29,6 @@ namespace Allocator
 		 */
 		bool m_Original;
 	public:
-	public:
 		/**
 		 * @param p_Size The amount of memory to be allocated in bytes.
 		 * Throws MemoryException if it fails to allocate memory or if p_Size is zero.

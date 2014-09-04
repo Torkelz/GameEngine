@@ -13,8 +13,8 @@ namespace Allocator
 		if (!m_Data)
 			throw MemoryException("Bad allocation at: ", __LINE__, __FILE__);
 
-		m_nrAllocations = 0;
-		m_Size = p_NumItem;
+		//m_nrAllocations = 0;
+		//m_Size = p_NumItem;
 		m_Marker = (void**)m_Data;
 
 		// Setting each segment to mark where next segment starts.
@@ -53,7 +53,6 @@ namespace Allocator
 		// Allocate next free segment and change the marker to next free segment.
 		void *freeMemory = m_Marker;
 		m_Marker = (void**)(*m_Marker);
-		m_nrAllocations++;
 		return freeMemory;
 	}
 
@@ -61,7 +60,6 @@ namespace Allocator
 	{
 		*((void**)p_Position) = m_Marker;
 		m_Marker = (void**)p_Position;
-		m_nrAllocations--;
 	}
 
 	void PoolAllocator::clear()
