@@ -40,7 +40,7 @@ namespace Allocator
 
 	void* LinearAllocator::alloc(UINT p_Size)
 	{
-		if (m_Marker + p_Size < m_Size)
+		if (m_Marker + p_Size > m_Size)
 			return nullptr;
 
 		void* currentAdress = m_Buffer + m_Marker + p_Size;
