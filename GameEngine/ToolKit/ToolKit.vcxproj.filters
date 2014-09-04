@@ -21,6 +21,9 @@
     <ClInclude Include="Source\LinearAllocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\MemoryExceptions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\LinearAllocator.cpp">

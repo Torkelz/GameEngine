@@ -84,6 +84,7 @@
   <ItemGroup>
     <ClInclude Include="include\IToolKit.h" />
     <ClInclude Include="Source\LinearAllocator.h" />
+    <ClInclude Include="Source\MemoryExceptions.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\LinearAllocator.cpp" />
