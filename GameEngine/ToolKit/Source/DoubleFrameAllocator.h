@@ -1,14 +1,22 @@
 #pragma once
-#include "LinearAllocation.h"
+#include "LinearAllocator.h"
 
 namespace Allocator
 {
+	typedef unsigned int UINT;
+
 	class DoubleFrameAllocator
 	{
 	private:
-		Linea
+		LinearAllocator m_Allocators[2];
+		UINT m_Current;
+
 	public:
 		DoubleFrameAllocator();
 		~DoubleFrameAllocator();
+
+		void swap();
+		void clearCurrentBuffer();
+		void *alloc(UINT p_Size);
 	};
 }
