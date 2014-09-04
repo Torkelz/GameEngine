@@ -21,9 +21,15 @@
     <ClInclude Include="Source\ToolKit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PoolAllocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\ToolKit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PoolAllocator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
