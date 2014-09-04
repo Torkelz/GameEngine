@@ -76,3 +76,7 @@ namespace Allocator
 	};
 }
 
+inline void* operator new (size_t p_Size, Allocator::LinearAllocator &p_Allocator)
+{
+	return p_Allocator.alloc(p_Size);
+}
