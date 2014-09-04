@@ -83,13 +83,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\IToolKit.h" />
-    <ClInclude Include="Source\PoolAllocator.h" />
-    <ClInclude Include="Source\LinearAllocator.h" />
-    <ClInclude Include="Source\MemoryExceptions.h" />
+<<<<<<< HEAD
+    <ClInclude Include="PoolAllocator.h" />
+    <ClInclude Include="Source\ToolKit.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\PoolAllocator.cpp" />
+    <ClCompile Include="PoolAllocator.cpp" />
+    <ClCompile Include="Source\ToolKit.cpp" />
+=======
+    <ClInclude Include="Source\LinearAllocator.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="Source\LinearAllocator.cpp" />
+>>>>>>> origin/LinearAllocator
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

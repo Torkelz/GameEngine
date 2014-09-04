@@ -8,8 +8,9 @@ namespace Allocator
 
 	private:
 		char *m_Data;
-		void *m_FirstFree;
-		UINT m_ItemSize;
+		void **m_Marker;
+		//UINT m_Size;
+		//UINT m_nrAllocations;
 
 	public:
 		PoolAllocator(UINT p_ItemSize, UINT p_NumItem);
