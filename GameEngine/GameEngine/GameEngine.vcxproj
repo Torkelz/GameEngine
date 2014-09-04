@@ -11,8 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{AF5241EC-D6ED-48E0-B01B-63C56FC84336}</ProjectGuid>
-    <RootNamespace>MemoryManager</RootNamespace>
+    <ProjectGuid>{99A25199-AA6B-405E-A639-4B4BFD7FDF15}</ProjectGuid>
+    <RootNamespace>GameEngine</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
