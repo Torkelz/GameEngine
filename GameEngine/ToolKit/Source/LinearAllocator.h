@@ -14,6 +14,7 @@ namespace Allocator
 	public:
 	public:
 		LinearAllocator(UINT p_Size);
+		LinearAllocator(char *p_Buffer, UINT p_Size);
 		~LinearAllocator();
 
 		void *alloc(UINT p_Size);
