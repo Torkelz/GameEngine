@@ -1,11 +1,14 @@
 #include "DoubleFrameAllocator.h"
 
-Allocator::DoubleFrameAllocator::DoubleFrameAllocator()
+Allocator::DoubleFrameAllocator::DoubleFrameAllocator(UINT p_Size)
 {
+	m_Allocators[0] = LinearAllocator(p_Size);
+	m_Allocators[1] = LinearAllocator(p_Size);
 }
 
 Allocator::DoubleFrameAllocator::~DoubleFrameAllocator()
 {
+
 }
 
 void Allocator::DoubleFrameAllocator::swap()

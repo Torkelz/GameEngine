@@ -12,7 +12,7 @@ namespace Allocator
 		UINT m_Current;
 
 	public:
-		DoubleFrameAllocator();
+		DoubleFrameAllocator(UINT p_Size);
 		~DoubleFrameAllocator();
 
 		void swap();
