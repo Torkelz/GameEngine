@@ -14,20 +14,9 @@ namespace Allocator
 		};
 		typedef unsigned int UINT;
 
-		//struct Marker
-		//{
-		//	Edge m_Edge;
-		//	UINT m_Mark;
-
-		//	Marker(){}
-
-		//	Marker(const Edge &p_Edge, const UINT p_Mark)
-		//		: m_Edge(p_Edge), m_Mark(p_Mark)
-		//	{}
-		//};
-
 	private:
-		std::pair<Edge, UINT> m_Marker[2];
+		UINT m_TopMarker;
+		UINT m_BottomMarker;
 
 		char *m_Buffer;
 		UINT m_Size;
@@ -59,7 +48,13 @@ namespace Allocator
 		* Moves the memory marker back to a previous state.
 		* @param p_Marker The positon the stack should be rolled back to.
 		*/
-		void freeToMarker(const std::pair<Edge, UINT>  &p_Marker);
+		void freeToTopMarker(const UINT  &p_Marker);
+
+		/**
+		* Moves the memory marker back to a previous state.
+		* @param p_Marker The positon the stack should be rolled back to.
+		*/
+		void freeToBottomMarker(const UINT  &p_Marker);
 
 		/**
 		* Resets the marker to the start of allocated memory.
@@ -67,8 +62,13 @@ namespace Allocator
 		void clear();
 
 		/**
-		* @return Returns where the marker currently is.
+		* @return Returns where the Top marker currently is.
 		*/
-		std::pair<Edge, UINT>  getMarker(const DoubleEdgeAllocator::Edge &p_Edge) const;
+		UINT  getTopMarker() const;
+
+		/**
+		* @return Returns where the bottom marker currently is.
+		*/
+		UINT  getBottomMarker() const;
 	};
 }
