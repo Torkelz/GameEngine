@@ -83,10 +83,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\IToolKit.h" />
-    <ClInclude Include="Source\ToolKit.h" />
+    <ClInclude Include="Source\LinearAllocator.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\ToolKit.cpp" />
+    <ClCompile Include="Source\LinearAllocator.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
