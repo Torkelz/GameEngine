@@ -12,7 +12,9 @@ namespace Allocator
 	{}
 
 	void *DoubleEdgeAllocator::alloc(UINT p_Size, DoubleEdgeAllocator::Edge p_Edge)
-	{}
+	{
+		return nullptr;
+	}
 
 	void DoubleEdgeAllocator::freeToTopMarker(const UINT &p_Marker)
 	{
