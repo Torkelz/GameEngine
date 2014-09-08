@@ -4,17 +4,11 @@ Allocator::DoubleFrameAllocator::DoubleFrameAllocator(UINT p_Size)
 {
 	m_Allocators[0] = LinearAllocator(p_Size);
 	m_Allocators[1] = LinearAllocator(p_Size);
-	//m_Allocators[0] = new LinearAllocator(p_Size);
-	//m_Allocators[1] = new LinearAllocator(p_Size);
 	m_Current = 0;
 }
 
 Allocator::DoubleFrameAllocator::~DoubleFrameAllocator()
 {
-	//if (m_Allocators[0])
-	//	delete m_Allocators[0];
-	//if (m_Allocators[1])
-	//	delete m_Allocators[1];
 }
 
 void Allocator::DoubleFrameAllocator::swap()
@@ -38,3 +32,4 @@ void *Allocator::DoubleFrameAllocator::alloc(UINT p_Size)
 {
 	return m_Allocators[m_Current].alloc(p_Size);
 }
+

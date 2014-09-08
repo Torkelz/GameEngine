@@ -31,6 +31,9 @@ namespace Allocator
 
 	PoolAllocator::~PoolAllocator()
 	{
+		if(m_Data)
+			free(m_Data);
+
 		m_Marker = nullptr;
 	}
 
@@ -54,16 +57,16 @@ namespace Allocator
 
 	void PoolAllocator::clear()
 	{
-		// Setting each segment to mark where next segment starts.
-		void** tempMarker = m_Marker;
-		for (UINT i = 0; i < m_NumItems - 1; i += m_ItemSize)
-		{
-			*tempMarker = tempMarker + m_ItemSize;
-			tempMarker = (void**)*tempMarker;
-		}
+		//Setting each segment to mark where next segment starts.
+		void** p = (void**)m_Data;
 
-		// The last pointer in the list is set to nullptr
-		*tempMarker = tempMarker + m_ItemSize;
-		tempMarker = nullptr;
+		//Initialize free blocks list
+		for (size_t i = 0; i < m_NumItems - 1; i++)
+		{
+			*p = (void*)(reinterpret_cast<uintptr_t>(p)+m_ItemSize);
+			p = (void**)*p;
+		}
+		//The last pointer in the list is set to nullptr
+		*p = nullptr;
 	}
 }

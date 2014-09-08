@@ -69,3 +69,8 @@ namespace Allocator
 	};
 }
 
+inline void* operator new (size_t p_Size, Allocator::PoolAllocator &p_Allocator)
+{
+	return p_Allocator.allocate();
+}
+

@@ -35,7 +35,9 @@ namespace Allocator
 		 * Default constructor. Don't use it.
 		 */
 		LinearAllocator();
-			
+		/**
+		* Copy constructor.
+		*/
 		LinearAllocator(LinearAllocator&& other)
 		{
 			m_Marker = other.m_Marker;
@@ -45,7 +47,9 @@ namespace Allocator
 
 			other.m_Buffer = nullptr;
 		}
-
+		/**
+		* Copy constructor.
+		*/
 		LinearAllocator& LinearAllocator::operator=( LinearAllocator& other) {
 			std::swap(m_Marker,other.m_Marker);
 			std::swap(m_Size , other.m_Size);
@@ -53,7 +57,6 @@ namespace Allocator
 			std::swap(m_Original , other.m_Original);
 			return *this;
 		}
-
 		/**
 		 * @param p_Size The amount of memory to be allocated in bytes.
 		 * Throws MemoryException if it fails to allocate memory or if p_Size is zero.
