@@ -4,7 +4,7 @@
 namespace Allocator
 {
 	DoubleEdgeAllocator::DoubleEdgeAllocator(UINT p_Size)
-		: m_Size(p_Size), m_Original(true)
+		: m_Size(p_Size), m_Original(true), m_BottomMarker(0), m_TopMarker(p_Size - 1)
 	{
 		if (m_Size == 0)
 			throw MemoryException("LinearAllocator, size was 0", __LINE__, __FILE__);
@@ -15,7 +15,7 @@ namespace Allocator
 	}
 
 	DoubleEdgeAllocator::DoubleEdgeAllocator(char *p_Buffer, UINT p_Size)
-		: m_Buffer(p_Buffer), m_Size(p_Size), m_Original(false)
+		: m_Buffer(p_Buffer), m_Size(p_Size), m_Original(false), m_BottomMarker(0), m_TopMarker(p_Size - 1)
 	{
 		if (m_Size == 0)
 			throw MemoryException("LinearAllocator, size was 0", __LINE__, __FILE__);
