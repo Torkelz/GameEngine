@@ -48,7 +48,7 @@ namespace Allocator
 		return currentAdress;
 	}
 
-	void LinearAllocator::freeToMarker(UINT p_Marker)
+	void LinearAllocator::freeMarkerTo(UINT p_Marker)
 	{
 		//Should the program or programmer be smart if the p_Marker is larger than either m_Marker or m_Size?
 		m_Marker = p_Marker;

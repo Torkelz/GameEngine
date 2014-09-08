@@ -63,7 +63,7 @@ namespace Allocator
 		 * Moves the memory marker back to a previous state.
 		 * @param p_Marker The positon the stack should be rolled back to.
 		 */
-		void freeToMarker(UINT p_Marker);
+		void freeMarkerTo(UINT p_Marker);
 
 		/**
 		 * Resets the marker to the start of allocated memory.
