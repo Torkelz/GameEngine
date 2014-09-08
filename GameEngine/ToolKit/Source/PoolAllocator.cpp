@@ -6,28 +6,18 @@
 
 namespace Allocator
 {
-	PoolAllocator::PoolAllocator(UINT p_ItemSize, UINT p_NumItem)
+	PoolAllocator::PoolAllocator(UINT p_ItemSize, UINT p_NumItems)
 	{
-		UINT totalSize = p_ItemSize * p_NumItem;
+		UINT totalSize = p_ItemSize * p_NumItems;
 		m_Data = (char*)malloc(totalSize);
 		if (!m_Data)
 			throw MemoryException("Bad allocation at: ", __LINE__, __FILE__);
 
-		//m_nrAllocations = 0;
-		//m_Size = p_NumItem;
+		m_ItemSize = p_ItemSize;
+		m_NumItems = p_NumItems;
 		m_Marker = (void**)m_Data;
 
-		// Setting each segment to mark where next segment starts.
-		void** tempMarker = m_Marker;
-		for (UINT i = 0; i < p_NumItem - 1; i += p_ItemSize)
-		{
-			*tempMarker = tempMarker + p_ItemSize;
-			tempMarker = (void**) *tempMarker;
-		}
-
-		// The last pointer in the list is set to nullptr
-		*tempMarker = tempMarker + p_ItemSize;
-		tempMarker = nullptr;
+		clear();
 	}
 
 	PoolAllocator::PoolAllocator(char *p_Buffer, UINT p_ItemSize, UINT p_NumItem)
@@ -64,6 +54,16 @@ namespace Allocator
 
 	void PoolAllocator::clear()
 	{
-		m_Marker = nullptr;
+		// Setting each segment to mark where next segment starts.
+		void** tempMarker = m_Marker;
+		for (UINT i = 0; i < m_NumItems - 1; i += m_ItemSize)
+		{
+			*tempMarker = tempMarker + m_ItemSize;
+			tempMarker = (void**)*tempMarker;
+		}
+
+		// The last pointer in the list is set to nullptr
+		*tempMarker = tempMarker + m_ItemSize;
+		tempMarker = nullptr;
 	}
 }
