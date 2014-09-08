@@ -48,3 +48,8 @@ namespace Allocator
 		void *alloc(UINT p_Size);
 	};
 }
+
+inline void* operator new (size_t p_Size, Allocator::DoubleFrameAllocator &p_Allocator)
+{
+	return p_Allocator.alloc(p_Size);
+}

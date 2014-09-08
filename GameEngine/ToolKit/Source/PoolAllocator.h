@@ -52,7 +52,7 @@ namespace Allocator
 
 		/**
 		 * Allocate a block in the memory.
-		 * @return, Memory adress
+		 * @return, the memory adress that has been allocated. nullptr is returned if memory is full.
 		 */
 		void *allocate(void);
 

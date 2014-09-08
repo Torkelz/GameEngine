@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+
 namespace Allocator
 {
 	class LinearAllocator
@@ -32,7 +34,25 @@ namespace Allocator
 		/**
 		 * Default constructor. Don't use it.
 		 */
-		LinearAllocator(){};
+		LinearAllocator();
+			
+		LinearAllocator(LinearAllocator&& other)
+		{
+			m_Marker = other.m_Marker;
+			m_Size = other.m_Size;
+			m_Buffer = other.m_Buffer;
+			m_Original = other.m_Original;
+
+			other.m_Buffer = nullptr;
+		}
+
+		LinearAllocator& LinearAllocator::operator=( LinearAllocator& other) {
+			std::swap(m_Marker,other.m_Marker);
+			std::swap(m_Size , other.m_Size);
+			std::swap(m_Buffer , other.m_Buffer);
+			std::swap(m_Original , other.m_Original);
+			return *this;
+		}
 
 		/**
 		 * @param p_Size The amount of memory to be allocated in bytes.
