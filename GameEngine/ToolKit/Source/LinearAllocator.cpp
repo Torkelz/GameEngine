@@ -34,8 +34,8 @@ namespace Allocator
 		 */
 		if (m_Original)
 			free(m_Buffer);
-		else
-			m_Buffer = nullptr;
+
+		m_Buffer = nullptr;
 	}
 
 	void* LinearAllocator::alloc(UINT p_Size)
