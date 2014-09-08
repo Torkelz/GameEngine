@@ -24,13 +24,14 @@
     <ClInclude Include="Source\MemoryExceptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="Source\DoubleEdgeAllocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+=======
     <ClInclude Include="Source\PoolAllocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\DoubleFrameAllocator.h">
+>>>>>>> master
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,13 +39,14 @@
     <ClCompile Include="Source\LinearAllocator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="Source\DoubleEdgeAllocator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+=======
     <ClCompile Include="Source\PoolAllocator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\DoubleFrameAllocator.cpp">
+>>>>>>> master
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

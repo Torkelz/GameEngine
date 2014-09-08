@@ -82,17 +82,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ClInclude Include="Source\DoubleEdgeAllocator.h" />
+=======
     <ClInclude Include="Source\DoubleFrameAllocator.h" />
+>>>>>>> master
     <ClInclude Include="include\IToolKit.h" />
     <ClInclude Include="Source\PoolAllocator.h" />
     <ClInclude Include="Source\LinearAllocator.h" />
     <ClInclude Include="Source\MemoryExceptions.h" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ClCompile Include="Source\DoubleEdgeAllocator.cpp" />
+=======
     <ClCompile Include="Source\DoubleFrameAllocator.cpp" />
     <ClCompile Include="Source\PoolAllocator.cpp" />
+>>>>>>> master
     <ClCompile Include="Source\LinearAllocator.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

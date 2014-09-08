@@ -34,18 +34,17 @@ namespace Allocator
 		 */
 		if (m_Original)
 			free(m_Buffer);
-		else
-			m_Buffer = nullptr;
+
+		m_Buffer = nullptr;
 	}
 
 	void* LinearAllocator::alloc(UINT p_Size)
 	{
-		if (m_Marker + p_Size > m_Size)
+		if (m_Marker + p_Size >= m_Size)
 			return nullptr;
 
 		void* currentAdress = m_Buffer + m_Marker + p_Size;
 		m_Marker += p_Size;
-
 		return currentAdress;
 	}
 
