@@ -7,7 +7,7 @@
 namespace Allocator
 {
 	LinearAllocator::LinearAllocator(UINT p_Size)
-		: m_Size(p_Size), m_Original(true)
+		: m_Size(p_Size), m_Original(true), m_Marker(0)
 	{
 		if (m_Size == 0)
 			throw MemoryException("LinearAllocator, size was 0", __LINE__, __FILE__);
@@ -18,7 +18,7 @@ namespace Allocator
 	}
 
 	LinearAllocator::LinearAllocator(char *p_Buffer, UINT p_Size)
-		: m_Buffer(p_Buffer), m_Size(p_Size), m_Original(false)
+		: m_Buffer(p_Buffer), m_Size(p_Size), m_Original(false), m_Marker(0)
 	{
 		if (m_Size == 0)
 			throw MemoryException("LinearAllocator, size was 0", __LINE__, __FILE__);
