@@ -20,6 +20,7 @@ namespace Allocator
 
 		char *m_Buffer;
 		UINT m_Size;
+		bool m_Original;
 
 	public:
 		/**
@@ -35,40 +36,48 @@ namespace Allocator
 		*/
 		DoubleEdgeAllocator(char *p_Buffer, UINT p_Size);
 
-		~DoubleEdgeAllocator();
+		/**
+		 * Default destructor.
+		*/
+		~DoubleEdgeAllocator(void);
 
 		/**
 		* @param p_Size The amount of memory to be allocated in bytes.
 		* @return If able to allocate memory it returns a pointer to the allocated chunk.
 		* @return If failed to allocate memory it returns nullptr.
 		*/
-		void *alloc(UINT p_Size, DoubleEdgeAllocator::Edge p_Edge);
+		void *allocate(UINT p_Size, DoubleEdgeAllocator::Edge p_Edge);
 
 		/**
 		* Moves the memory marker back to a previous state.
 		* @param p_Marker The positon the stack should be rolled back to.
 		*/
-		void freeToTopMarker(const UINT  &p_Marker);
+		void freeToTopMarker(UINT p_Marker);
 
 		/**
 		* Moves the memory marker back to a previous state.
 		* @param p_Marker The positon the stack should be rolled back to.
 		*/
-		void freeToBottomMarker(const UINT  &p_Marker);
+		void freeToBottomMarker(UINT p_Marker);
 
 		/**
 		* Resets the marker to the start of allocated memory.
 		*/
-		void clear();
+		void clear(void);
 
 		/**
 		* @return Returns where the Top marker currently is.
 		*/
-		UINT  getTopMarker() const;
+		UINT  getTopMarker(void) const;
 
 		/**
 		* @return Returns where the bottom marker currently is.
 		*/
-		UINT  getBottomMarker() const;
+		UINT  getBottomMarker(void) const;
 	};
+}
+
+inline void* operator new (size_t p_Size, Allocator::DoubleEdgeAllocator &p_Allocator, Allocator::DoubleEdgeAllocator::Edge p_Edge)
+{
+	return p_Allocator.allocate(p_Size, p_Edge);
 }
