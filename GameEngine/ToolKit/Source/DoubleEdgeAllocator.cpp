@@ -64,12 +64,12 @@ namespace Allocator
 		}
 	}
 
-	void DoubleEdgeAllocator::freeToTopMarker(UINT p_Marker)
+	void DoubleEdgeAllocator::freeTopMarkerTo(UINT p_Marker)
 	{
 		m_TopMarker = p_Marker;
 	}
 
-	void DoubleEdgeAllocator::freeToBottomMarker(UINT p_Marker)
+	void DoubleEdgeAllocator::freeBottomMarkerTo(UINT p_Marker)
 	{
 		m_BottomMarker = p_Marker;
 	}

@@ -7,6 +7,9 @@ namespace Allocator
 	class DoubleEdgeAllocator
 	{
 	public:
+		/**
+		 * Flag indicating in which end of the buffer to store the data.
+		*/
 		enum class Edge
 		{
 			TOP,
@@ -43,22 +46,23 @@ namespace Allocator
 
 		/**
 		* @param p_Size The amount of memory to be allocated in bytes.
+		* @param p_Edge The end part of the buffer the allocation should be made in.
 		* @return If able to allocate memory it returns a pointer to the allocated chunk.
 		* @return If failed to allocate memory it returns nullptr.
 		*/
 		void *allocate(UINT p_Size, DoubleEdgeAllocator::Edge p_Edge);
 
 		/**
-		* Moves the memory marker back to a previous state.
+		* Moves the top memory marker back to a previous state.
 		* @param p_Marker The positon the stack should be rolled back to.
 		*/
-		void freeToTopMarker(UINT p_Marker);
+		void freeTopMarkerTo(UINT p_Marker);
 
 		/**
-		* Moves the memory marker back to a previous state.
+		* Moves the bottom memory marker back to a previous state.
 		* @param p_Marker The positon the stack should be rolled back to.
 		*/
-		void freeToBottomMarker(UINT p_Marker);
+		void freeBottomMarkerTo(UINT p_Marker);
 
 		/**
 		* Resets the marker to the start of allocated memory.
@@ -66,7 +70,7 @@ namespace Allocator
 		void clear(void);
 
 		/**
-		* @return Returns where the Top marker currently is.
+		* @return Returns where the top marker currently is.
 		*/
 		UINT  getTopMarker(void) const;
 
