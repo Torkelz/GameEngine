@@ -32,7 +32,7 @@ namespace Allocator
 		/**
 		 * Default constructor. Don't use it.
 		 */
-		LinearAllocator(){};
+		LinearAllocator(void){};
 
 		/**
 		 * @param p_Size The amount of memory to be allocated in bytes.
@@ -47,30 +47,35 @@ namespace Allocator
 		 */
 		LinearAllocator(char *p_Buffer, UINT p_Size);
 
-		~LinearAllocator();
+		/**
+		 * Default destructor.
+		 */
+		~LinearAllocator(void);
 
 		/**
+		 * Allocates a new memory chunk.
+		 *
 		 * @param p_Size The amount of memory to be allocated in bytes.
 		 * @return If able to allocate memory it returns a pointer to the allocated chunk.
 		 * @return If failed to allocate memory it returns nullptr.
 		 */
-		void *alloc(UINT p_Size);
+		void *allocate(UINT p_Size);
 
 		/**
 		 * Moves the memory marker back to a previous state.
 		 * @param p_Marker The positon the stack should be rolled back to.
 		 */
-		void freeToMarker(const UINT &p_Marker);
+		void freeMarkerTo(UINT p_Marker);
 
 		/**
 		 * Resets the marker to the start of allocated memory.
 		 */
-		void clear();
+		void clear(void);
 
 		/**
 		 * @return Returns where the marker currently is.
 		 */
-		const UINT &getMarker() const;
+		UINT getMarker(void) const;
 
 	private:
 	};
@@ -78,5 +83,5 @@ namespace Allocator
 
 inline void* operator new (size_t p_Size, Allocator::LinearAllocator &p_Allocator)
 {
-	return p_Allocator.alloc(p_Size);
+	return p_Allocator.allocate(p_Size);
 }

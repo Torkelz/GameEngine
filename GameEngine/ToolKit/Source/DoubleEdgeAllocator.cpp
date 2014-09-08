@@ -1,39 +1,91 @@
 #include "DoubleEdgeAllocator.h"
+#include "MemoryExceptions.h"
 
 namespace Allocator
 {
 	DoubleEdgeAllocator::DoubleEdgeAllocator(UINT p_Size)
-	{}
+		: m_Size(p_Size), m_Original(true), m_BottomMarker(0), m_TopMarker(p_Size - 1)
+	{
+		if (m_Size == 0)
+			throw MemoryException("LinearAllocator, size was 0", __LINE__, __FILE__);
+
+		m_Buffer = (char*)malloc(m_Size);
+		if (m_Buffer == nullptr)
+			throw MemoryException("LinearAllocator, failed to allocate memory", __LINE__, __FILE__);
+	}
 
 	DoubleEdgeAllocator::DoubleEdgeAllocator(char *p_Buffer, UINT p_Size)
-	{}
-
-	DoubleEdgeAllocator::~DoubleEdgeAllocator()
-	{}
-
-	void *DoubleEdgeAllocator::alloc(UINT p_Size, DoubleEdgeAllocator::Edge p_Edge)
+		: m_Buffer(p_Buffer), m_Size(p_Size), m_Original(false), m_BottomMarker(0), m_TopMarker(p_Size - 1)
 	{
-		return nullptr;
+		if (m_Size == 0)
+			throw MemoryException("LinearAllocator, size was 0", __LINE__, __FILE__);
+		if (m_Buffer == nullptr)
+			throw MemoryException("LinearAllocator, buffer parameter was nullptr", __LINE__, __FILE__);
 	}
 
-	void DoubleEdgeAllocator::freeToTopMarker(const UINT &p_Marker)
+	DoubleEdgeAllocator::~DoubleEdgeAllocator(void)
 	{
-	
+		/**
+		* Memory should be returned to the OS if this is where the memory was originally allocated.
+		* Else set to nullptr not to mess up for others.
+		*/
+		if (m_Original)
+			free(m_Buffer);
+
+		m_Buffer = nullptr;
 	}
 
-	void DoubleEdgeAllocator::freeToBottomMarker(const UINT &p_Marker)
+	void *DoubleEdgeAllocator::allocate(UINT p_Size, DoubleEdgeAllocator::Edge p_Edge)
 	{
+		switch (p_Edge)
+		{
+		case Edge::TOP:
+		{
+			if (m_TopMarker - p_Size <= m_BottomMarker)
+				return nullptr;
 
+			void *currentAdress = m_Buffer + m_TopMarker - p_Size;
+			m_TopMarker -= p_Size;
+
+			return currentAdress;
+		}
+		case Edge::BOTTOM:
+		{
+			if (m_BottomMarker + p_Size >= m_TopMarker)
+				return nullptr;
+
+			void *currentAdress = m_Buffer + m_BottomMarker + p_Size;
+			m_BottomMarker += p_Size;
+
+			return currentAdress;
+		}
+		default:
+			return nullptr;
+		}
 	}
 
-	void DoubleEdgeAllocator::clear()
-	{}
+	void DoubleEdgeAllocator::freeTopMarkerTo(UINT p_Marker)
+	{
+		m_TopMarker = p_Marker;
+	}
 
-	DoubleEdgeAllocator::UINT DoubleEdgeAllocator::getTopMarker() const
+	void DoubleEdgeAllocator::freeBottomMarkerTo(UINT p_Marker)
+	{
+		m_BottomMarker = p_Marker;
+	}
+
+	void DoubleEdgeAllocator::clear(void)
+	{
+		// Bottom is lowest position, top is highest.
+		m_BottomMarker = 0;
+		m_TopMarker = m_Size - 1;
+	}
+
+	DoubleEdgeAllocator::UINT DoubleEdgeAllocator::getTopMarker(void) const
 	{
 		return m_TopMarker;
 	}
-	DoubleEdgeAllocator::UINT DoubleEdgeAllocator::getBottomMarker() const
+	DoubleEdgeAllocator::UINT DoubleEdgeAllocator::getBottomMarker(void) const
 	{
 		return m_BottomMarker;
 	}
