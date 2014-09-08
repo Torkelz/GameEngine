@@ -53,6 +53,8 @@ namespace Allocator
 		~LinearAllocator(void);
 
 		/**
+		 * Allocates a new memory chunk.
+		 *
 		 * @param p_Size The amount of memory to be allocated in bytes.
 		 * @return If able to allocate memory it returns a pointer to the allocated chunk.
 		 * @return If failed to allocate memory it returns nullptr.

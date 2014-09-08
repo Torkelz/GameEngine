@@ -27,56 +27,66 @@ namespace Allocator
 
 	public:
 		/**
-		* @param p_Size The amount of memory to be allocated in bytes.
-		* Throws MemoryException if it fails to allocate memory or if p_Size is zero.
-		*/
+		 * Throws MemoryException if it fails to allocate memory or if p_Size is zero.
+		 *
+		 * @param p_Size The amount of memory to be allocated in bytes.
+		 */
 		DoubleEdgeAllocator(UINT p_Size);
 
 		/**
-		* @param p_Buffer An already allocated memory chunk.
-		* @param p_Size The amount of memory p_Buffer allocates.
-		* Throws MemoryException if p_Buffer is nullptr or if p_Size is zero.
-		*/
+		 * Throws MemoryException if p_Buffer is nullptr or if p_Size is zero.
+		 *
+		 * @param p_Buffer An already allocated memory chunk.
+		 * @param p_Size The amount of memory p_Buffer allocates.
+		 */
 		DoubleEdgeAllocator(char *p_Buffer, UINT p_Size);
 
 		/**
 		 * Default destructor.
-		*/
+		 */
 		~DoubleEdgeAllocator(void);
 
 		/**
-		* @param p_Size The amount of memory to be allocated in bytes.
-		* @param p_Edge The end part of the buffer the allocation should be made in.
-		* @return If able to allocate memory it returns a pointer to the allocated chunk.
-		* @return If failed to allocate memory it returns nullptr.
-		*/
+		 * Allocates a new memory chunk.
+		 *
+		 * @param p_Size The amount of memory to be allocated in bytes.
+		 * @param p_Edge The end part of the buffer the allocation should be made in.
+		 * @return If able to allocate memory it returns a pointer to the allocated chunk.
+		 * @return If failed to allocate memory it returns nullptr.
+		 */
 		void *allocate(UINT p_Size, DoubleEdgeAllocator::Edge p_Edge);
 
 		/**
-		* Moves the top memory marker back to a previous state.
-		* @param p_Marker The positon the stack should be rolled back to.
-		*/
+		 * Moves the top memory marker back to a previous state.
+		 *
+		 * @param p_Marker The positon the stack should be rolled back to.
+		 */
 		void freeTopMarkerTo(UINT p_Marker);
 
 		/**
-		* Moves the bottom memory marker back to a previous state.
-		* @param p_Marker The positon the stack should be rolled back to.
-		*/
+		 * Moves the bottom memory marker back to a previous state.
+		 * 
+		 * @param p_Marker The positon the stack should be rolled back to.
+		 */
 		void freeBottomMarkerTo(UINT p_Marker);
 
 		/**
-		* Resets the marker to the start of allocated memory.
-		*/
+		 * Resets the marker to the start of allocated memory.
+		 */
 		void clear(void);
 
 		/**
-		* @return Returns where the top marker currently is.
-		*/
+		 * Gets the position of the top marker.
+		 *
+		 * @return where the top marker currently is.
+		 */
 		UINT  getTopMarker(void) const;
 
 		/**
-		* @return Returns where the bottom marker currently is.
-		*/
+		 * Gets the position of the bottom marker.
+		 *
+		 * @return where the bottom marker currently is.
+		 */
 		UINT  getBottomMarker(void) const;
 	};
 }
