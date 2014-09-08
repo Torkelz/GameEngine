@@ -30,6 +30,6 @@ void Allocator::DoubleFrameAllocator::clearCurrentBuffer()
 
 void *Allocator::DoubleFrameAllocator::alloc(UINT p_Size)
 {
-	return m_Allocators[m_Current].alloc(p_Size);
+	return m_Allocators[m_Current].allocate(p_Size);
 }
 

@@ -82,6 +82,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\DoubleEdgeAllocator.h" />
     <ClInclude Include="Source\DoubleFrameAllocator.h" />
     <ClInclude Include="include\IToolKit.h" />
     <ClInclude Include="Source\PoolAllocator.h" />
@@ -89,6 +90,7 @@
     <ClInclude Include="Source\MemoryExceptions.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\DoubleEdgeAllocator.cpp" />
     <ClCompile Include="Source\DoubleFrameAllocator.cpp" />
     <ClCompile Include="Source\PoolAllocator.cpp" />
     <ClCompile Include="Source\LinearAllocator.cpp" />

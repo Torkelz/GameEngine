@@ -11,7 +11,7 @@ namespace Allocator
 	{ }
 
 	LinearAllocator::LinearAllocator(UINT p_Size)
-		: m_Size(p_Size), m_Original(true), m_Marker(0), m_Buffer(nullptr)
+		: m_Size(p_Size), m_Original(true), m_Marker(0)
 	{
 		if (m_Size == 0)
 			throw MemoryException("LinearAllocator, size was 0", __LINE__, __FILE__);
@@ -21,7 +21,7 @@ namespace Allocator
 			throw MemoryException("LinearAllocator, failed to allocate memory", __LINE__, __FILE__);
 	}
 
-	LinearAllocator::LinearAllocator(char* p_Buffer, UINT p_Size)
+	LinearAllocator::LinearAllocator(char *p_Buffer, UINT p_Size)
 		: m_Buffer(p_Buffer), m_Size(p_Size), m_Original(false), m_Marker(0)
 	{
 		if (m_Size == 0)
@@ -30,7 +30,7 @@ namespace Allocator
 			throw MemoryException("LinearAllocator, buffer parameter was nullptr", __LINE__, __FILE__);
 	}
 
-	LinearAllocator::~LinearAllocator()
+	LinearAllocator::~LinearAllocator(void)
 	{
 		/**
 		 * Memory should be returned to the OS if this is where the memory was originally allocated.
@@ -42,28 +42,28 @@ namespace Allocator
 		m_Buffer = nullptr;
 	}
 
-	void* LinearAllocator::alloc(UINT p_Size)
+	void *LinearAllocator::allocate(UINT p_Size)
 	{
 		if (m_Marker + p_Size >= m_Size)
 			return nullptr;
 
-		void* currentAdress = m_Buffer + m_Marker + p_Size;
+		void *currentAdress = m_Buffer + m_Marker + p_Size;
 		m_Marker += p_Size;
 		return currentAdress;
 	}
 
-	void LinearAllocator::freeToMarker(const UINT &p_Marker)
+	void LinearAllocator::freeMarkerTo(UINT p_Marker)
 	{
 		//Should the program or programmer be smart if the p_Marker is larger than either m_Marker or m_Size?
 		m_Marker = p_Marker;
 	}
 
-	void LinearAllocator::clear()
+	void LinearAllocator::clear(void)
 	{
 		m_Marker = 0;
 	}
 
-	const LinearAllocator::UINT& LinearAllocator::getMarker() const
+	LinearAllocator::UINT LinearAllocator::getMarker(void) const
 	{
 		return m_Marker;
 	}
