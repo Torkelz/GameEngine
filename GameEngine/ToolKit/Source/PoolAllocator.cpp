@@ -3,7 +3,6 @@
 #include <malloc.h>
 #include <string>
 
-
 namespace Allocator
 {
 	PoolAllocator::PoolAllocator(UINT p_ItemSize, UINT p_NumItems)
