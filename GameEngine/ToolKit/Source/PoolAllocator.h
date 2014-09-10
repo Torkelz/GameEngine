@@ -74,3 +74,7 @@ inline void* operator new (size_t p_Size, Allocator::PoolAllocator &p_Allocator)
 	return p_Allocator.allocate();
 }
 
+inline void operator delete (void* p_Position, Allocator::PoolAllocator &p_Allocator)
+{
+	p_Allocator.deallocate(p_Position);
+}

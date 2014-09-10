@@ -51,6 +51,9 @@ namespace Allocator
 
 	void PoolAllocator::deallocate(void *p_Position)
 	{
+		if (!p_Position)
+			return;
+
 		*((void**)p_Position) = m_Marker;
 		m_Marker = (void**)p_Position;
 	}
