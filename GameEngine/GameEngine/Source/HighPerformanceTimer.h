@@ -24,7 +24,6 @@ public:
 	*/
 	double measureFunction(std::function<void(void)> p_Function, unsigned int p_Repeats = 1);
 
-private:
 	void start();
 	LONGLONG stop();
 	double ticksToMs(LONGLONG p_Ticks);

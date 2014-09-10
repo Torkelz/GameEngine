@@ -52,5 +52,5 @@ double HighPerformanceTimer::ticksToMs(LONGLONG p_Ticks)
 	// to microseconds *before* dividing by ticks-per-second.
 	//
 	p_Ticks *= 1000000;
-	return (double)(p_Ticks / m_Frequency.QuadPart);
+	return ((double)p_Ticks / m_Frequency.QuadPart);
 }
