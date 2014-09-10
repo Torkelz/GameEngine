@@ -28,7 +28,7 @@ void Allocator::DoubleFrameAllocator::clearCurrentBuffer()
 	m_Allocators[m_Current].clear();
 }
 
-void *Allocator::DoubleFrameAllocator::alloc(UINT p_Size)
+void *Allocator::DoubleFrameAllocator::allocate(UINT p_Size)
 {
 	return m_Allocators[m_Current].allocate(p_Size);
 }

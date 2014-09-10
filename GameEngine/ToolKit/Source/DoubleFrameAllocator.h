@@ -45,11 +45,11 @@ namespace Allocator
 		 * @param Size, the memory size to be allocated.
 		 * @return, the memory adress that has been allocated. nullptr is returned if memory is full.
 		 */
-		void *alloc(UINT p_Size);
+		void *allocate(UINT p_Size);
 	};
 }
 
 inline void* operator new (size_t p_Size, Allocator::DoubleFrameAllocator &p_Allocator)
 {
-	return p_Allocator.alloc(p_Size);
+	return p_Allocator.allocate(p_Size);
 }
