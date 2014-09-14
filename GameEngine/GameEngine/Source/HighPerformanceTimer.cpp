@@ -31,6 +31,7 @@ double HighPerformanceTimer::measureFunction(std::function<void(void)> p_Functio
 
 void HighPerformanceTimer::start()
 {
+	m_StartingTime = {};
 	QueryPerformanceCounter(&m_StartingTime);
 }
 

@@ -25,18 +25,22 @@ void functionToBeMeasured2()
 		*k = i;
 	}
 }
-static Allocator::LinearAllocator staticAlloc(5100);
-std::vector<int*> list;
+const int THREADS = 16;
+const int LOOPS = 1000;
+
+static Allocator::LinearAllocator staticAlloc(THREADS * LOOPS * sizeof(int) * 2);
+int* arr[THREADS * LOOPS];
+int te = 0;
 
 void threadCallFunction(int id)
 {
-	for (unsigned int i = 0; i < 40; ++i)
+	for (unsigned int i = 0; i < LOOPS; ++i)
 	{
-		list.push_back(new(staticAlloc) int);
-		*list.back() = i+(id*40);
+		arr[i + (id * LOOPS)] = new(staticAlloc) int;
+		*arr[i + (id * LOOPS)] = i + (id * LOOPS);
 	}
 }
-
+// 10896 no locks.
 
 int main(int /*argc*/, char* /*argv*/[])
 {
@@ -61,26 +65,41 @@ int main(int /*argc*/, char* /*argv*/[])
 		total2 += timer.stop();
 	}
 
+
+	timer.start();
+
 	std::vector<std::thread> threads;
-	for (unsigned int i = 0; i < 4; ++i)
+	for (unsigned int i = 0; i < THREADS; ++i)
 	{
 		threads.push_back(std::thread(threadCallFunction, i));
 	}
-	std::cout << "Threads now execute concurrently..." << std::endl;
+	//std::cout << "Threads now execute concurrently..." << std::endl;
 	for (std::vector<std::thread>::iterator t = threads.begin(); t != threads.end(); ++t)
 	{
 		t->join();
 	}
-	std::cout << "Threads completed.\nResults: \n" << std::endl;
 
-	for (unsigned int i = 0; i < 4; ++i)
+
+	std::cout << "Threads completed.\nResults: " << std::to_string(timer.ticksToMs(timer.stop())) << "\n" << std::endl;
+
+	//for (unsigned int i = 0; i < THREADS; ++i)
+	//{
+	//	for (unsigned int j = 0; j < LOOPS; ++j)
+	//	{
+	//		std::cout << std::to_string(*arr[j + (i * LOOPS)]) << ",";
+	//	}
+	//	std::cout << std::endl;
+	//}
+
+	int nrErrors = 0;
+	for (unsigned int i = 0; i < THREADS*LOOPS; ++i)
 	{
-		for (unsigned int j = 0; j < 40; ++j)
-		{
-			std::cout << std::to_string(*list.at((40 * i) + j)) << ",";
-		}
-		std::cout << std::endl;
+		if (*arr[i] != i)
+			++nrErrors;
 	}
+	std::cout << "Errors: " << std::to_string(nrErrors) << std::endl;
+
+
 
 
 	std::cout << std::to_string(f1) << " ms( " << std::to_string(f1 / f2) << " %) " << std::to_string(f2) << std::endl;
