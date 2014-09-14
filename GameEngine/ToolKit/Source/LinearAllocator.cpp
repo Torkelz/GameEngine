@@ -44,11 +44,14 @@ namespace Allocator
 
 	void *LinearAllocator::allocate(UINT p_Size)
 	{
-		if (m_Marker.load() + p_Size >= m_Size)
+		lock.lock();
+
+		if (m_Marker + p_Size >= m_Size)
 			return nullptr;
 
-		void *currentAdress = m_Buffer + m_Marker.fetch_add(p_Size) + p_Size;
-		//m_Marker += p_Size;
+		void *currentAdress = m_Buffer + m_Marker + p_Size;
+		m_Marker += p_Size;
+		lock.unlock();
 		return currentAdress;
 	}
 

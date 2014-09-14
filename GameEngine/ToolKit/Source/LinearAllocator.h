@@ -5,16 +5,39 @@
 
 namespace Allocator
 {
+	class SpinLock
+	{
+	public:
+		void lock()
+		{
+			while (lck.test_and_set(std::memory_order_acquire))
+			{
+			}
+		}
+
+		void unlock()
+		{
+			lck.clear(std::memory_order_release);
+		}
+
+	private:
+		std::atomic_flag lck;// = ATOMIC_FLAG_INIT;
+	};
+
+
+
 	class LinearAllocator
 	{
 	public:
 		typedef unsigned int UINT;
 
 	private:
+		SpinLock lock;
+
 		/**
 		 * Marks where next allocation begins.
 		 */
-		std::atomic<UINT> m_Marker;
+		UINT m_Marker;
 
 		/**
 		 * Describes the size of m_Buffer.
