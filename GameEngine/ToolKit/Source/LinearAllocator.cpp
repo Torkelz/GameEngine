@@ -44,14 +44,13 @@ namespace Allocator
 
 	void *LinearAllocator::allocate(UINT p_Size)
 	{
-		lock.lock();
+		std::lock_guard<std::mutex> l(lock);
 
 		if (m_Marker + p_Size >= m_Size)
 			return nullptr;
 
 		void *currentAdress = m_Buffer + m_Marker + p_Size;
 		m_Marker += p_Size;
-		lock.unlock();
 		return currentAdress;
 	}
 
