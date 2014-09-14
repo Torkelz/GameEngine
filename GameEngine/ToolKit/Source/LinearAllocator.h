@@ -14,7 +14,7 @@ namespace Allocator
 		/**
 		 * Marks where next allocation begins.
 		 */
-		UINT m_Marker;
+		std::atomic<UINT> m_Marker;
 
 		/**
 		 * Describes the size of m_Buffer.
@@ -41,7 +41,7 @@ namespace Allocator
 		*/
 		LinearAllocator(LinearAllocator&& other)
 		{
-			m_Marker = other.m_Marker;
+			//m_Marker = other.m_Marker;
 			m_Size = other.m_Size;
 			m_Buffer = other.m_Buffer;
 			m_Original = other.m_Original;
@@ -52,7 +52,7 @@ namespace Allocator
 		* Copy constructor.
 		*/
 		LinearAllocator& LinearAllocator::operator=( LinearAllocator& other) {
-			std::swap(m_Marker,other.m_Marker);
+			//std::swap(m_Marker,other.m_Marker);
 			std::swap(m_Size , other.m_Size);
 			std::swap(m_Buffer , other.m_Buffer);
 			std::swap(m_Original , other.m_Original);
