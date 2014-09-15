@@ -39,12 +39,13 @@ namespace Allocator
 	void *PoolAllocator::allocate(void)
 	{
 		// If marker is nullptr, no more segments are available.
-		if (m_Marker == nullptr)
+		if (m_Marker.load() == nullptr)
 			return nullptr;
 
 		// Allocate next free segment and change the marker to next free segment.
-		void *freeMemory = m_Marker;
+		void *freeMemory = m_Marker.load();
 		m_Marker = (void**)(*m_Marker);
+		
 		return freeMemory;
 	}
 
@@ -53,7 +54,7 @@ namespace Allocator
 		if (!p_Position)
 			return;
 
-		*((void**)p_Position) = m_Marker;
+		*((void**)p_Position) = m_Marker.load();
 		m_Marker = (void**)p_Position;
 	}
 
@@ -65,7 +66,7 @@ namespace Allocator
 		//Initialize free blocks list
 		for (size_t i = 0; i < m_NumItems - 1; i++)
 		{
-			*p = (void*)(reinterpret_cast<uintptr_t>(p)+m_ItemSize);
+			*p = (void*)(reinterpret_cast<uintptr_t>(p) + m_ItemSize);
 			p = (void**)*p;
 		}
 		//The last pointer in the list is set to nullptr
