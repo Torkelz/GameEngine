@@ -65,6 +65,6 @@ namespace Allocator
 
 	LinearAllocator::UINT LinearAllocator::getMarker(void) const
 	{
-		return m_Marker;
+		return m_Marker.load();
 	}
 }
