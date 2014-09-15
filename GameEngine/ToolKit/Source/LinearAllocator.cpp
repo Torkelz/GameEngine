@@ -16,7 +16,7 @@ namespace Allocator
 		if (m_Size == 0)
 			throw MemoryException("LinearAllocator, size was 0", __LINE__, __FILE__);
 
-		m_Buffer = (char*)malloc(m_Size);
+		m_Buffer = (char*)malloc(m_Size + sizeof(void*));
 		if (m_Buffer == nullptr)
 			throw MemoryException("LinearAllocator, failed to allocate memory", __LINE__, __FILE__);
 	}
