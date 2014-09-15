@@ -1,4 +1,5 @@
 #include "IToolKit.h"
+#include "Assignment1.h"
 #include <iostream>
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -27,7 +28,8 @@ void functionToBeMeasured2()
 int main(int /*argc*/, char* /*argv*/[])
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
+	Assignment1 ass1;
+	ass1.scenario2(2048);
 	std::system("PAUSE");
 	return 0;
 }
