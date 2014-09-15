@@ -45,7 +45,6 @@ namespace Allocator
 				return nullptr;
 
 			void *currentAdress = m_Buffer + m_TopMarker.fetch_sub(p_Size) - p_Size;
-			//m_TopMarker -= p_Size;
 
 			return currentAdress;
 		}
@@ -55,7 +54,6 @@ namespace Allocator
 				return nullptr;
 
 			void *currentAdress = m_Buffer + m_BottomMarker.fetch_add(p_Size) + p_Size;
-			//m_BottomMarker += p_Size;
 
 			return currentAdress;
 		}

@@ -48,7 +48,6 @@ namespace Allocator
 			return nullptr;
 
 		void *currentAdress = m_Buffer + m_Marker.fetch_add(p_Size) + p_Size;
-		//m_Marker += p_Size;
 		return currentAdress;
 	}
 
