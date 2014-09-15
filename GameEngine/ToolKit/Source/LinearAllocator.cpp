@@ -48,7 +48,6 @@ namespace Allocator
 			return nullptr;
 
 		void *currentAdress = m_Buffer + m_Marker.fetch_add(p_Size) + p_Size;
-		//m_Marker += p_Size;
 		return currentAdress;
 	}
 
@@ -65,6 +64,6 @@ namespace Allocator
 
 	LinearAllocator::UINT LinearAllocator::getMarker(void) const
 	{
-		return m_Marker;
+		return m_Marker.load();
 	}
 }
