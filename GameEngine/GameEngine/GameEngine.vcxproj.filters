@@ -21,9 +21,15 @@
     <ClCompile Include="Source\HighPerformanceTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Assignment1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\HighPerformanceTimer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Assignment1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
