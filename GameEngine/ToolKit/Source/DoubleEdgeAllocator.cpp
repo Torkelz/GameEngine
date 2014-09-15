@@ -41,21 +41,21 @@ namespace Allocator
 		{
 		case Edge::TOP:
 		{
-			if (m_TopMarker - p_Size <= m_BottomMarker)
+			if (m_TopMarker.load() - p_Size <= m_BottomMarker)
 				return nullptr;
 
-			void *currentAdress = m_Buffer + m_TopMarker - p_Size;
-			m_TopMarker -= p_Size;
+			void *currentAdress = m_Buffer + m_TopMarker.fetch_sub(p_Size) - p_Size;
+			//m_TopMarker -= p_Size;
 
 			return currentAdress;
 		}
 		case Edge::BOTTOM:
 		{
-			if (m_BottomMarker + p_Size >= m_TopMarker)
+			if (m_BottomMarker.load() + p_Size >= m_TopMarker)
 				return nullptr;
 
-			void *currentAdress = m_Buffer + m_BottomMarker + p_Size;
-			m_BottomMarker += p_Size;
+			void *currentAdress = m_Buffer + m_BottomMarker.fetch_add(p_Size) + p_Size;
+			//m_BottomMarker += p_Size;
 
 			return currentAdress;
 		}
@@ -83,10 +83,10 @@ namespace Allocator
 
 	DoubleEdgeAllocator::UINT DoubleEdgeAllocator::getTopMarker(void) const
 	{
-		return m_TopMarker;
+		return m_TopMarker.load();
 	}
 	DoubleEdgeAllocator::UINT DoubleEdgeAllocator::getBottomMarker(void) const
 	{
-		return m_BottomMarker;
+		return m_BottomMarker.load();
 	}
 }

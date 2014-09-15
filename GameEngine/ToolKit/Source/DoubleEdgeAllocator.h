@@ -1,5 +1,5 @@
 #pragma once
-
+#include <atomic>
 #include <utility>
 
 namespace Allocator
@@ -18,8 +18,8 @@ namespace Allocator
 		typedef unsigned int UINT;
 
 	private:
-		UINT m_TopMarker;
-		UINT m_BottomMarker;
+		std::atomic<UINT> m_TopMarker;
+		std::atomic<UINT> m_BottomMarker;
 
 		char *m_Buffer;
 		UINT m_Size;
