@@ -9,12 +9,11 @@
 #endif
 
 #ifdef OLDNEW
-#define DELETE(x, y) delete x
+#define DELETE(x, y) if(x != nullptr){ delete x; x = nullptr;}
 #else
-#define DELETE(x, y) operator delete(x, y)
+#define DELETE(x, y) if(x != nullptr){operator delete(x, y); x = nullptr;}
 #endif
 
-int *k[2048];
 
 Assignment1::Assignment1(void)
 {
@@ -24,6 +23,7 @@ Assignment1::Assignment1(void)
 Assignment1::~Assignment1(void)
 {
 }
+int *k[2049];
 
 void Assignment1::scenario1(unsigned int p_ItemSize, unsigned int p_NumItems)
 {
@@ -50,11 +50,14 @@ void Assignment1::scenario1(unsigned int p_ItemSize, unsigned int p_NumItems)
 		}
 		j++;
 	}
-	//for (unsigned int i = 0; i < p_NumItems; i++)
-	//{
-	//	delete k[i];
-	//}
-	free(k);
+
+	//Cleanup for old new
+#ifdef OLDNEW
+	for (unsigned int i = 0; i < p_NumItems; i++)
+	{
+		DELETE(k[i], nullptr);
+	}
+#endif
 }
 
 void Assignment1::scenario2(unsigned int p_Size)
