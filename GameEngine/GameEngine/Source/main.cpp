@@ -8,7 +8,6 @@
 #include <crtdbg.h>
 #endif
 
-//#define OLDNEW
 #include "Assignment1.h"
 
 int main(int /*argc*/, char* /*argv*/[])
@@ -19,7 +18,7 @@ int main(int /*argc*/, char* /*argv*/[])
 
 	Assignment1 ass1;
 	HighPerformanceTimer timer;
-	//std::cout << "Scenario 1: " << std::to_string(timer.measureFunction(std::bind(&Assignment1::scenario1, ass1, 4, 2048), 10)) << std::endl;
+	std::cout << "Scenario 1: " << std::to_string(timer.measureFunction(std::bind(&Assignment1::scenario1, ass1, 4, 2048), 10)) << std::endl;
 	std::cout << "Scenario 2: " << std::to_string(timer.measureFunction(std::bind(&Assignment1::scenario2, ass1, 2048), 10)) << std::endl;
 	std::system("PAUSE");
 	return 0;

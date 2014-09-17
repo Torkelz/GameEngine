@@ -1,5 +1,6 @@
 #include "Assignment1.h"
 
+//#define OLDNEW
 
 #ifdef OLDNEW
 #define NEW(x) new
