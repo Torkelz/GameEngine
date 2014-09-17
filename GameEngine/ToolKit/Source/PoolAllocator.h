@@ -1,4 +1,5 @@
 #pragma once
+#include <atomic>
 
 namespace Allocator
 {
@@ -15,7 +16,7 @@ namespace Allocator
 		/**
 		 * Marks the next free block in memory.
 		 */
-		void **m_Marker;
+		std::atomic<void**> m_Marker;
 
 		/**
 		* Block size.
