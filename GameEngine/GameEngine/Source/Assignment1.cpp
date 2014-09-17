@@ -1,6 +1,5 @@
 #include "Assignment1.h"
 
-#define OLDNEW
 
 #ifdef OLDNEW
 #define NEW(x) new
@@ -64,23 +63,24 @@ void Assignment1::scenario2(unsigned int p_Size)
 {
 	Allocator::LinearAllocator oneFrameStack(p_Size);
 	int j = 0;
+	int *b[512];
+
 	while (j < 5000)
 	{
 		oneFrameStack.clear();
 
-		int *k[512];
 		for (int i = 0; i < 512; i++)
 		{
-			k[i] = NEW(oneFrameStack) int;
+			b[i] = NEW(oneFrameStack) int;
 			
-			if (k[i] != nullptr)
-				*k[i] = i + j;
+			if (b[i] != nullptr)
+				*b[i] = i + j;
 		}
 
 		for (int i = 1; i < 512; i++)
 		{
-			if (k[i] != nullptr)
-				*k[i] = *k[i] * *k[i - 1];
+			if (b[i] != nullptr)
+				*b[i] = *b[i] * *b[i - 1];
 			else
 				break;
 		}
