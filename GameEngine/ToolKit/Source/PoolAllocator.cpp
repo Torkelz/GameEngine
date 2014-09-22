@@ -38,18 +38,14 @@ namespace Allocator
 
 	void *PoolAllocator::allocate(void)
 	{
-		lock.lock();
-
 		// If marker is nullptr, no more segments are available.
-		if (m_Marker == nullptr)
+		if (m_Marker.load() == nullptr)
 			return nullptr;
 
 		// Allocate next free segment and change the marker to next free segment.
-		void *freeMemory = m_Marker;
+		void *freeMemory = m_Marker.load();
 		m_Marker = (void**)(*m_Marker);
-
-		lock.unlock();
-
+		
 		return freeMemory;
 	}
 
@@ -58,12 +54,8 @@ namespace Allocator
 		if (!p_Position)
 			return;
 
-		lock.lock();
-
-		*((void**)p_Position) = m_Marker;
+		*((void**)p_Position) = m_Marker.load();
 		m_Marker = (void**)p_Position;
-
-		lock.unlock();
 	}
 
 	void PoolAllocator::clear()
