@@ -4,36 +4,39 @@
 
 typedef std::map<std::string, int> ZipContentsMap;		// maps path to a zip content id
 
-class ZipFile
+namespace Res
 {
-private:
-	struct TZipDirHeader;
-	struct TZipDirFileHeader;
-	struct TZipLocalHeader;
+	class ZipFile
+	{
+	private:
+		struct TZipDirHeader;
+		struct TZipDirFileHeader;
+		struct TZipLocalHeader;
 
-	FILE *m_File;		// Zip file
-	char *m_DirData;	// Raw data buffer.
-	int  m_NumEntries;	// Number of entries.
+		FILE *m_File;		// Zip file
+		char *m_DirData;	// Raw data buffer.
+		int m_NumEntries;	// Number of entries.
 
-	// Pointers to the dir entries in pDirData.
-	const TZipDirFileHeader **m_AppDir;
+		// Pointers to the dir entries in pDirData.
+		const TZipDirFileHeader **m_AppDir;
 
-public:
-	ZipFile();
-	virtual ~ZipFile();
+	public:
+		ZipFile(void);
+		virtual ~ZipFile(void);
 
-	bool init(const std::wstring &p_ResFileName);
-	void end();
+		bool init(const std::wstring &p_ResFileName);
+		void end(void);
 
-	int getNumFiles()const;
-	std::string getFilename(int p_I) const;
-	int getFileLen(int p_I) const;
-	bool readFile(int p_I, void *pBuf);
+		int getNumFiles(void) const;
+		std::string getFilename(int p_Index) const;
+		int getFileLen(int p_Index) const;
+		bool readFile(int p_Index, void *p_Buffer);
 
-	// Added to show multi-threaded decompression
-	bool readLargeFile(int p_I, void *p_Buffer, void(*progressCallback)(int, bool &));
+		// Added to show multi-threaded decompression
+		bool readLargeFile(int p_Index, void *p_Buffer, void(*progressCallback)(int, bool&));
 
-	int find(const std::string &p_Path) const;
+		int find(const std::string &p_Path) const;
 
-	ZipContentsMap m_ZipContentsMap;
-};
+		ZipContentsMap m_ZipContentsMap;
+	};
+}

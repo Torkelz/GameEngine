@@ -3,18 +3,23 @@
 #include <string>
 #include <memory>
 
-class ResHandle;
-
-//
-// class IResourceLoader					- Chapter 8, page 224
-//
-class IResourceLoader
+namespace Res
 {
-public:
-	virtual std::string getPattern() = 0;
-	virtual bool useRawFile() = 0;
-	virtual bool discardRawBufferAfterLoad() = 0;
-	virtual bool addNullZero() { return false; }
-	virtual unsigned int getLoadedResourceSize(char *p_RawBuffer, unsigned int p_RawSize) = 0;
-	virtual bool loadResource(char *p_RawBuffer, unsigned int p_RawSize, std::shared_ptr<ResHandle> p_Handle) = 0;
-};
+	class ResHandle;
+
+	//
+	// class IResourceLoader					- Chapter 8, page 224
+	//
+	class IResourceLoader
+	{
+	public:
+		typedef unsigned int UINT;
+	public:
+		virtual std::string getPattern(void) = 0;
+		virtual bool useRawFile(void) = 0;
+		virtual bool discardRawBufferAfterLoad(void) = 0;
+		virtual bool addNullZero(void) { return false; }
+		virtual UINT getLoadedResourceSize(char *p_RawBuffer, UINT p_RawSize) = 0;
+		virtual bool loadResource(char *p_RawBuffer, UINT p_RawSize, std::shared_ptr<ResHandle> p_Handle) = 0;
+	};
+}

@@ -79,14 +79,14 @@ namespace Allocator
 		 *
 		 * @return where the top marker currently is.
 		 */
-		UINT  getTopMarker(void) const;
+		UINT getTopMarker(void) const;
 
 		/**
 		 * Gets the position of the bottom marker.
 		 *
 		 * @return where the bottom marker currently is.
 		 */
-		UINT  getBottomMarker(void) const;
+		UINT getBottomMarker(void) const;
 	};
 }
 

@@ -9,8 +9,11 @@
 //   a particular resource. Best example is storing the length and format of a sound file. 
 //   There's a great discussion of this in Chapter 13, "Game Audio"
 //
-class IResourceExtraData
+namespace Res
 {
-public:
-	virtual std::string toString() = 0;
-};
+	class IResourceExtraData
+	{
+	public:
+		virtual std::string toString(void) = 0;
+	};
+}
