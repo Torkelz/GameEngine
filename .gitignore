@@ -174,7 +174,8 @@ UpgradeLog*.htm
 FakesAssemblies/
 
 # User defines
-*.lib
+ToolKit.lib
+ToolKitd.lib
 *.exe
 *.dll
 */Bin/
