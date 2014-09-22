@@ -87,6 +87,10 @@ namespace Allocator
 		 * @return where the bottom marker currently is.
 		 */
 		UINT  getBottomMarker(void) const;
+
+	private:
+		DoubleEdgeAllocator(const DoubleEdgeAllocator& p_Other) = delete; // non construction-copyable
+		DoubleEdgeAllocator& operator=(const DoubleEdgeAllocator&) = delete; // non copyable
 	};
 }
 
