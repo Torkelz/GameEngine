@@ -137,7 +137,5 @@ void Assignment1::threadTestPoolAllocator()
 	{
 		std::cout << *plaksplaks2[i] << std::endl;
 	}
-
-	std::system("PAUSE");
 }
 
