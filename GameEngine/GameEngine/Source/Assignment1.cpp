@@ -93,49 +93,49 @@ void Assignment1::scenario2(unsigned int p_Size)
 	}
 }
 
-int *plaksplaks[1000];
-int *plaksplaks2[100];
+int *thread1mem[1000];
+int *thread2mem[100];
 
-void Assignment1::plask(Allocator::PoolAllocator& fetePlask)
+void Assignment1::thread1test(Allocator::PoolAllocator& pool)
 {
 	for (int i = 0; i < 20; i++)
 	{
-		plaksplaks[i] = NEW(fetePlask) int;
+		thread1mem[i] = NEW(pool) int;
 
-		if (plaksplaks[i] != nullptr)
-			*plaksplaks[i] = i;
+		if (thread1mem[i] != nullptr)
+			*thread1mem[i] = i;
 	}
 }
 
-void Assignment1::magplask(Allocator::PoolAllocator& fetePlask)
+void Assignment1::thread2test(Allocator::PoolAllocator& pool)
 {
 	for (int i = 0; i < 10; i++)
 	{
-		plaksplaks2[i] = NEW(fetePlask) int;
+		thread2mem[i] = NEW(pool) int;
 
-		if (plaksplaks2[i] != nullptr)
-			*plaksplaks2[i] = i + 2000;
+		if (thread2mem[i] != nullptr)
+			*thread2mem[i] = i + 2000;
 	}
 }
 
 void Assignment1::threadTestPoolAllocator()
 {
-	Allocator::PoolAllocator fetePlask(4, 9001);
+	Allocator::PoolAllocator pool(4, 9001);
 
-	std::thread plaskare1 (&Assignment1::plask, *this, std::ref(fetePlask));
-	std::thread plaskare2 (&Assignment1::magplask,*this, std::ref(fetePlask));
+	std::thread thread1(&Assignment1::thread1test, *this, std::ref(pool));
+	std::thread thread2(&Assignment1::thread2test, *this, std::ref(pool));
 	
-	plaskare1.join();
-	plaskare2.join();
+	thread1.join();
+	thread2.join();
 
 	for (int i = 0; i < 20; i++)
 	{
-		std::cout << *plaksplaks[i] << std::endl;
+		std::cout << *thread1mem[i] << std::endl;
 	}
 
 	for (int i = 0; i < 10; i++)
 	{
-		std::cout << *plaksplaks2[i] << std::endl;
+		std::cout << *thread2mem[i] << std::endl;
 	}
 }
 

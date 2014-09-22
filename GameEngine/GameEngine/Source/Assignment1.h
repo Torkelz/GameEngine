@@ -13,7 +13,7 @@ public:
 
 	void threadTestPoolAllocator();
 
-	void plask(Allocator::PoolAllocator&);
-	void magplask(Allocator::PoolAllocator&);
+	void thread1test(Allocator::PoolAllocator&);
+	void thread2test(Allocator::PoolAllocator&);
 };
 
