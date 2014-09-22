@@ -82,18 +82,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Source\DoubleEdgeAllocator.h" />
-    <ClInclude Include="Source\DoubleFrameAllocator.h" />
+    <ClInclude Include="include\IResourceManager.h" />
+    <ClInclude Include="Source\Allocator\DoubleEdgeAllocator.h" />
+    <ClInclude Include="Source\Allocator\DoubleFrameAllocator.h" />
     <ClInclude Include="include\IAllocators.h" />
-    <ClInclude Include="Source\PoolAllocator.h" />
-    <ClInclude Include="Source\LinearAllocator.h" />
-    <ClInclude Include="Source\MemoryExceptions.h" />
+    <ClInclude Include="Source\IResourceExtraData.h" />
+    <ClInclude Include="Source\Allocator\PoolAllocator.h" />
+    <ClInclude Include="Source\Allocator\LinearAllocator.h" />
+    <ClInclude Include="Source\Allocator\MemoryExceptions.h" />
+    <ClInclude Include="Source\Resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\DoubleEdgeAllocator.cpp" />
-    <ClCompile Include="Source\DoubleFrameAllocator.cpp" />
-    <ClCompile Include="Source\PoolAllocator.cpp" />
-    <ClCompile Include="Source\LinearAllocator.cpp" />
+    <ClCompile Include="Source\Allocator\DoubleEdgeAllocator.cpp" />
+    <ClCompile Include="Source\Allocator\DoubleFrameAllocator.cpp" />
+    <ClCompile Include="Source\Allocator\PoolAllocator.cpp" />
+    <ClCompile Include="Source\Allocator\LinearAllocator.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

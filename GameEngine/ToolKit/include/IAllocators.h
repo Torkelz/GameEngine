@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../Source/LinearAllocator.h"
-#include "../Source/DoubleFrameAllocator.h"
-#include "../Source/DoubleEdgeAllocator.h"
-#include "../Source/PoolAllocator.h"
+#include "../Source/Allocator/LinearAllocator.h"
+#include "../Source/Allocator/DoubleFrameAllocator.h"
+#include "../Source/Allocator/DoubleEdgeAllocator.h"
+#include "../Source/Allocator/PoolAllocator.h"
 
-#include "../Source/MemoryExceptions.h"
+#include "../Source/Allocator/MemoryExceptions.h"
