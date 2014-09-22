@@ -67,6 +67,10 @@ namespace Allocator
 		 * Clear the whole pool.
 		 */
 		void clear(void);
+
+	private:
+		PoolAllocator(const PoolAllocator& p_Other) = delete; // non construction-copyable
+		PoolAllocator& operator=(const PoolAllocator&) = delete; // non copyable
 	};
 }
 

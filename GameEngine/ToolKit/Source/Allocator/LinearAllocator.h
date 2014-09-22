@@ -34,28 +34,28 @@ namespace Allocator
 		 * Default constructor. Don't use it.
 		 */
 		LinearAllocator(void);
-		/**
-		* Copy constructor.
-		*/
-		LinearAllocator(LinearAllocator&& other)
-		{
-			//m_Marker = other.m_Marker;
-			m_Size = other.m_Size;
-			m_Buffer = other.m_Buffer;
-			m_Original = other.m_Original;
+		///**
+		//* Copy constructor.
+		//*/
+		//LinearAllocator(LinearAllocator&& other)
+		//{
+		//	//m_Marker = other.m_Marker;
+		//	m_Size = other.m_Size;
+		//	m_Buffer = other.m_Buffer;
+		//	m_Original = other.m_Original;
 
-			other.m_Buffer = nullptr;
-		}
-		/**
-		* Copy constructor.
-		*/
-		LinearAllocator& LinearAllocator::operator=( LinearAllocator& other) {
-			//std::swap(m_Marker,other.m_Marker);
-			std::swap(m_Size , other.m_Size);
-			std::swap(m_Buffer , other.m_Buffer);
-			std::swap(m_Original , other.m_Original);
-			return *this;
-		}
+		//	other.m_Buffer = nullptr;
+		//}
+		///**
+		//* Copy constructor.
+		//*/
+		//LinearAllocator& LinearAllocator::operator=( LinearAllocator& other) {
+		//	//std::swap(m_Marker,other.m_Marker);
+		//	std::swap(m_Size , other.m_Size);
+		//	std::swap(m_Buffer , other.m_Buffer);
+		//	std::swap(m_Original , other.m_Original);
+		//	return *this;
+		//}
 		/**
 		 * @param p_Size The amount of memory to be allocated in bytes.
 		 * Throws MemoryException if it fails to allocate memory or if p_Size is zero.
@@ -100,6 +100,8 @@ namespace Allocator
 		UINT getMarker(void) const;
 
 	private:
+		LinearAllocator(const LinearAllocator& p_Other) = delete; // non construction-copyable
+		LinearAllocator& operator=(const LinearAllocator&) = delete; // non copyable
 	};
 }
 

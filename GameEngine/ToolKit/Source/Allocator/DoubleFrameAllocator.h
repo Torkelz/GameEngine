@@ -11,7 +11,7 @@ namespace Allocator
 		/**
 		 * The two stack allocators used to do the two frame buffering.
 		 */
-		LinearAllocator m_Allocators[2];
+		LinearAllocator *m_Allocators[2];
 
 		/**
 		 * Currently active buffer.
@@ -46,6 +46,10 @@ namespace Allocator
 		 * @return, the memory adress that has been allocated. nullptr is returned if memory is full.
 		 */
 		void *allocate(UINT p_Size);
+
+	private:
+		DoubleFrameAllocator(const DoubleFrameAllocator& p_Other) = delete; // non construction-copyable
+		DoubleFrameAllocator& operator=(const DoubleFrameAllocator&) = delete; // non copyable
 	};
 }
 
