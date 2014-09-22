@@ -84,7 +84,7 @@
   <ItemGroup>
     <ClInclude Include="Source\DoubleEdgeAllocator.h" />
     <ClInclude Include="Source\DoubleFrameAllocator.h" />
-    <ClInclude Include="include\IToolKit.h" />
+    <ClInclude Include="include\IAllocators.h" />
     <ClInclude Include="Source\PoolAllocator.h" />
     <ClInclude Include="Source\LinearAllocator.h" />
     <ClInclude Include="Source\MemoryExceptions.h" />
