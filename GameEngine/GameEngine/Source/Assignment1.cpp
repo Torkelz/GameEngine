@@ -1,4 +1,6 @@
 #include "Assignment1.h"
+#include <thread>
+#include <iostream>
 
 //#define OLDNEW
 
@@ -35,6 +37,7 @@ void Assignment1::scenario1(unsigned int p_ItemSize, unsigned int p_NumItems)
 		if (k[i] != nullptr)
 			*k[i] = i + j;
 	}
+	
 	unsigned int removed = 0;
 	while (j < 5000)
 	{
@@ -73,7 +76,7 @@ void Assignment1::scenario2(unsigned int p_Size)
 		for (int i = 0; i < 512; i++)
 		{
 			b[i] = NEW(oneFrameStack) int;
-			
+
 			if (b[i] != nullptr)
 				*b[i] = i + j;
 		}
@@ -88,5 +91,53 @@ void Assignment1::scenario2(unsigned int p_Size)
 
 		j++;
 	}
+}
+
+int *plaksplaks[1000];
+int *plaksplaks2[100];
+
+void Assignment1::plask(Allocator::PoolAllocator& fetePlask)
+{
+	for (int i = 0; i < 20; i++)
+	{
+		plaksplaks[i] = NEW(fetePlask) int;
+
+		if (plaksplaks[i] != nullptr)
+			*plaksplaks[i] = i;
+	}
+}
+
+void Assignment1::magplask(Allocator::PoolAllocator& fetePlask)
+{
+	for (int i = 0; i < 10; i++)
+	{
+		plaksplaks2[i] = NEW(fetePlask) int;
+
+		if (plaksplaks2[i] != nullptr)
+			*plaksplaks2[i] = i + 2000;
+	}
+}
+
+void Assignment1::threadTestPoolAllocator()
+{
+	Allocator::PoolAllocator fetePlask(4, 9001);
+
+	std::thread plaskare1 (&Assignment1::plask, *this, std::ref(fetePlask));
+	std::thread plaskare2 (&Assignment1::magplask,*this, std::ref(fetePlask));
+	
+	plaskare1.join();
+	plaskare2.join();
+
+	for (int i = 0; i < 20; i++)
+	{
+		std::cout << *plaksplaks[i] << std::endl;
+	}
+
+	for (int i = 0; i < 10; i++)
+	{
+		std::cout << *plaksplaks2[i] << std::endl;
+	}
+
+	std::system("PAUSE");
 }
 
