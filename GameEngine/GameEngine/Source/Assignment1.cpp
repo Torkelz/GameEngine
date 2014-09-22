@@ -122,8 +122,6 @@ void Assignment1::threadTestPoolAllocator()
 {
 	Allocator::PoolAllocator fetePlask(4, 9001);
 
-	//plask(fetePlask);
-	//magplask(fetePlask);
 	std::thread plaskare1 (&Assignment1::plask, *this, std::ref(fetePlask));
 	std::thread plaskare2 (&Assignment1::magplask,*this, std::ref(fetePlask));
 	
