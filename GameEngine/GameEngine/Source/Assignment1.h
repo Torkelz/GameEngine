@@ -10,5 +10,10 @@ public:
 
 	void scenario1(unsigned int p_ItemSize, unsigned int p_NumItems);
 	void scenario2(unsigned int p_Size);
+
+	void threadTestPoolAllocator();
+
+	void plask(Allocator::PoolAllocator&);
+	void magplask(Allocator::PoolAllocator&);
 };
 

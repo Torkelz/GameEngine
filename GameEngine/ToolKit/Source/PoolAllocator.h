@@ -1,5 +1,5 @@
 #pragma once
-#include <atomic>
+#include "SpinLock.h"
 
 namespace Allocator
 {
@@ -16,7 +16,12 @@ namespace Allocator
 		/**
 		 * Marks the next free block in memory.
 		 */
-		std::atomic<void**> m_Marker;
+		void** m_Marker;
+
+		/**
+		 * Spin lock.
+		 */
+		SpinLock lock;
 
 		/**
 		* Block size.
