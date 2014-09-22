@@ -2,6 +2,8 @@
 #include "HighPerformanceTimer.h"
 #include <iostream>
 
+
+
 #ifdef _DEBUG
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -19,10 +21,10 @@ int main(int /*argc*/, char* /*argv*/[])
 	Assignment1 ass1;
 	HighPerformanceTimer timer;
 
-	ass1.threadTestPoolAllocator();
+	//ass1.threadTestPoolAllocator();
 
-	//std::cout << "Scenario 1: " << std::to_string(timer.measureFunction(std::bind(&Assignment1::scenario1, ass1, 4, 2048), 10)) << std::endl;
-	//std::cout << "Scenario 2: " << std::to_string(timer.measureFunction(std::bind(&Assignment1::scenario2, ass1, 2048), 10)) << std::endl;
+	std::cout << "Scenario 1: " << std::to_string(timer.measureFunction(std::bind(&Assignment1::scenario1<int>, ass1, 1000), 100)) << std::endl;
+	std::cout << "Scenario 2: " << std::to_string(timer.measureFunction(std::bind(&Assignment1::scenario2<int>, ass1, 1000), 100)) << std::endl;
 	std::system("PAUSE");
 	return 0;
 }

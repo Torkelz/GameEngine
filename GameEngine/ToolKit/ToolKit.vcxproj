@@ -103,7 +103,6 @@
     <ClInclude Include="Source\Allocator\PoolAllocator.h" />
     <ClInclude Include="Source\Allocator\LinearAllocator.h" />
     <ClInclude Include="Source\Allocator\MemoryExceptions.h" />
-    <ClInclude Include="Source\SpinLock.h" />
     <ClInclude Include="Source\ResourceManager\IResourceFile.h" />
     <ClInclude Include="Source\ResourceManager\IResourceLoader.h" />
     <ClInclude Include="Source\ResourceManager\ResHandle.h" />
