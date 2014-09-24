@@ -17,7 +17,7 @@ namespace Res
 		return p_RawSize;
 	}
 
-	bool DefaultResourceLoader::loadResource(char *p_RawBuffer, UINT p_RawSize, std::shared_ptr<ResHandle> p_Handle)
+	bool DefaultResourceLoader::loadResource(char *p_RawBuffer, UINT p_RawSize, std::shared_ptr<ResourceHandle> p_Handle)
 	{
 		return true;
 	}

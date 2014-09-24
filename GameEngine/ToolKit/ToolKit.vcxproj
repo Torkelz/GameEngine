@@ -105,12 +105,12 @@
     <ClInclude Include="Source\Allocator\MemoryExceptions.h" />
     <ClInclude Include="Source\ResourceManager\IResourceFile.h" />
     <ClInclude Include="Source\ResourceManager\IResourceLoader.h" />
-    <ClInclude Include="Source\ResourceManager\ResHandle.h" />
+    <ClInclude Include="Source\ResourceManager\ResourceHandle.h" />
     <ClInclude Include="Source\ResourceManager\Resource.h" />
     <ClInclude Include="Source\ResourceManager\ZipFile.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\ResourceManager\ResHandle.cpp" />
+    <ClCompile Include="Source\ResourceManager\ResourceHandle.cpp" />
     <ClCompile Include="Source\ResourceManager\ResourceZipFile.cpp" />
     <ClCompile Include="Source\ResourceManager\Resource.cpp" />
     <ClCompile Include="Source\ResourceManager\ResourceManager.cpp" />
