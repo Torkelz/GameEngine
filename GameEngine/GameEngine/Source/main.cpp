@@ -5,6 +5,7 @@
 #endif
 
 #include "Assignment1.h"
+#include <iostream>
 
 int main(int /*argc*/, char* /*argv*/[])
 {
@@ -15,7 +16,11 @@ int main(int /*argc*/, char* /*argv*/[])
 
 	ass1.scenario1Test();
 	ass1.scenario2Test();
-	ass1.threadTestPoolAllocator();
+	if (!ass1.threadTestPoolAllocator())
+		std::cout << "Alligator are not thread safe!" << std::endl;
+	if (!ass1.threadTestStackAllocator())
+		std::cout << "Stack are not thread safe!" << std::endl;
+	system("pause");
 
 	return 0;
 }
