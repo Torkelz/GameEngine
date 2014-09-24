@@ -38,13 +38,14 @@ namespace Allocator
 
 	void *PoolAllocator::allocate(void)
 	{
+		void *freeMemory = m_Marker.load(std::memory_order_acquire);
+
 		// If marker is nullptr, no more segments are available.
-		if (m_Marker.load() == nullptr)
+		if (!freeMemory)
 			return nullptr;
 
 		// Allocate next free segment and change the marker to next free segment.
-		void *freeMemory = m_Marker.load();
-		m_Marker = (void**)(*m_Marker);
+		m_Marker.store((void**)(*m_Marker), std::memory_order_consume);
 		
 		return freeMemory;
 	}
@@ -54,8 +55,8 @@ namespace Allocator
 		if (!p_Position)
 			return;
 
-		*((void**)p_Position) = m_Marker.load();
-		m_Marker = (void**)p_Position;
+		*((void**)p_Position) = m_Marker.load(std::memory_order_acquire);
+		m_Marker.store((void**)p_Position, std::memory_order_consume);
 	}
 
 	void PoolAllocator::clear()
