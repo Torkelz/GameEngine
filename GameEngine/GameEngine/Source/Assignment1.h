@@ -1,9 +1,12 @@
 #pragma once
 
 #include "IAllocators.h"
+#include "HighPerformanceTimer.h"
+
 #include <vector>
 #include <thread>
 #include <random>
+#include <fstream>
 
 #define OLDNEW
 
@@ -25,6 +28,8 @@ class Assignment1
 public:
 	Assignment1(void){};
 	~Assignment1(void){};
+
+private:
 
 	template<typename T>
 	void scenario1(unsigned int p_NumItems, int* randSeq)
@@ -106,28 +111,124 @@ public:
 #endif;
 	}
 
-	//template<typename T>
-	//void threadtest(Allocator::PoolAllocator& pool, unsigned int p_Iterator)
-	//{
-	//	std::vector<T*> threadmem(p_Iterator, nullptr);
-	//	for (int i = 0; i < p_Iterator; i++)
-	//	{
-	//		threadmem[i] = DBGNEW(pool) T;
+	template<typename T = int>
+	std::vector<T*> threadtest(Allocator::PoolAllocator& pool, unsigned int p_Iterator, int id)
+	{
+		std::vector<T*> threadmem(p_Iterator, nullptr);
+		for (unsigned int i = 0; i < p_Iterator; i++)
+		{
+			threadmem[i] = DBGNEW(pool) T;
 
-	//		if (threadmem[i] != nullptr)
-	//			*threadmem[i] = i + 2000;
-	//	}
-	//}
+			if (threadmem[i] != nullptr)
+				*threadmem[i] = i + p_Iterator * id;
+		}
 
-	//void threadTestPoolAllocator()
-	//{
-	//	Allocator::PoolAllocator pool(4, 9001);
+		return threadmem;
+	}
 
-	//	std::thread thread1(&Assignment1::threadtest<int>, *this, std::ref(pool), 50);
-	//	std::thread thread2(&Assignment1::threadtest<int>, *this, std::ref(pool), 50);
 
-	//	thread1.join();
-	//	thread2.join();
-	//}
+public:
+	bool threadTestPoolAllocator()
+	{
+		Allocator::PoolAllocator pool(4, 9001);
+		std::vector<int*> v1, v2;
+		std::thread thread1([&]{ v1 = threadtest<int>(pool, 50, 0); });
+		std::thread thread2([&]{ v2 = threadtest<int>(pool, 50, 1); });
+
+		thread1.join();
+		thread2.join();
+
+		std::move(v2.begin(), v2.end(), std::back_inserter(v1));
+		for (int i = 0; i < 100; i++)
+		{
+			if (i != *v1.at(i))
+				return false;
+		}
+		return true;
+	}
+
+	void scenario1Test()
+	{
+		HighPerformanceTimer timer;
+
+		std::string fileName;
+#ifdef OLDNEW
+		fileName = "Scenario1TestsOLDNEW.csv";
+#else
+		fileName = "Scenario1Tests.csv";
+#endif
+		const int nTests = 8;
+		int startValue = 25;
+		std::vector<int> tests;
+		for (unsigned int i = 0; i < nTests; ++i)
+		{
+			tests.push_back(startValue);
+			startValue *= 2;
+		}
+
+		std::ofstream myFile(fileName);
+		if (myFile.is_open())
+		{
+			myFile << "X" << ";" << "Time(ms)\n";
+			for each(const int &i in tests)
+			{
+				int* randSeq = new int[1000];
+				std::default_random_engine engine;
+				std::uniform_int_distribution<int> distribution(0, i - 1);
+				engine.seed(9001);
+
+				for (int j = 0; j < 1000; j++)
+				{
+					randSeq[j] = distribution(engine);
+				}
+
+				myFile << std::to_string(i) << ";" << std::to_string(timer.measureFunction(std::bind(&Assignment1::scenario1<int>, this, i, randSeq), 100)) << "\n";
+
+				delete[] randSeq;
+			}
+			myFile.close();
+		}
+	}
+
+	void scenario2Test()
+	{
+		HighPerformanceTimer timer;
+		int numberOfItems = 1000;
+		int* randSeq = new int[numberOfItems];
+
+		std::string fileName;
+#ifdef OLDNEW
+		fileName = "Scenario2TestsOLDNEW.csv";
+#else
+		fileName = "Scenario2Tests.csv";
+#endif
+
+		const int nTests = 8;
+		int startValue = 25;
+		std::vector<int> tests;
+		for (unsigned int i = 0; i < nTests; ++i)
+		{
+			tests.push_back(startValue);
+			startValue *= 2;
+		}
+
+		std::ofstream myFile(fileName);
+		if (myFile.is_open())
+		{
+			myFile << "X" << ";" << "Time(ms)\n";
+			for each(const int &i in tests)
+			{
+				myFile << std::to_string(i) << ";" << std::to_string(timer.measureFunction(std::bind(&Assignment1::scenario2<int>, this, i), 100)) << "\n";
+			}
+			myFile.close();
+		}
+	}
+
+	void runAllTests()
+	{
+		scenario1Test();
+		scenario2Test();
+		threadTestPoolAllocator();
+	}
 };
 
