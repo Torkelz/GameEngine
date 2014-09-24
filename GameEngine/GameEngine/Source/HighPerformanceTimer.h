@@ -26,6 +26,6 @@ public:
 
 	void start();
 	LONGLONG stop();
-	double ticksToMs(LONGLONG p_Ticks);
+	double ticksToMs(double p_Ticks);
 };
 

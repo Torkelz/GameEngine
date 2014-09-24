@@ -5,7 +5,7 @@
 #include <thread>
 #include <random>
 
-//#define OLDNEW
+#define OLDNEW
 
 #ifdef OLDNEW
 #define DBGNEW(x) new

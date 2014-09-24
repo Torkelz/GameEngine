@@ -1,4 +1,6 @@
 #include "HighPerformanceTimer.h"
+#include <vector>
+#include <algorithm>
 
 
 HighPerformanceTimer::HighPerformanceTimer()
@@ -19,14 +21,24 @@ HighPerformanceTimer::~HighPerformanceTimer()
 
 double HighPerformanceTimer::measureFunction(std::function<void(void)> p_Function, unsigned int p_Repeats /*= 1*/)
 {
-	LONGLONG total = {};
+	std::vector<LONGLONG> results(p_Repeats, {});
+
 	for (unsigned int i = 0; i < p_Repeats; ++i)
 	{
 		start();
 		p_Function();
-		total += stop();
+		results[i] = stop();
 	}
-	return ticksToMs(total / p_Repeats);
+
+	std::sort(results.begin(), results.end());
+	results.erase(results.begin(), results.begin() + 10); //Remove first 10 results
+	results.erase(results.end() - 10, results.end()); //Remove last 10 results
+	double total = {};
+	for each(const LONGLONG &r in results)
+		total += r;
+	total /= results.size();
+
+	return ticksToMs(total);
 }
 
 void HighPerformanceTimer::start()
@@ -43,7 +55,7 @@ LONGLONG HighPerformanceTimer::stop()
 	return m_EndingTime.QuadPart - m_StartingTime.QuadPart - m_Overhead.QuadPart;
 }
 
-double HighPerformanceTimer::ticksToMs(LONGLONG p_Ticks)
+double HighPerformanceTimer::ticksToMs(double p_Ticks)
 {
 	//
 	// We now have the elapsed number of ticks, along with the
@@ -53,5 +65,5 @@ double HighPerformanceTimer::ticksToMs(LONGLONG p_Ticks)
 	// to microseconds *before* dividing by ticks-per-second.
 	//
 	p_Ticks *= 1000000;
-	return ((double)p_Ticks / m_Frequency.QuadPart);
+	return p_Ticks / m_Frequency.QuadPart;
 }
