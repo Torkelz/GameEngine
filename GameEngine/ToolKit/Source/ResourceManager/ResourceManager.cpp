@@ -3,7 +3,7 @@
 #include "IResourceLoader.h"
 #include "DefaultResourceLoader.h"
 #include "Resource.h"
-#include "ResHandle.h"
+#include "ResourceHandle.h"
 #include "Macros.h"
 
 
@@ -62,9 +62,9 @@ namespace Res
 	//
 	// ResourceManager::GetHandle							- Chapter 8, page 227
 	//
-	std::shared_ptr<ResHandle> ResourceManager::getHandle(Resource *p_R)
+	std::shared_ptr<ResourceHandle> ResourceManager::getHandle(Resource *p_R)
 	{
-		std::shared_ptr<ResHandle> handle(find(p_R));
+		std::shared_ptr<ResourceHandle> handle(find(p_R));
 		if (handle == NULL)
 		{
 			handle = load(p_R);
@@ -80,12 +80,12 @@ namespace Res
 	//
 	// ResourceManager::Load								- Chapter 8, page 228-230
 	//
-	std::shared_ptr<ResHandle> ResourceManager::load(Resource *p_R)
+	std::shared_ptr<ResourceHandle> ResourceManager::load(Resource *p_R)
 	{
 		// Create a new resource and add it to the lru list and map
 
 		std::shared_ptr<IResourceLoader> loader;
-		std::shared_ptr<ResHandle> handle;
+		std::shared_ptr<ResourceHandle> handle;
 
 		for (ResourceLoaders::iterator it = m_ResourceLoaders.begin(); it != m_ResourceLoaders.end(); ++it)
 		{
@@ -108,7 +108,7 @@ namespace Res
 		if (rawSize < 0)
 		{
 			//GCC_ASSERT(rawSize > 0 && "Resource size returned -1 - Resource not found");
-			return std::shared_ptr<ResHandle>();
+			return std::shared_ptr<ResourceHandle>();
 		}
 
 		int allocSize = rawSize + ((loader->addNullZero()) ? (1) : (0));
@@ -118,7 +118,7 @@ namespace Res
 		if (rawBuffer == NULL || m_File->getRawResource(*p_R, rawBuffer) == 0)
 		{
 			// resource cache out of memory
-			return std::shared_ptr<ResHandle>();
+			return std::shared_ptr<ResourceHandle>();
 		}
 
 		char *buffer = NULL;
@@ -127,7 +127,7 @@ namespace Res
 		if (loader->useRawFile())
 		{
 			buffer = rawBuffer;
-			handle = std::shared_ptr<ResHandle>(new ResHandle(*p_R, buffer, rawSize, this));
+			handle = std::shared_ptr<ResourceHandle>(new ResourceHandle(*p_R, buffer, rawSize, this));
 		}
 		else
 		{
@@ -136,9 +136,9 @@ namespace Res
 			if (rawBuffer == NULL || buffer == NULL)
 			{
 				// resource cache out of memory
-				return std::shared_ptr<ResHandle>();
+				return std::shared_ptr<ResourceHandle>();
 			}
-			handle = std::shared_ptr<ResHandle>(new ResHandle(*p_R, buffer, size, this));
+			handle = std::shared_ptr<ResourceHandle>(new ResourceHandle(*p_R, buffer, size, this));
 			bool success = loader->loadResource(rawBuffer, rawSize, handle);
 
 			// [mrmike] - This was added after the chapter went to copy edit. It is used for those
@@ -154,7 +154,7 @@ namespace Res
 			if (!success)
 			{
 				// resource cache out of memory
-				return std::shared_ptr<ResHandle>();
+				return std::shared_ptr<ResourceHandle>();
 			}
 		}
 
@@ -171,11 +171,11 @@ namespace Res
 	//
 	// ResourceManager::Find									- Chapter 8, page 228
 	//
-	std::shared_ptr<ResHandle> ResourceManager::find(Resource *p_R)
+	std::shared_ptr<ResourceHandle> ResourceManager::find(Resource *p_R)
 	{
 		ResHandleMap::iterator i = m_Resources.find(p_R->m_Name);
 		if (i == m_Resources.end())
-			return std::shared_ptr<ResHandle>();
+			return std::shared_ptr<ResourceHandle>();
 
 		return i->second;
 	}
@@ -183,7 +183,7 @@ namespace Res
 	//
 	// ResourceManager::Update									- Chapter 8, page 228
 	//
-	void ResourceManager::update(std::shared_ptr<ResHandle> p_Handle)
+	void ResourceManager::update(std::shared_ptr<ResourceHandle> p_Handle)
 	{
 		m_Lru.remove(p_Handle);
 		m_Lru.push_front(p_Handle);
@@ -217,12 +217,12 @@ namespace Res
 		ResHandleList::iterator gonner = m_Lru.end();
 		gonner--;
 
-		std::shared_ptr<ResHandle> handle = *gonner;
+		std::shared_ptr<ResourceHandle> handle = *gonner;
 
 		m_Lru.pop_back();
 		m_Resources.erase(handle->m_Resource.m_Name);
 		// Note - you can't change the resource cache size yet - the resource bits could still actually be
-		// used by some sybsystem holding onto the ResHandle. Only when it goes out of scope can the memory
+		// used by some sybsystem holding onto the ResourceHandle. Only when it goes out of scope can the memory
 		// be actually free again.
 	}
 
@@ -239,7 +239,7 @@ namespace Res
 	{
 		while (!m_Lru.empty())
 		{
-			std::shared_ptr<ResHandle> handle = *(m_Lru.begin());
+			std::shared_ptr<ResourceHandle> handle = *(m_Lru.begin());
 			free(handle);
 			m_Lru.pop_front();
 		}
@@ -272,13 +272,13 @@ namespace Res
 	//
 	//	ResourceManager::Free									- Chapter 8, page 228
 	//
-	void ResourceManager::free(std::shared_ptr<ResHandle> p_Gonner)
+	void ResourceManager::free(std::shared_ptr<ResourceHandle> p_Gonner)
 	{
 		m_Lru.remove(p_Gonner);
 		m_Resources.erase(p_Gonner->m_Resource.m_Name);
 		// Note - the resource might still be in use by something,
 		// so the cache can't actually count the memory freed until the
-		// ResHandle pointing to it is destroyed.
+		// ResourceHandle pointing to it is destroyed.
 
 		//m_Allocated -= gonner->m_Resource.m_size;
 		//delete gonner;
@@ -337,7 +337,7 @@ namespace Res
 	//
 	//		if (wildcardMatch(p_Pattern.c_str(), resource.m_Name.c_str()))
 	//		{
-	//			std::shared_ptr<ResHandle> handle = g_pApp->m_ResourceManager->getHandle(&resource);
+	//			std::shared_ptr<ResourceHandle> handle = g_pApp->m_ResourceManager->getHandle(&resource);
 	//			++loaded;
 	//		}
 	//

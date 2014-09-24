@@ -8,19 +8,19 @@ namespace Res
 {
 	class IResourceFile;
 	class IResourceLoader;
-	class ResHandle;
+	class ResourceHandle;
 	class Resource;
 
 	//
 	//  class ResCache										- Chapter 8, page 225
 	//
-	typedef std::list< std::shared_ptr <ResHandle>> ResHandleList;					// lru list
-	typedef std::map<std::string, std::shared_ptr<ResHandle>> ResHandleMap;		// maps indentifiers to resource data
+	typedef std::list< std::shared_ptr <ResourceHandle>> ResHandleList;					// lru list
+	typedef std::map<std::string, std::shared_ptr<ResourceHandle>> ResHandleMap;		// maps indentifiers to resource data
 	typedef std::list< std::shared_ptr<IResourceLoader>> ResourceLoaders;
 
 	class ResourceManager
 	{
-		friend class ResHandle;
+		friend class ResourceHandle;
 	
 	public:
 		typedef unsigned int UINT;
@@ -38,11 +38,11 @@ namespace Res
 
 		bool makeRoom(UINT p_Size);
 		char *allocate(UINT p_Size);
-		void free(std::shared_ptr<ResHandle> p_Gonner);
+		void free(std::shared_ptr<ResourceHandle> p_Gonner);
 
-		std::shared_ptr<ResHandle> load(Resource *p_R);
-		std::shared_ptr<ResHandle> find(Resource *p_R);
-		void update(std::shared_ptr<ResHandle> p_Handle);
+		std::shared_ptr<ResourceHandle> load(Resource *p_R);
+		std::shared_ptr<ResourceHandle> find(Resource *p_R);
+		void update(std::shared_ptr<ResourceHandle> p_Handle);
 
 		void freeOneResource(void);
 		void memoryHasBeenFreed(UINT p_Size);
@@ -56,7 +56,7 @@ namespace Res
 
 		void registerLoader(std::shared_ptr<IResourceLoader> p_Loader);
 
-		std::shared_ptr<ResHandle> getHandle(Resource *p_R);
+		std::shared_ptr<ResourceHandle> getHandle(Resource *p_R);
 
 		//int preload(const std::string p_Pattern, void(*progressCallback)(int, bool &));
 		std::vector<std::string> match(const std::string p_Pattern);

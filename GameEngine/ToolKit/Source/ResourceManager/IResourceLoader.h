@@ -5,7 +5,7 @@
 
 namespace Res
 {
-	class ResHandle;
+	class ResourceHandle;
 
 	//
 	// class IResourceLoader					- Chapter 8, page 224
@@ -20,6 +20,6 @@ namespace Res
 		virtual bool discardRawBufferAfterLoad(void) = 0;
 		virtual bool addNullZero(void) { return false; }
 		virtual UINT getLoadedResourceSize(char *p_RawBuffer, UINT p_RawSize) = 0;
-		virtual bool loadResource(char *p_RawBuffer, UINT p_RawSize, std::shared_ptr<ResHandle> p_Handle) = 0;
+		virtual bool loadResource(char *p_RawBuffer, UINT p_RawSize, std::shared_ptr<ResourceHandle> p_Handle) = 0;
 	};
 }
