@@ -1,6 +1,6 @@
 #include "MemoryExceptions.h"
 #include "PoolAllocator.h"
-#include <malloc.h>
+#include <malloc>
 #include <string>
 
 namespace Allocator

@@ -1,7 +1,7 @@
 #include "LinearAllocator.h"
 #include "MemoryExceptions.h"
 
-#include <malloc.h>
+#include <malloc>
 #include <string>
 
 namespace Allocator
