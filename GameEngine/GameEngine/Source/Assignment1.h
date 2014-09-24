@@ -3,6 +3,7 @@
 #include "IAllocators.h"
 #include <vector>
 #include <thread>
+#include <random>
 
 //#define OLDNEW
 
@@ -26,7 +27,7 @@ public:
 	~Assignment1(void){};
 
 	template<typename T>
-	void scenario1(unsigned int p_NumItems)
+	void scenario1(unsigned int p_NumItems, int* randSeq)
 	{
 		std::vector<T*> buffer(p_NumItems, nullptr);
 
@@ -41,21 +42,17 @@ public:
 				*buffer[i] = i;
 		}
 
-		unsigned int removed = 0;
 		int j = 0;
+		int deleted = 0;
+
 		while (j < 5000)
 		{
 			if (j % 100 == 0)
 			{
-				DBGDELETE(buffer[removed], memoryPool);
-				removed += 5;
-
-				if (removed >= p_NumItems)
-				{
-					removed = removed % p_NumItems;
-				}
+				DBGDELETE(buffer[randSeq[deleted]], memoryPool);
+				++deleted;
 			}
-			j++;
+			++j;
 		}
 
 		//Cleanup for old new

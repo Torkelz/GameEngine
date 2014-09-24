@@ -20,11 +20,24 @@ int main(int /*argc*/, char* /*argv*/[])
 
 	Assignment1 ass1;
 	HighPerformanceTimer timer;
+	int numberOfItems = 1000;
+	int* randSeq = new int[numberOfItems];
 
 	//ass1.threadTestPoolAllocator();
 
-	std::cout << "Scenario 1: " << std::to_string(timer.measureFunction(std::bind(&Assignment1::scenario1<int>, ass1, 1000), 100)) << std::endl;
-	std::cout << "Scenario 2: " << std::to_string(timer.measureFunction(std::bind(&Assignment1::scenario2<int>, ass1, 1000), 100)) << std::endl;
+	std::default_random_engine engine;
+	std::uniform_int_distribution<int> distribution(0, numberOfItems);
+	engine.seed(9001);
+
+	//auto random = std::bind(engine, distribution);
+
+	for (int i = 0; i < numberOfItems; i++)
+	{
+		randSeq[i] = distribution(engine);
+	}
+
+	std::cout << "Scenario 1: " << std::to_string(timer.measureFunction(std::bind(&Assignment1::scenario1<int>, ass1, numberOfItems, randSeq), 100)) << std::endl;
+	std::cout << "Scenario 2: " << std::to_string(timer.measureFunction(std::bind(&Assignment1::scenario2<int>, ass1, numberOfItems), 100)) << std::endl;
 	std::system("PAUSE");
 	return 0;
 }
