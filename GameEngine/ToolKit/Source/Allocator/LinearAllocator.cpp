@@ -1,7 +1,7 @@
 #include "LinearAllocator.h"
 #include "MemoryExceptions.h"
 
-#include <malloc>
+#include <malloc.h>
 #include <string>
 
 namespace Allocator
@@ -49,7 +49,7 @@ namespace Allocator
 
 		if (cSize + p_Size >= m_Size)
 		{
-			m_Marker.fetch_sub(p_Size, std::memory_order_consume);
+			m_Marker.fetch_sub(p_Size, std::memory_order_release);
 			return nullptr;
 		}
 

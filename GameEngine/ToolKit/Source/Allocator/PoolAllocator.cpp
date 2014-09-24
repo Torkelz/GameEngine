@@ -1,6 +1,6 @@
 #include "MemoryExceptions.h"
 #include "PoolAllocator.h"
-#include <malloc>
+#include <malloc.h>
 #include <string>
 
 namespace Allocator
@@ -45,7 +45,7 @@ namespace Allocator
 			return nullptr;
 
 		// Allocate next free segment and change the marker to next free segment.
-		m_Marker.store((void**)(*m_Marker), std::memory_order_consume);
+		m_Marker.store((void**)(*m_Marker), std::memory_order_release);
 		
 		return freeMemory;
 	}
@@ -56,7 +56,7 @@ namespace Allocator
 			return;
 
 		*((void**)p_Position) = m_Marker.load(std::memory_order_acquire);
-		m_Marker.store((void**)p_Position, std::memory_order_consume);
+		m_Marker.store((void**)p_Position, std::memory_order_release);
 	}
 
 	void PoolAllocator::clear()
