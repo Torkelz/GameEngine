@@ -4,7 +4,7 @@
 #include <vector>
 #include <thread>
 
-//#define OLDNEW
+#define OLDNEW
 
 #ifdef OLDNEW
 #define DBGNEW(x) new
