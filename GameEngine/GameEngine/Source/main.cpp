@@ -24,7 +24,7 @@ int main(int /*argc*/, char* /*argv*/[])
 	//ass1.threadTestPoolAllocator();
 
 	std::cout << "Scenario 1: " << std::to_string(timer.measureFunction(std::bind(&Assignment1::scenario1<int>, ass1, 1000), 100)) << std::endl;
-	//std::cout << "Scenario 2: " << std::to_string(timer.measureFunction(std::bind(&Assignment1::scenario2<int>, ass1, 1000), 100)) << std::endl;
+	std::cout << "Scenario 2: " << std::to_string(timer.measureFunction(std::bind(&Assignment1::scenario2<int>, ass1, 1000), 100)) << std::endl;
 	std::system("PAUSE");
 	return 0;
 }
