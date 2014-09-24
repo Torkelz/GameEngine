@@ -1,0 +1,2 @@
+const string &getName() const in file ResourceHandle
+const ? getExtra() const in file ResourceHandle
