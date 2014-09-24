@@ -44,10 +44,16 @@ namespace Allocator
 
 	void *LinearAllocator::allocate(UINT p_Size)
 	{
-		if (m_Marker.load() + p_Size >= m_Size)
-			return nullptr;
+		UINT cSize = m_Marker.fetch_add(p_Size, std::memory_order_acquire);
 
-		void *currentAdress = m_Buffer + m_Marker.fetch_add(p_Size) + p_Size;
+
+		if (cSize + p_Size >= m_Size)
+		{
+			m_Marker.fetch_sub(p_Size, std::memory_order_consume);
+			return nullptr;
+		}
+
+		void *currentAdress = m_Buffer + cSize + p_Size;
 		return currentAdress;
 	}
 
