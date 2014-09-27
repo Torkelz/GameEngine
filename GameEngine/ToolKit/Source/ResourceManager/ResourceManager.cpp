@@ -16,9 +16,9 @@ namespace Res
 	//
 	// ResourceManager::ResourceManager							- Chapter 8, page 227
 	//
-	ResourceManager::ResourceManager(const UINT p_SizeInMb, IResourceFile *p_ResFile) :
+	ResourceManager::ResourceManager(UINT p_SizeInMb, IResourceFile *p_ResFile) :
 		m_CacheSize(p_SizeInMb * 1024 * 1024), m_Allocated(0), m_File(p_ResFile)
-	{
+	{		
 	}
 
 	//
@@ -112,7 +112,7 @@ namespace Res
 		}
 
 		int allocSize = rawSize + ((loader->addNullZero()) ? (1) : (0));
-		char *rawBuffer = loader->useRawFile() ? allocate(allocSize) : new char[allocSize];
+		char *rawBuffer = loader->useRawFile() ? Allocate(allocSize) : new char[allocSize];
 		memset(rawBuffer, 0, allocSize);
 
 		if (rawBuffer == NULL || m_File->getRawResource(*p_R, rawBuffer) == 0)
@@ -132,7 +132,7 @@ namespace Res
 		else
 		{
 			size = loader->getLoadedResourceSize(rawBuffer, rawSize);
-			buffer = allocate(size);
+			buffer = Allocate(size);
 			if (rawBuffer == NULL || buffer == NULL)
 			{
 				// resource cache out of memory
@@ -194,7 +194,7 @@ namespace Res
 	//
 	// ResourceManager::Allocate								- Chapter 8, page 230
 	//
-	char *ResourceManager::allocate(UINT p_Size)
+	char *ResourceManager::Allocate(UINT p_Size)
 	{
 		if (!makeRoom(p_Size))
 			return NULL;
@@ -240,7 +240,7 @@ namespace Res
 		while (!m_Lru.empty())
 		{
 			std::shared_ptr<ResourceHandle> handle = *(m_Lru.begin());
-			free(handle);
+			Free(handle);
 			m_Lru.pop_front();
 		}
 	}
@@ -272,7 +272,7 @@ namespace Res
 	//
 	//	ResourceManager::Free									- Chapter 8, page 228
 	//
-	void ResourceManager::free(std::shared_ptr<ResourceHandle> p_Gonner)
+	void ResourceManager::Free(std::shared_ptr<ResourceHandle> p_Gonner)
 	{
 		m_Lru.remove(p_Gonner);
 		m_Resources.erase(p_Gonner->m_Resource.m_Name);

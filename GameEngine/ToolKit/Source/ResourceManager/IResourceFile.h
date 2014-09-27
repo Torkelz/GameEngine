@@ -14,7 +14,7 @@ namespace Res
 		virtual int getRawResource(const Resource &p_R, char *p_Buffer) = 0;
 		virtual int getNumResources(void) const = 0;
 		virtual std::string getResourceName(int p_Num) const = 0;
-		virtual bool isUsingDevelopmentDirectories(void) const = 0;
+		//virtual bool isUsingDevelopmentDirectories(void) const = 0;
 		virtual ~IResourceFile(void) { }
 	};
 }

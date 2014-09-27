@@ -37,8 +37,8 @@ namespace Res
 	protected:
 
 		bool makeRoom(UINT p_Size);
-		char *allocate(UINT p_Size);
-		void free(std::shared_ptr<ResourceHandle> p_Gonner);
+		char *Allocate(UINT p_Size);
+		void Free(std::shared_ptr<ResourceHandle> p_Gonner);
 
 		std::shared_ptr<ResourceHandle> load(Resource *p_R);
 		std::shared_ptr<ResourceHandle> find(Resource *p_R);
@@ -49,7 +49,7 @@ namespace Res
 		bool wildcardMatch(const char *p_Pattern, const char *p_String);
 
 	public:
-		ResourceManager(const UINT p_SizeInMb, IResourceFile *p_File);
+		ResourceManager(UINT p_SizeInMb, IResourceFile *p_File);
 		virtual ~ResourceManager(void);
 
 		bool init(void);

@@ -3,7 +3,7 @@
 #include "ZipFile.h"
 #include "Macros.h"
 
-#include <zlib.h>
+#include "zlib.h"
 #include <string.h>
 #include <algorithm>
 
@@ -104,7 +104,8 @@ namespace Res
 	ZipFile::~ZipFile(void)
 	{
 		end();
-		fclose(m_File);
+		if (m_File)
+			fclose(m_File);
 	}
 
 
