@@ -25,13 +25,13 @@ int main(int /*argc*/, char* /*argv*/[])
 	//system("pause");
 	using namespace Res;
 
-	ResourceZipFile zip(L"Desktop.zip");
+	ResourceZipFile zip(L"hubba.zip");
 	const unsigned int s = 50;
 	ResourceManager man(s, &zip);
 
 	if (man.init())
 	{
-		Resource res("Movies.txt");
+		Resource res("hubba\\asignment1.pdf");
 		std::shared_ptr<ResourceHandle> texture = man.getHandle(&res);
 		int size = texture->size();
 	}
