@@ -31,9 +31,9 @@ namespace Res
 			freeOneResource();
 		}
 
-		for each (auto &res in m_FileMap)
+		for (auto &res : m_FileMap)
 		{
-			//Cleane some memory here
+			SAFE_DELETE(res.second);
 		}
 	}
 
