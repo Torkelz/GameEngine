@@ -19,13 +19,15 @@ namespace Allocator
 		clear();
 	}
 
-	PoolAllocator::PoolAllocator(char *p_Buffer, UINT p_ItemSize, UINT p_NumItem)
+	PoolAllocator::PoolAllocator(char *p_Buffer, UINT p_ItemSize, UINT p_NumItems)
 	{
-		//m_Data = p_Buffer;
+		m_Data = p_Buffer;
 		
-		//TODO: Move pointer in buffer forwards and such
-		//m_Marker = m_Data;
-		//m_ItemSize = p_ItemSize;
+		m_ItemSize = p_ItemSize;
+		m_NumItems = p_NumItems;
+		m_Marker = (void**)m_Data;
+
+		clear();
 	}
 
 	PoolAllocator::~PoolAllocator()
