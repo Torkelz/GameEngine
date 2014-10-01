@@ -16,13 +16,27 @@ int main(int /*argc*/, char* /*argv*/[])
 #endif
 	Assignment1 ass1;
 
-	ass1.scenario1Test();
-	ass1.scenario2Test();
-	if (!ass1.threadTestPoolAllocator())
-		std::cout << "Alligator are not thread safe!" << std::endl;
-	if (!ass1.threadTestStackAllocator())
-		std::cout << "Stack are not thread safe!" << std::endl;
-	system("pause");
+	//ass1.scenario1Test();
+	//ass1.scenario2Test();
+	//if (!ass1.threadTestPoolAllocator())
+	//	std::cout << "Alligator are not thread safe!" << std::endl;
+	//if (!ass1.threadTestStackAllocator())
+	//	std::cout << "Stack are not thread safe!" << std::endl;
+	//system("pause");
+	
+	using namespace Res;
+
+	ResourceZipFile zip(L"hubba.zip");
+	const unsigned int s = 50;
+	ResourceManager man(s);
+	man.init();
+	
+	Resource res("scenario1Tests.csv");
+	man.loadResource(&zip, "hubba");
+
+	std::shared_ptr<ResourceHandle> texture = man.getHandle(&res, "hubba");
+	int size = texture->size();
+
 
 	return EXIT_SUCCESS;
 }

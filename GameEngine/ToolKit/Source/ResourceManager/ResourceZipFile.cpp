@@ -71,4 +71,10 @@ namespace Res
 		}
 		return resName;
 	}
+
+	std::string ResourceZipFile::getFilePath(void) const
+	{
+		std::string path((const char*)&m_ResFileName[0], sizeof(wchar_t) / sizeof(char)*m_ResFileName.size());
+		return path;
+	}
 }

@@ -16,8 +16,8 @@ namespace Res
 	//
 	// ResourceManager::ResourceManager							- Chapter 8, page 227
 	//
-	ResourceManager::ResourceManager(UINT p_SizeInMb, IResourceFile *p_ResFile) :
-		m_CacheSize(p_SizeInMb * 1024 * 1024), m_Allocated(0), m_File(p_ResFile)
+	ResourceManager::ResourceManager(UINT p_SizeInMb) :
+		m_CacheSize(p_SizeInMb * 1024 * 1024), m_Allocated(0)
 	{		
 	}
 
@@ -30,21 +30,31 @@ namespace Res
 		{
 			freeOneResource();
 		}
-		SAFE_DELETE(m_File);
+
+		for each (auto &res in m_FileMap)
+		{
+			//Cleane some memory here
+		}
 	}
 
 	//
 	// ResourceManager::Init								- Chapter 8, page 227
 	//
-	bool ResourceManager::init(void)
+	void ResourceManager::init(void)
 	{
-		bool retValue = false;
-		if (m_File->open())
+		registerLoader(std::shared_ptr<IResourceLoader>(new DefaultResourceLoader()));
+	}
+
+	bool ResourceManager::loadResource(IResourceFile *p_Resource, std::string p_GUID)
+	{
+		if (p_Resource->open())
 		{
-			registerLoader(std::shared_ptr<IResourceLoader>(new DefaultResourceLoader()));
-			retValue = true;
+			m_FileMap.insert(std::pair<std::string, IResourceFile*>(p_GUID, p_Resource));
+
+			return true;
 		}
-		return retValue;
+
+		return false;
 	}
 
 	//
@@ -62,12 +72,12 @@ namespace Res
 	//
 	// ResourceManager::GetHandle							- Chapter 8, page 227
 	//
-	std::shared_ptr<ResourceHandle> ResourceManager::getHandle(Resource *p_R)
+	std::shared_ptr<ResourceHandle> ResourceManager::getHandle(Resource *p_R, std::string p_GUID)
 	{
 		std::shared_ptr<ResourceHandle> handle(find(p_R));
-		if (handle == NULL)
+		if (handle == nullptr)
 		{
-			handle = load(p_R);
+			handle = load(p_R, p_GUID);
 			//GCC_ASSERT(handle);
 		}
 		else
@@ -80,7 +90,7 @@ namespace Res
 	//
 	// ResourceManager::Load								- Chapter 8, page 228-230
 	//
-	std::shared_ptr<ResourceHandle> ResourceManager::load(Resource *p_R)
+	std::shared_ptr<ResourceHandle> ResourceManager::load(Resource *p_R, std::string p_GUID)
 	{
 		// Create a new resource and add it to the lru list and map
 
@@ -104,7 +114,18 @@ namespace Res
 			return handle;		// Resource not loaded!
 		}
 
-		int rawSize = m_File->getRawResourceSize(*p_R);
+		IResourceFile *file = nullptr;
+		for each (auto &res in m_FileMap)
+		{
+			if (res.first == p_GUID)
+			{
+				file = res.second;
+			}
+		}
+		if (!file)
+			return std::shared_ptr<ResourceHandle>();
+
+		int rawSize = file->getRawResourceSize(*p_R);
 		if (rawSize < 0)
 		{
 			//GCC_ASSERT(rawSize > 0 && "Resource size returned -1 - Resource not found");
@@ -115,7 +136,7 @@ namespace Res
 		char *rawBuffer = loader->useRawFile() ? Allocate(allocSize) : new char[allocSize];
 		memset(rawBuffer, 0, allocSize);
 
-		if (rawBuffer == NULL || m_File->getRawResource(*p_R, rawBuffer) == 0)
+		if (rawBuffer == NULL || file->getRawResource(*p_R, rawBuffer) == 0)
 		{
 			// resource cache out of memory
 			return std::shared_ptr<ResourceHandle>();
@@ -300,16 +321,26 @@ namespace Res
 	//   Searches the resource cache assets for files matching the pattern. Useful for providing a 
 	//   a list of levels for a main menu screen, for example.
 	//
-	std::vector<std::string> ResourceManager::match(const std::string p_Pattern)
+	std::vector<std::string> ResourceManager::match(const std::string p_Pattern, std::string p_GUID)
 	{
 		std::vector<std::string> matchingNames;
-		if (m_File == NULL)
+		if (m_FileMap.size() <= 0)
 			return matchingNames;
 
-		int numFiles = m_File->getNumResources();
+		IResourceFile *resourceFile = nullptr;
+		for each (auto &res in m_FileMap)
+		{
+			if (res.first == p_GUID)
+				resourceFile = res.second;
+		}
+
+		if (!resourceFile)
+			return matchingNames;
+
+		int numFiles = resourceFile->getNumResources();
 		for (int i = 0; i < numFiles; ++i)
 		{
-			std::string name = m_File->getResourceName(i);
+			std::string name = resourceFile->getResourceName(i);
 			std::transform(name.begin(), name.end(), name.begin(), (int(*)(int)) std::tolower);
 			if (wildcardMatch(p_Pattern.c_str(), name.c_str()))
 			{
