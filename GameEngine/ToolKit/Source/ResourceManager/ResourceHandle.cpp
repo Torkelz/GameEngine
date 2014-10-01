@@ -21,7 +21,7 @@ namespace Res
 		m_ResCache->memoryHasBeenFreed(m_Size);
 	}
 
-	const std::string ResourceHandle::getName(void)
+	const std::string &ResourceHandle::getName(void) const
 	{
 		return m_Resource.m_Name;
 	}
@@ -41,7 +41,7 @@ namespace Res
 		return m_Buffer;
 	}
 
-	std::shared_ptr<IResourceExtraData> ResourceHandle::getExtra(void)
+	std::shared_ptr<IResourceExtraData> ResourceHandle::getExtra(void) const
 	{
 		return m_Extra;
 	}

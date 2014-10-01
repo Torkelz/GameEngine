@@ -30,12 +30,12 @@ namespace Res
 
 		virtual ~ResourceHandle(void);
 
-		const std::string getName(void);
+		const std::string &getName(void) const;
 		UINT size(void) const;
 		char *buffer(void) const;
 		char *writableBuffer(void);
 
-		std::shared_ptr<IResourceExtraData> getExtra(void);
+		std::shared_ptr<IResourceExtraData> getExtra(void) const;
 		void setExtra(std::shared_ptr<IResourceExtraData> extra);
 	};
 }
