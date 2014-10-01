@@ -11,9 +11,9 @@
 
 int main(int /*argc*/, char* /*argv*/[])
 {
-#ifdef _DEBUG
+
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-#endif
+
 	Assignment1 ass1;
 
 	//ass1.scenario1Test();
@@ -26,13 +26,13 @@ int main(int /*argc*/, char* /*argv*/[])
 	
 	using namespace Res;
 
-	ResourceZipFile zip(L"hubba.zip");
+	ResourceZipFile *zip = new ResourceZipFile(L"hubba.zip");
 	const unsigned int s = 50;
 	ResourceManager man(s);
 	man.init();
 	
 	Resource res("scenario1Tests.csv");
-	man.loadResource(&zip, "hubba");
+	man.loadResource(zip, "hubba");
 
 	std::shared_ptr<ResourceHandle> texture = man.getHandle(&res, "hubba");
 	int size = texture->size();
