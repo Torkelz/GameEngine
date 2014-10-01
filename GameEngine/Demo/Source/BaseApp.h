@@ -1,11 +1,14 @@
 #pragma once
 #include "Window.h"
 #include "Render.h"
+#include "Input\Input.h"
 
 class BaseApp
 {
 private:
 	static const std::string m_GameTitle;
+
+	Input m_InputQueue;
 
 	bool m_ShouldQuit;
 	float m_SecsPerCnt;
@@ -35,6 +38,7 @@ private:
 	void updateDebugInfo();
 	void resetTimer();
 	void updateTimer();
+	void handleInput();
 	std::string getGameTitle() const;
 
 	DirectX::XMFLOAT2 getWindowSize() const;

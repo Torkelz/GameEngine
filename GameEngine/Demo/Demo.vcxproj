@@ -85,6 +85,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Input\InputState.cpp" />
+    <ClCompile Include="Source\Input\InputTranslator.cpp" />
+    <ClCompile Include="Source\Input\Input.cpp" />
     <ClCompile Include="Source\Logger.cpp" />
     <ClCompile Include="Source\Level.cpp" />
     <ClCompile Include="Source\Buffer.cpp" />
@@ -97,6 +100,11 @@
     <ClCompile Include="Source\WrapperFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Input\InputRecord.h" />
+    <ClInclude Include="Source\Input\InputState.h" />
+    <ClInclude Include="Source\Input\InputTranslator.h" />
+    <ClInclude Include="Source\Input\InputTranslatorEnums.h" />
+    <ClInclude Include="Source\Input\Input.h" />
     <ClInclude Include="Source\Logger.h" />
     <ClInclude Include="Source\Level.h" />
     <ClInclude Include="Source\ShaderDefinitions.h" />

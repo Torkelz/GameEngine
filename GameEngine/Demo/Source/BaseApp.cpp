@@ -1,7 +1,10 @@
 #include "BaseApp.h"
+#include "Logger.h"
 
+#include <sstream>
+#include <iomanip>
 
-const std::string BaseApp::m_GameTitle = "Particles";
+const std::string BaseApp::m_GameTitle = "Demo 1.45";
 
 BaseApp::BaseApp(void)
 {
@@ -29,6 +32,14 @@ void BaseApp::init()
 		std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	m_Window.registerCallback(WM_SIZE, std::bind(&BaseApp::handleWindowSize, this, std::placeholders::_1,
 		std::placeholders::_2, std::placeholders::_3));
+
+
+	InputTranslator::ptr translator(new InputTranslator);
+	translator->init(&m_Window);
+
+	translator->addKeyboardMapping(27, "Esc");
+
+	m_InputQueue.init(std::move(translator));
 }
 
 void BaseApp::run()
@@ -39,12 +50,13 @@ void BaseApp::run()
 
 	while (!m_ShouldQuit)
 	{
-		//m_InputQueue.onFrame();
+		m_InputQueue.onFrame();
 		m_Window.pollMessages();
 		updateTimer();
-		/*handleInput();
 
-		updateLogic();
+		handleInput();
+
+		/*updateLogic();
 
 		render();*/
 
@@ -54,7 +66,7 @@ void BaseApp::run()
 
 void BaseApp::shutdown()
 {
-
+	m_InputQueue.destroy();
 }
 
 bool BaseApp::handleWindowClose( WPARAM /*p_WParam*/, LPARAM /*p_LParam*/, LRESULT& p_Result )
@@ -140,6 +152,24 @@ void BaseApp::updateTimer()
 	if (m_DeltaTime > maxDeltaTime)
 	{
 		m_DeltaTime = maxDeltaTime;
+	}
+}
+
+void BaseApp::handleInput()
+{
+	for (auto& in : m_InputQueue.getFrameInputs())
+	{
+		std::ostringstream msg;
+		msg << "Received input action: " << in.m_Action << " (" << std::setprecision(2) << std::fixed << in.m_Value << ")";
+		Logger::log(Logger::Level::TRACE, msg.str());
+
+		if (in.m_Value > 0.5f && in.m_PrevValue <= 0.5f)
+		{
+			if (in.m_Action == "Esc")
+			{
+				m_ShouldQuit = true;
+			}
+		}
 	}
 }
 
