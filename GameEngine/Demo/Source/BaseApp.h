@@ -1,6 +1,6 @@
 #pragma once
 #include "Window.h"
-#include "Graphics.h"
+#include "Render.h"
 
 class BaseApp
 {
@@ -18,7 +18,7 @@ private:
 	DirectX::XMFLOAT2 m_NewWindowSize;
 
 	Window m_Window;
-	Graphics m_Graphics;
+	Render m_Render;
 public:
 	BaseApp(void);
 	~BaseApp(void);

@@ -21,7 +21,7 @@ void BaseApp::init()
 	m_NewWindowSize = m_Window.getSize();
 
 	bool fullscreen = false;
-	m_Graphics.initialize(m_Window.getHandle(), (int)m_Window.getSize().x, (int)m_Window.getSize().y, fullscreen);
+	m_Render.initialize(m_Window.getHandle(), (int)m_Window.getSize().x, (int)m_Window.getSize().y, fullscreen);
 
 	m_Window.registerCallback(WM_CLOSE, std::bind(&BaseApp::handleWindowClose, this, std::placeholders::_1,
 		std::placeholders::_2, std::placeholders::_3));
