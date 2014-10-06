@@ -8,7 +8,7 @@
 #include <iostream>
 
 #include "IResourceManager.h"
-#define TOTAL_SIZE 200000000
+#define TOTAL_SIZE 200 * 1024 * 1024
 int main(int /*argc*/, char* /*argv*/[])
 {
 
@@ -29,19 +29,21 @@ int main(int /*argc*/, char* /*argv*/[])
 	Allocator::LinearAllocator *allocator;
 	allocator = new Allocator::LinearAllocator(TOTAL_SIZE);
 
+	int kkk = sizeof(*allocator);
+
 	UINT zipHeaderSize = sizeof(ResourceZipFile);
 
 	ResourceZipFile *zip = new(allocator->allocate(zipHeaderSize)) ResourceZipFile();
 	zip->initialize(L"hubba.zip");
 	
-	const unsigned int s = 50;
-	ResourceManager man(s);
+	Allocator::LinearAllocator *resourceAllocator = new(allocator->allocate(50 * 1024 * 1024 + 16)) Allocator::LinearAllocator(50 * 1024 * 1024 + 16);
+	ResourceManager man(resourceAllocator);
 	man.init();
+	int marker = allocator->getMarker();
 	
 	man.loadResource(zip, "hubba");
 
 	Resource res("scenario1Tests.csv");
-	int i = zip->getRawResourceSize(res);
 
 	std::shared_ptr<ResourceHandle> texture = man.getHandle(&res, "hubba");
 	int size = texture->size();

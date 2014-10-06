@@ -93,6 +93,7 @@
   <ItemGroup>
     <ClInclude Include="libs\zconf.h" />
     <ClInclude Include="libs\zlib.h" />
+    <ClInclude Include="Source\Allocator\Deleter.h" />
     <ClInclude Include="Source\ResourceManager\Macros.h" />
     <ClInclude Include="Source\ResourceManager\ResourceZipFile.h" />
     <ClInclude Include="Source\ResourceManager\ResourceManager.h" />

@@ -4,6 +4,10 @@
 #include <map>
 #include <vector>
 
+#include "../Allocator/LinearAllocator.h"
+
+//class Allocator::LinearAllocator;
+
 namespace Res
 {
 	class IResourceFile;
@@ -31,12 +35,13 @@ namespace Res
 		ResourceLoaders m_ResourceLoaders;
 		std::map<std::string, IResourceFile*> m_FileMap;
 
-		UINT m_CacheSize;			// total memory size
-		UINT m_Allocated;			// total memory allocated
+		Allocator::LinearAllocator	*m_Cache;
+		//UINT m_CacheSize;			// total memory size
+		//UINT m_Allocated;			// total memory allocated
 
 	protected:
 
-		bool makeRoom(UINT p_Size);
+		//bool makeRoom(UINT p_Size);
 		char *Allocate(UINT p_Size);
 		void Free(std::shared_ptr<ResourceHandle> p_Gonner);
 
@@ -45,11 +50,11 @@ namespace Res
 		void update(std::shared_ptr<ResourceHandle> p_Handle);
 
 		void freeOneResource(void);
-		void memoryHasBeenFreed(UINT p_Size);
+		//void memoryHasBeenFreed(UINT p_Size);
 		bool wildcardMatch(const char *p_Pattern, const char *p_String);
 
 	public:
-		ResourceManager(UINT p_SizeInMb);
+		ResourceManager(Allocator::LinearAllocator *p_Cache);
 		virtual ~ResourceManager(void);
 
 		void init(void);

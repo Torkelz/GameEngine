@@ -6,6 +6,7 @@
 #include "ResourceHandle.h"
 #include "Macros.h"
 
+#include "../Allocator/Deleter.h"
 
 #include <algorithm>
 #include <cctype>
@@ -13,17 +14,10 @@
 
 namespace Res
 {
-	//
-	// ResourceManager::ResourceManager							- Chapter 8, page 227
-	//
-	ResourceManager::ResourceManager(UINT p_SizeInMb) :
-		m_CacheSize(p_SizeInMb * 1024 * 1024), m_Allocated(0)
-	{		
-	}
+	ResourceManager::ResourceManager(Allocator::LinearAllocator *p_Cache) :
+		m_Cache(p_Cache)
+	{ }
 
-	//
-	// ResourceManager::~ResourceManager							- Chapter 8, page 227
-	//
 	ResourceManager::~ResourceManager(void)
 	{
 		while (!m_Lru.empty())
@@ -37,9 +31,6 @@ namespace Res
 		}
 	}
 
-	//
-	// ResourceManager::Init								- Chapter 8, page 227
-	//
 	void ResourceManager::init(void)
 	{
 		registerLoader(std::shared_ptr<IResourceLoader>(new DefaultResourceLoader()));
@@ -57,28 +48,17 @@ namespace Res
 		return false;
 	}
 
-	//
-	// ResourceManager::RegisterLoader						- Chapter 8, page 225
-	// 
-	//    The loaders are discussed on the page refereced above - this method simply adds the loader
-	//    to the resource cache.
-	//
 	void ResourceManager::registerLoader(std::shared_ptr<IResourceLoader> p_Loader)
 	{
 		m_ResourceLoaders.push_front(p_Loader);
 	}
 
-
-	//
-	// ResourceManager::GetHandle							- Chapter 8, page 227
-	//
 	std::shared_ptr<ResourceHandle> ResourceManager::getHandle(Resource *p_R, std::string p_GUID)
 	{
 		std::shared_ptr<ResourceHandle> handle(find(p_R));
 		if (handle == nullptr)
 		{
 			handle = load(p_R, p_GUID);
-			//GCC_ASSERT(handle);
 		}
 		else
 		{
@@ -87,13 +67,9 @@ namespace Res
 		return handle;
 	}
 
-	//
-	// ResourceManager::Load								- Chapter 8, page 228-230
-	//
 	std::shared_ptr<ResourceHandle> ResourceManager::load(Resource *p_R, std::string p_GUID)
 	{
 		// Create a new resource and add it to the lru list and map
-
 		std::shared_ptr<IResourceLoader> loader;
 		std::shared_ptr<ResourceHandle> handle;
 
@@ -110,7 +86,6 @@ namespace Res
 
 		if (!loader)
 		{
-			//GCC_ASSERT(loader && _T("Default resource loader not found!"));
 			return handle;		// Resource not loaded!
 		}
 
@@ -128,12 +103,11 @@ namespace Res
 		int rawSize = file->getRawResourceSize(*p_R);
 		if (rawSize < 0)
 		{
-			//GCC_ASSERT(rawSize > 0 && "Resource size returned -1 - Resource not found");
 			return std::shared_ptr<ResourceHandle>();
 		}
 
 		int allocSize = rawSize + ((loader->addNullZero()) ? (1) : (0));
-		char *rawBuffer = loader->useRawFile() ? Allocate(allocSize) : new char[allocSize];
+		char *rawBuffer = loader->useRawFile() ? Allocate(allocSize) : (char*)m_Cache->allocate(allocSize);
 		memset(rawBuffer, 0, allocSize);
 
 		if (rawBuffer == NULL || file->getRawResource(*p_R, rawBuffer) == 0)
@@ -185,13 +159,9 @@ namespace Res
 			m_Resources[p_R->m_Name] = handle;
 		}
 
-		//GCC_ASSERT(loader && _T("Default resource loader not found!"));
 		return handle;		// ResourceManager is out of memory!
 	}
 
-	//
-	// ResourceManager::Find									- Chapter 8, page 228
-	//
 	std::shared_ptr<ResourceHandle> ResourceManager::find(Resource *p_R)
 	{
 		ResHandleMap::iterator i = m_Resources.find(p_R->m_Name);
@@ -201,38 +171,19 @@ namespace Res
 		return i->second;
 	}
 
-	//
-	// ResourceManager::Update									- Chapter 8, page 228
-	//
 	void ResourceManager::update(std::shared_ptr<ResourceHandle> p_Handle)
 	{
 		m_Lru.remove(p_Handle);
 		m_Lru.push_front(p_Handle);
 	}
 
-
-
-	//
-	// ResourceManager::Allocate								- Chapter 8, page 230
-	//
 	char *ResourceManager::Allocate(UINT p_Size)
 	{
-		if (!makeRoom(p_Size))
-			return NULL;
-
-		char *mem = new char[p_Size];
-		if (mem)
-		{
-			m_Allocated += p_Size;
-		}
+		char *mem = (char*)m_Cache->allocate(p_Size);
 
 		return mem;
 	}
 
-
-	//
-	// ResourceManager::FreeOneResource						- Chapter 8, page 231
-	//
 	void ResourceManager::freeOneResource(void)
 	{
 		ResHandleList::iterator gonner = m_Lru.end();
@@ -247,15 +198,6 @@ namespace Res
 		// be actually free again.
 	}
 
-
-
-	//
-	// ResourceManager::Flush									- not described in the book
-	//
-	//    Frees every handle in the cache - this would be good to call if you are loading a new
-	//    level, or if you wanted to force a refresh of all the data in the cache - which might be 
-	//    good in a development environment.
-	//
 	void ResourceManager::flush(void)
 	{
 		while (!m_Lru.empty())
@@ -264,31 +206,33 @@ namespace Res
 			Free(handle);
 			m_Lru.pop_front();
 		}
+
+		m_Cache->clear();
 	}
 
 
-	//
-	// ResourceManager::MakeRoom									- Chapter 8, page 231
-	//
-	bool ResourceManager::makeRoom(UINT p_Size)
-	{
-		if (p_Size > m_CacheSize)
-		{
-			return false;
-		}
+	////
+	//// ResourceManager::MakeRoom									- Chapter 8, page 231
+	////
+	//bool ResourceManager::makeRoom(UINT p_Size)
+	//{
+	//	if (p_Size > m_CacheSize)
+	//	{
+	//		return false;
+	//	}
 
-		// return null if there's no possible way to allocate the memory
-		while (p_Size > (m_CacheSize - m_Allocated))
-		{
-			// The cache is empty, and there's still not enough room.
-			if (m_Lru.empty())
-				return false;
+	//	// return null if there's no possible way to allocate the memory
+	//	while (p_Size > (m_CacheSize - m_Allocated))
+	//	{
+	//		// The cache is empty, and there's still not enough room.
+	//		if (m_Lru.empty())
+	//			return false;
 
-			freeOneResource();
-		}
+	//		freeOneResource();
+	//	}
 
-		return true;
-	}
+	//	return true;
+	//}
 
 	//
 	//	ResourceManager::Free									- Chapter 8, page 228
@@ -310,10 +254,10 @@ namespace Res
 	//
 	//     This is called whenever the memory associated with a resource is actually freed
 	//
-	void ResourceManager::memoryHasBeenFreed(UINT p_Size)
-	{
-		m_Allocated -= p_Size;
-	}
+	//void ResourceManager::memoryHasBeenFreed(UINT p_Size)
+	//{
+	//	m_Allocated -= p_Size;
+	//}
 
 	//
 	// ResourceManager::Match									- not described in the book
