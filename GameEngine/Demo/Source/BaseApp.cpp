@@ -49,6 +49,7 @@ void BaseApp::init()
 	m_CameraDirection = Vector3(1, 0, 0);
 	m_CameraPosition = Vector3(0, 0, 0);
 	m_CamerSpeed = 10;
+	m_Level.initialize(&m_Render);
 }
 
 void BaseApp::run()

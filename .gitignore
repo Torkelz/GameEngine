@@ -180,3 +180,5 @@ ToolKitd.lib
 *.dll
 */Bin/
 */Test/
+*.cso
+GameEngine/Demo/logFile.txt
