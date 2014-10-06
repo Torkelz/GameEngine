@@ -72,4 +72,10 @@ namespace Allocator
 	{
 		return m_Marker.load();
 	}
+
+	void LinearAllocator::setBuffer(char* p_Buffer)
+	{
+		m_Buffer = p_Buffer;
+		m_Original = false;
+	}
 }

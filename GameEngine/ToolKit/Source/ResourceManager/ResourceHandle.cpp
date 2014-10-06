@@ -17,7 +17,7 @@ namespace Res
 	//
 	ResourceHandle::~ResourceHandle(void)
 	{
-		SAFE_DELETE_ARRAY(m_Buffer);
+		m_Buffer = nullptr;
 	}
 
 	const std::string &ResourceHandle::getName(void) const

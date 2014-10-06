@@ -26,28 +26,30 @@ int main(int /*argc*/, char* /*argv*/[])
 	
 	using namespace Res;
 
-	Allocator::LinearAllocator *allocator;
-	allocator = new Allocator::LinearAllocator(TOTAL_SIZE);
-
-	int kkk = sizeof(*allocator);
+	Allocator::LinearAllocator allocator(TOTAL_SIZE);
+	Allocator::LinearAllocator *resourceAllocator = new(allocator.allocate(16)) Allocator::LinearAllocator();
+	char* resourceBuffer = (char*)allocator.allocate(50 * 1024 * 1024);
+	resourceAllocator->setBuffer(resourceBuffer);
 
 	UINT zipHeaderSize = sizeof(ResourceZipFile);
 
-	ResourceZipFile *zip = new(allocator->allocate(zipHeaderSize)) ResourceZipFile();
+	ResourceZipFile *zip = new(allocator.allocate(zipHeaderSize)) ResourceZipFile();
 	zip->initialize(L"hubba.zip");
 	
-	Allocator::LinearAllocator *resourceAllocator = new(allocator->allocate(50 * 1024 * 1024 + 16)) Allocator::LinearAllocator(50 * 1024 * 1024 + 16);
-	ResourceManager man(resourceAllocator);
-	man.init();
-	int marker = allocator->getMarker();
 	
-	man.loadResource(zip, "hubba");
+	//ResourceManager man(resourceAllocator);
+	//man.init();
+	
+	//man.loadResource(zip, "hubba");
 
-	Resource res("scenario1Tests.csv");
+	//Resource res("scenario1Tests.csv");
 
-	std::shared_ptr<ResourceHandle> texture = man.getHandle(&res, "hubba");
-	int size = texture->size();
+	//std::shared_ptr<ResourceHandle> texture = man.getHandle(&res, "hubba");
+	//int size = texture->size();
 
+	zip = nullptr;
+	resourceAllocator->clear();
+	allocator.clear();
 
 	return EXIT_SUCCESS;
 }

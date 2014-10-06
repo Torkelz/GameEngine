@@ -24,10 +24,9 @@ namespace Res
 		{
 			freeOneResource();
 		}
-
 		for (auto &res : m_FileMap)
 		{
-			SAFE_DELETE(res.second);
+			res.second = nullptr;
 		}
 	}
 
