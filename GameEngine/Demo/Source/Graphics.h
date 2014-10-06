@@ -38,6 +38,9 @@ public:
 	void Graphics::begin(float color[4]);
 	void end(void);
 
+	ID3D11DeviceContext *getDeviceContext();
+	ID3D11Device *getDevice();
+
 private:
 	HRESULT createDeviceAndSwapChain(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bool p_Fullscreen);
 	HRESULT createRenderTargetView(void);

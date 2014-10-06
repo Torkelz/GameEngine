@@ -111,4 +111,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Source\Shader\Box.hlsl" />
+  </ItemGroup>
 </Project>

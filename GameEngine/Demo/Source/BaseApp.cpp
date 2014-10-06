@@ -45,6 +45,10 @@ void BaseApp::init()
 
 
 	m_InputQueue.init(std::move(translator));
+
+	m_CameraDirection = Vector3(1, 0, 0);
+	m_CameraPosition = Vector3(0, 0, 0);
+	m_CamerSpeed = 10;
 }
 
 void BaseApp::run()
@@ -64,15 +68,38 @@ void BaseApp::run()
 		/*updateLogic();
 
 		render();*/
-		//const InputState& state = m_InputQueue.getCurrentState();
-		//float forward = state.getValue("moveForward") - state.getValue("moveBackward");
-		//float right = state.getValue("moveRight") - state.getValue("moveLeft");
-		//float up = state.getValue("moveUp") - state.getValue("moveDown");
+		const InputState& state = m_InputQueue.getCurrentState();
+		float forward = state.getValue("moveForward") - state.getValue("moveBackward");
+		float right = state.getValue("moveRight") - state.getValue("moveLeft");
+		float up = state.getValue("moveUp") - state.getValue("moveDown");
 
-		//m_CameraDirection = Vector3(forward, right, up);
+		if (up != 0.0f || right != 0.0f || forward != 0.0f)
+		{
+
+			DirectX::XMVECTOR dir = DirectX::XMVectorSet(forward, right, up, 0);
+			DirectX::XMVECTOR lengthSq = DirectX::XMVector3LengthSq(dir);
+
+			if (DirectX::XMVectorGetX(lengthSq) > 1.f)
+			{
+				const float div = 1.f / sqrtf(DirectX::XMVectorGetX(lengthSq));
+				using DirectX::operator*=;
+				dir *= div;
+			}
+			DirectX::XMStoreFloat3(&m_CameraDirection, dir);
+
+			DirectX::XMVECTOR cPos = DirectX::XMLoadFloat3(&m_CameraPosition);
+			using DirectX::operator*;
+			using DirectX::operator+;
+
+			cPos = cPos + DirectX::XMLoadFloat3(&m_CameraDirection) * m_CamerSpeed;
+			DirectX::XMStoreFloat3(&m_CameraPosition, cPos);
+		}
+
 		//m_CameraPosition = m_CameraPosition + m_CameraDirection * m_CamerSpeed;
 
-		//m_Render.updateCamera(m_CameraPosition, m_CameraDirection, Vector3(0, 1, 0));
+		
+
+		m_Render.updateCamera(m_CameraPosition, m_CameraDirection, Vector3(0, 1, 0));
 		m_Render.draw();
 
 

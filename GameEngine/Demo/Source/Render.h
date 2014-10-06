@@ -24,6 +24,14 @@ private:
 	Buffer *m_CBCameraFixed;
 	Buffer *m_CBCamera;
 
+	struct Vertex
+	{
+		Vector3 position;
+		Vector3 normal;
+	};
+	Buffer *temporarybox;
+	Shader *temporaryShader;
+
 public:
 	Render(void);
 	~Render(void);
@@ -39,5 +47,17 @@ private:
 	void updateConstantBuffer(void);
 
 	void initializeMatrices(int p_ScreenWidth, int p_ScreenHeight, float p_NearZ, float p_FarZ);
+
+	Vertex* createBox(int size, DirectX::XMVECTOR center);
+
+	inline Vertex createVertex(DirectX::XMVECTOR _position, DirectX::XMVECTOR _normal)
+	{
+		Vertex v;
+
+		DirectX::XMStoreFloat3(&v.position, _position);
+		DirectX::XMStoreFloat3(&v.normal, _normal);
+
+		return v;
+	}
 };
 
