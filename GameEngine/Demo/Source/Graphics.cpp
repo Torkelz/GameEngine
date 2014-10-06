@@ -1,6 +1,7 @@
 #include "Graphics.h"
 #include "Utilities.h"
 #include "UserExceptions.h"
+#include "WrapperFactory.h"
 
 
 Graphics::Graphics(void)
@@ -147,11 +148,14 @@ void Graphics::initialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bo
 	{
 		throw GraphicsException("Error when creating the rasterizer state", __LINE__,__FILE__);
 	}
+
+
+	WrapperFactory::initialize(m_Device, m_DeviceContext);
 }
 
 void Graphics::shutdown()
 {
-
+	WrapperFactory::getInstance()->shutdown();
 }
 
 void Graphics::begin(float color[4])
@@ -352,4 +356,14 @@ HRESULT Graphics::createRasterizerState(void)
 	rasterDesc.SlopeScaledDepthBias = 0.0f;
 
 	return m_Device->CreateRasterizerState(&rasterDesc, &m_RasterState);
+}
+
+ID3D11DeviceContext *Graphics::getDeviceContext()
+{
+	return m_DeviceContext;
+}
+
+ID3D11Device *Graphics::getDevice()
+{
+	return m_Device;
 }

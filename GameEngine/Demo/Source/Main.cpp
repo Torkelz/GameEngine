@@ -8,23 +8,33 @@
 
 int main(int /*argc*/, char* /*argv*/[])
 {
+	std::ofstream logFile("logFile.txt", std::ofstream::trunc);
+
+	Logger::addOutput(Logger::Level::DEBUG_L, logFile);
+	Logger::addOutput(Logger::Level::INFO, std::cout);
+
 	try
 	{
-		std::ofstream logFile("logFile.txt", std::ofstream::trunc);
-		Logger::addOutput(Logger::Level::DEBUG_L, logFile);
-		Logger::addOutput(Logger::Level::INFO, std::cout);
-
-
 		BaseApp app;
 		app.init();
 		app.run();
 		app.shutdown();
+		Logger::log(Logger::Level::INFO, "Closed the game");
+	}
+	catch (std::exception& err)
+	{
+		Logger::log(Logger::Level::FATAL, err.what());
+		logFile.close();
+		return EXIT_FAILURE;
 	}
 	catch (...)
 	{
-		throw;
-
+		Logger::log(Logger::Level::FATAL, "Unknown exception caught, aborting program");
+		logFile.close();
 		return EXIT_FAILURE;
 	}
+
+	logFile.close();
+
 	return EXIT_SUCCESS;
 }
