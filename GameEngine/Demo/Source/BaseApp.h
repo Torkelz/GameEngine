@@ -18,10 +18,17 @@ private:
 	float m_TimeToNextMemUpdate;
 	float m_DeltaTime;
 
-	DirectX::XMFLOAT2 m_NewWindowSize;
+	Vector2 m_NewWindowSize;
 
 	Window m_Window;
 	Render m_Render;
+
+
+	//Will be moved to level?
+	Vector3 m_CameraPosition;
+	Vector3 m_CameraDirection;
+	float m_CamerSpeed;
+
 public:
 	BaseApp(void);
 	~BaseApp(void);
@@ -41,6 +48,6 @@ private:
 	void handleInput();
 	std::string getGameTitle() const;
 
-	DirectX::XMFLOAT2 getWindowSize() const;
+	Vector2 getWindowSize() const;
 };
 

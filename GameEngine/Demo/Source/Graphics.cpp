@@ -17,7 +17,7 @@ Graphics::Graphics(void)
 	m_DepthStencilBuffer = nullptr;
 	m_DepthStencilState = nullptr;
 	m_DepthStencilView = nullptr;
-	m_VSyncEnabled = false;
+	m_VSyncEnabled = true;
 }
 
 
@@ -152,6 +152,26 @@ void Graphics::initialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bo
 void Graphics::shutdown()
 {
 
+}
+
+void Graphics::begin(float color[4])
+{
+	m_DeviceContext->ClearRenderTargetView(m_RenderTargetView, color);
+	m_DeviceContext->ClearDepthStencilView(m_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+}
+
+void Graphics::end(void)
+{
+	if (m_VSyncEnabled)
+	{
+		// Lock to screen refresh rate.
+		m_SwapChain->Present(1, 0);
+	}
+	else
+	{
+		// Present as fast as possible.
+		m_SwapChain->Present(0, 0);
+	}
 }
 
 HRESULT Graphics::createDeviceAndSwapChain(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight,

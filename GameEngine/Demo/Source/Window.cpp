@@ -30,7 +30,7 @@ Window::~Window()
 	}
 }
 
-void Window::init(const std::string& p_Title, DirectX::XMFLOAT2 p_WindowSize)
+void Window::init(const std::string& p_Title, Vector2 p_WindowSize)
 {
 	//Logger::log(Logger::Level::INFO, "Initializing window");
 
@@ -183,12 +183,12 @@ void Window::setIcon(HICON p_Icon)
 	}
 }
 
-DirectX::XMFLOAT2 Window::getSize() const
+Vector2 Window::getSize() const
 {
 	return m_Size;
 }
 
-void Window::setSize(DirectX::XMFLOAT2 p_NewSize)
+void Window::setSize(Vector2 p_NewSize)
 {
 	if (m_Size.x != p_NewSize.x || m_Size.y != p_NewSize.y)
 	{

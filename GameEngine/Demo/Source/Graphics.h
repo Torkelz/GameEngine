@@ -23,10 +23,6 @@ private:
 	ID3D11DepthStencilState	*m_DepthStencilState;
 	ID3D11DepthStencilView *m_DepthStencilView;
 
-	DirectX::XMFLOAT4X4 m_ViewMatrix;
-	DirectX::XMFLOAT4X4 m_ProjectionMatrix;
-	DirectX::XMFLOAT3 m_Eye;
-
 	unsigned int m_Numerator;
 	unsigned int m_Denominator;
 	char m_GraphicsCard[128];
@@ -38,6 +34,9 @@ public:
 
 	void initialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bool p_Fullscreen);
 	void shutdown();
+
+	void Graphics::begin(float color[4]);
+	void end(void);
 
 private:
 	HRESULT createDeviceAndSwapChain(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bool p_Fullscreen);

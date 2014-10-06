@@ -17,7 +17,7 @@ BaseApp::~BaseApp(void)
 
 void BaseApp::init()
 {
-	m_MemUpdateDelay = 0.1f;
+	m_MemUpdateDelay = 10.f;
 	m_TimeToNextMemUpdate = 0.f;
 
 	m_Window.init(getGameTitle(), getWindowSize());
@@ -38,6 +38,11 @@ void BaseApp::init()
 	translator->init(&m_Window);
 
 	translator->addKeyboardMapping(27, "Esc");
+	translator->addKeyboardMapping(87, "moveForward");
+	translator->addKeyboardMapping(83, "moveBackward");
+	translator->addKeyboardMapping(65, "moveLeft");
+	translator->addKeyboardMapping(68, "moveRight");
+
 
 	m_InputQueue.init(std::move(translator));
 }
@@ -59,6 +64,17 @@ void BaseApp::run()
 		/*updateLogic();
 
 		render();*/
+		//const InputState& state = m_InputQueue.getCurrentState();
+		//float forward = state.getValue("moveForward") - state.getValue("moveBackward");
+		//float right = state.getValue("moveRight") - state.getValue("moveLeft");
+		//float up = state.getValue("moveUp") - state.getValue("moveDown");
+
+		//m_CameraDirection = Vector3(forward, right, up);
+		//m_CameraPosition = m_CameraPosition + m_CameraDirection * m_CamerSpeed;
+
+		//m_Render.updateCamera(m_CameraPosition, m_CameraDirection, Vector3(0, 1, 0));
+		m_Render.draw();
+
 
 		updateDebugInfo();
 	}
@@ -86,7 +102,7 @@ bool BaseApp::handleWindowExitSizeMove( WPARAM /*p_WParam*/, LPARAM p_LParam, LR
 
 bool BaseApp::handleWindowSize( WPARAM p_WParam, LPARAM p_LParam, LRESULT& p_Result )
 {
-	m_NewWindowSize = DirectX::XMFLOAT2(LOWORD(p_LParam),HIWORD(p_LParam));
+	m_NewWindowSize = Vector2(LOWORD(p_LParam),HIWORD(p_LParam));
 
 	switch(p_WParam)
 	{
@@ -178,10 +194,10 @@ std::string BaseApp::getGameTitle() const
 	return m_GameTitle;
 }
 
-DirectX::XMFLOAT2 BaseApp::getWindowSize() const
+Vector2 BaseApp::getWindowSize() const
 {
 	// TODO: Read from user option
 
-	const static DirectX::XMFLOAT2 size = DirectX::XMFLOAT2(1280, 720);
+	const static Vector2 size = Vector2(1280, 720);
 	return size;
 }

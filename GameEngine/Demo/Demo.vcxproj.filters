@@ -107,5 +107,8 @@
     <ClInclude Include="Source\Input\InputTranslatorEnums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\XMFloatUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
