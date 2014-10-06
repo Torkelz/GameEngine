@@ -14,9 +14,9 @@ namespace Res
 	//
 	//  class ResCache										- Chapter 8, page 225
 	//
-	typedef std::list< std::shared_ptr <ResourceHandle>> ResHandleList;					// lru list
+	typedef std::list<std::shared_ptr <ResourceHandle>> ResHandleList;					// lru list
 	typedef std::map<std::string, std::shared_ptr<ResourceHandle>> ResHandleMap;		// maps indentifiers to resource data
-	typedef std::list< std::shared_ptr<IResourceLoader>> ResourceLoaders;
+	typedef std::list<std::shared_ptr<IResourceLoader>> ResourceLoaders;
 
 	class ResourceManager
 	{
@@ -29,7 +29,7 @@ namespace Res
 		ResHandleList m_Lru;							// lru list
 		ResHandleMap m_Resources;
 		ResourceLoaders m_ResourceLoaders;
-		IResourceFile *m_File;
+		std::map<std::string, IResourceFile*> m_FileMap;
 
 		UINT m_CacheSize;			// total memory size
 		UINT m_Allocated;			// total memory allocated
@@ -40,7 +40,7 @@ namespace Res
 		char *Allocate(UINT p_Size);
 		void Free(std::shared_ptr<ResourceHandle> p_Gonner);
 
-		std::shared_ptr<ResourceHandle> load(Resource *p_R);
+		std::shared_ptr<ResourceHandle> load(Resource *p_R, std::string p_GUID);
 		std::shared_ptr<ResourceHandle> find(Resource *p_R);
 		void update(std::shared_ptr<ResourceHandle> p_Handle);
 
@@ -49,21 +49,21 @@ namespace Res
 		bool wildcardMatch(const char *p_Pattern, const char *p_String);
 
 	public:
-		ResourceManager(UINT p_SizeInMb, IResourceFile *p_File);
+		ResourceManager(UINT p_SizeInMb);
 		virtual ~ResourceManager(void);
 
-		bool init(void);
+		void init(void);
+		bool loadResource(IResourceFile *p_Resource, std::string p_GUID);
 
 		void registerLoader(std::shared_ptr<IResourceLoader> p_Loader);
 
-		std::shared_ptr<ResourceHandle> getHandle(Resource *p_R);
+		std::shared_ptr<ResourceHandle> getHandle(Resource *p_R, std::string p_GUID);
 
 		//int preload(const std::string p_Pattern, void(*progressCallback)(int, bool &));
-		std::vector<std::string> match(const std::string p_Pattern);
+		std::vector<std::string> match(const std::string p_Pattern, std::string p_GUID);
 
 		void flush(void);
 
 		//bool isUsingDevelopmentDirectories(void) const { GCC_ASSERT(m_File); return m_File->isUsingDevelopmentDirectories(); }
-
 	};
 }

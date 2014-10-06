@@ -26,5 +26,6 @@ namespace Res
 		virtual int getNumResources(void) const;
 		virtual std::string getResourceName(int p_Num) const;
 		//virtual bool isUsingDevelopmentDirectories(void) const { return false; }
+		virtual std::string getFilePath(void) const;
 	};
 }
