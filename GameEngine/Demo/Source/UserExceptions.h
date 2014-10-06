@@ -70,6 +70,44 @@ public:
 };
 
 /**
+* An exception to be thrown when an error is encountered with the buffers.
+*/
+class InvalidArgument : GraphicsException
+{
+public:
+	/**
+	* constructor.
+	*
+	* @param p_What A message describing the error
+	* @param p_Line The line of the exception (use __LINE__)
+	* @param p_File The file of the exception (use __FILE__)
+	*/
+	InvalidArgument(const std::string& p_What, int p_Line, const std::string& p_File)
+		: GraphicsException(p_What, p_Line, p_File)
+	{
+	}
+};
+
+/**
+* An exception to be thrown when an error is encountered with the buffers.
+*/
+class Win32Exception : GraphicsException
+{
+public:
+	/**
+	* constructor.
+	*
+	* @param p_What A message describing the error
+	* @param p_Line The line of the exception (use __LINE__)
+	* @param p_File The file of the exception (use __FILE__)
+	*/
+	Win32Exception(const std::string& p_What, int p_Line, const std::string& p_File)
+		: GraphicsException(p_What, p_Line, p_File)
+	{
+	}
+};
+
+/**
 * An exception to be thrown when an error occurs with the shaders.
 */
 class ShaderException : public GraphicsException

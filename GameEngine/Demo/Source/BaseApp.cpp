@@ -1,7 +1,10 @@
 #include "BaseApp.h"
+#include "Logger.h"
 
+#include <sstream>
+#include <iomanip>
 
-const std::string BaseApp::m_GameTitle = "Particles";
+const std::string BaseApp::m_GameTitle = "Demo 1.45";
 
 BaseApp::BaseApp(void)
 {
@@ -14,14 +17,14 @@ BaseApp::~BaseApp(void)
 
 void BaseApp::init()
 {
-	m_MemUpdateDelay = 0.1f;
+	m_MemUpdateDelay = 10.f;
 	m_TimeToNextMemUpdate = 0.f;
 
 	m_Window.init(getGameTitle(), getWindowSize());
 	m_NewWindowSize = m_Window.getSize();
 
 	bool fullscreen = false;
-	m_Graphics.initialize(m_Window.getHandle(), (int)m_Window.getSize().x, (int)m_Window.getSize().y, fullscreen);
+	m_Render.initialize(m_Window.getHandle(), (int)m_Window.getSize().x, (int)m_Window.getSize().y, fullscreen);
 
 	m_Window.registerCallback(WM_CLOSE, std::bind(&BaseApp::handleWindowClose, this, std::placeholders::_1,
 		std::placeholders::_2, std::placeholders::_3));
@@ -29,6 +32,19 @@ void BaseApp::init()
 		std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	m_Window.registerCallback(WM_SIZE, std::bind(&BaseApp::handleWindowSize, this, std::placeholders::_1,
 		std::placeholders::_2, std::placeholders::_3));
+
+
+	InputTranslator::ptr translator(new InputTranslator);
+	translator->init(&m_Window);
+
+	translator->addKeyboardMapping(27, "Esc");
+	translator->addKeyboardMapping(87, "moveForward");
+	translator->addKeyboardMapping(83, "moveBackward");
+	translator->addKeyboardMapping(65, "moveLeft");
+	translator->addKeyboardMapping(68, "moveRight");
+
+
+	m_InputQueue.init(std::move(translator));
 }
 
 void BaseApp::run()
@@ -39,14 +55,26 @@ void BaseApp::run()
 
 	while (!m_ShouldQuit)
 	{
-		//m_InputQueue.onFrame();
+		m_InputQueue.onFrame();
 		m_Window.pollMessages();
 		updateTimer();
-		/*handleInput();
 
-		updateLogic();
+		handleInput();
+
+		/*updateLogic();
 
 		render();*/
+		//const InputState& state = m_InputQueue.getCurrentState();
+		//float forward = state.getValue("moveForward") - state.getValue("moveBackward");
+		//float right = state.getValue("moveRight") - state.getValue("moveLeft");
+		//float up = state.getValue("moveUp") - state.getValue("moveDown");
+
+		//m_CameraDirection = Vector3(forward, right, up);
+		//m_CameraPosition = m_CameraPosition + m_CameraDirection * m_CamerSpeed;
+
+		//m_Render.updateCamera(m_CameraPosition, m_CameraDirection, Vector3(0, 1, 0));
+		m_Render.draw();
+
 
 		updateDebugInfo();
 	}
@@ -54,7 +82,7 @@ void BaseApp::run()
 
 void BaseApp::shutdown()
 {
-
+	m_InputQueue.destroy();
 }
 
 bool BaseApp::handleWindowClose( WPARAM /*p_WParam*/, LPARAM /*p_LParam*/, LRESULT& p_Result )
@@ -74,7 +102,7 @@ bool BaseApp::handleWindowExitSizeMove( WPARAM /*p_WParam*/, LPARAM p_LParam, LR
 
 bool BaseApp::handleWindowSize( WPARAM p_WParam, LPARAM p_LParam, LRESULT& p_Result )
 {
-	m_NewWindowSize = DirectX::XMFLOAT2(LOWORD(p_LParam),HIWORD(p_LParam));
+	m_NewWindowSize = Vector2(LOWORD(p_LParam),HIWORD(p_LParam));
 
 	switch(p_WParam)
 	{
@@ -143,15 +171,33 @@ void BaseApp::updateTimer()
 	}
 }
 
+void BaseApp::handleInput()
+{
+	for (auto& in : m_InputQueue.getFrameInputs())
+	{
+		std::ostringstream msg;
+		msg << "Received input action: " << in.m_Action << " (" << std::setprecision(2) << std::fixed << in.m_Value << ")";
+		Logger::log(Logger::Level::TRACE, msg.str());
+
+		if (in.m_Value > 0.5f && in.m_PrevValue <= 0.5f)
+		{
+			if (in.m_Action == "Esc")
+			{
+				m_ShouldQuit = true;
+			}
+		}
+	}
+}
+
 std::string BaseApp::getGameTitle() const
 {
 	return m_GameTitle;
 }
 
-DirectX::XMFLOAT2 BaseApp::getWindowSize() const
+Vector2 BaseApp::getWindowSize() const
 {
 	// TODO: Read from user option
 
-	const static DirectX::XMFLOAT2 size = DirectX::XMFLOAT2(1280, 720);
+	const static Vector2 size = Vector2(1280, 720);
 	return size;
 }

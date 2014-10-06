@@ -4,7 +4,7 @@
 #include <functional>
 #include <string>
 #include <vector>
-#include <DirectXMath.h>
+#include "XMFloatUtil.h"
 
 /**
  * Represents a Win32 window that deals with the basic initialization and message polling.
@@ -40,7 +40,7 @@ private:
 	std::string	m_Title;
 	HWND		m_Handle;
 	HICON		m_Icon;
-	DirectX::XMFLOAT2 m_Size;
+	Vector2		m_Size;
 	bool		m_ShowingCursor;
 	bool		m_IsVisible;
 	bool		m_Initialized;
@@ -70,7 +70,7 @@ public:
 	 * @param p_WindowSize The size of the window to create (width, height). The caller is
 	 *			responsible for making sure that the values are valid for the platform.
 	 */
-	void init(const std::string& p_Title, DirectX::XMFLOAT2 p_WindowSize);
+	void init(const std::string& p_Title, Vector2 p_WindowSize);
 	/**
 	 * Closes the window and cleans up any resources used. May be called on an unitialized object.
 	 */
@@ -111,14 +111,14 @@ public:
 	 *
 	 * @return The size (width, height) of the window.
 	 */
-	DirectX::XMFLOAT2 getSize() const;
+	Vector2 getSize() const;
 	/**
 	 * Set a new size for the window.
 	 *
 	 * @param p_NewSize The size to resize the window to. The caller is responsible
 	 *			for making sure that the size is supported by the platform.
 	 */
-	void setSize(DirectX::XMFLOAT2 p_NewSize);
+	void setSize(Vector2 p_NewSize);
 	/**
 	 * Get whether the windows cursor is currently shown.
 	 *
