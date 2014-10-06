@@ -149,6 +149,14 @@ void Graphics::initialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bo
 		throw GraphicsException("Error when creating the rasterizer state", __LINE__,__FILE__);
 	}
 
+	D3D11_VIEWPORT viewport;
+	viewport.Width = p_ScreenWidth;
+	viewport.Height = p_ScreenHeight;
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+	viewport.TopLeftX = 0.0f;
+	viewport.TopLeftY = 0.0f;
+	m_DeviceContext->RSSetViewports(1, &viewport);
 
 	WrapperFactory::initialize(m_Device, m_DeviceContext);
 }
@@ -162,6 +170,11 @@ void Graphics::begin(float color[4])
 {
 	m_DeviceContext->ClearRenderTargetView(m_RenderTargetView, color);
 	m_DeviceContext->ClearDepthStencilView(m_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+	m_DeviceContext->OMSetRenderTargets(1, &m_RenderTargetView, m_DepthStencilView);
+
+	m_DeviceContext->RSSetState(m_RasterState);
+	m_DeviceContext->OMSetDepthStencilState(m_DepthStencilState, 0);
 }
 
 void Graphics::end(void)

@@ -47,6 +47,8 @@ void BaseApp::init()
 	m_InputQueue.init(std::move(translator));
 
 	m_CameraDirection = Vector3(1, 0, 0);
+	m_CameraPosition = Vector3(0, 0, 0);
+	m_CamerSpeed = 10;
 }
 
 void BaseApp::run()
@@ -84,9 +86,18 @@ void BaseApp::run()
 				dir *= div;
 			}
 			DirectX::XMStoreFloat3(&m_CameraDirection, dir);
+
+			DirectX::XMVECTOR cPos = DirectX::XMLoadFloat3(&m_CameraPosition);
+			using DirectX::operator*;
+			using DirectX::operator+;
+
+			cPos = cPos + DirectX::XMLoadFloat3(&m_CameraDirection) * m_CamerSpeed;
+			DirectX::XMStoreFloat3(&m_CameraPosition, cPos);
 		}
 
 		//m_CameraPosition = m_CameraPosition + m_CameraDirection * m_CamerSpeed;
+
+		
 
 		m_Render.updateCamera(m_CameraPosition, m_CameraDirection, Vector3(0, 1, 0));
 		m_Render.draw();

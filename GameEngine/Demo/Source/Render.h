@@ -29,6 +29,8 @@ private:
 		Vector3 position;
 		Vector3 normal;
 	};
+	Buffer *temporarybox;
+	Shader *temporaryShader;
 
 public:
 	Render(void);
@@ -46,9 +48,9 @@ private:
 
 	void initializeMatrices(int p_ScreenWidth, int p_ScreenHeight, float p_NearZ, float p_FarZ);
 
-	Vertex* CreateBox(int size, DirectX::XMVECTOR center);
+	Vertex* createBox(int size, DirectX::XMVECTOR center);
 
-	inline Vertex CreateVertex(DirectX::XMVECTOR _position, DirectX::XMVECTOR _normal)
+	inline Vertex createVertex(DirectX::XMVECTOR _position, DirectX::XMVECTOR _normal)
 	{
 		Vertex v;
 
