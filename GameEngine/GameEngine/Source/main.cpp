@@ -31,9 +31,8 @@ int main(int /*argc*/, char* /*argv*/[])
 	ResourceZipFile zip = ResourceZipFile();
 	zip.initialize(L"hubba.zip");
 	
-	ResourceManager man(&allocator);
+	ResourceManager man(TOTAL_SIZE);
 	man.init();
-	
 	man.loadResource(&zip, "hubba");
 
 	Resource res("Scenario1Tests.csv");

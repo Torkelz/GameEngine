@@ -6,16 +6,15 @@
 #include "ResourceHandle.h"
 #include "Macros.h"
 
-#include "../Allocator/Deleter.h"
-
+#include "../Logger/Logger.h"
 #include <algorithm>
 #include <cctype>
 
 
 namespace Res
 {
-	ResourceManager::ResourceManager(Allocator::LinearAllocator *p_Cache) :
-		m_Cache(p_Cache)
+	ResourceManager::ResourceManager(UINT p_CacheSize) :
+		m_CacheSize(p_CacheSize)
 	{ }
 
 	ResourceManager::~ResourceManager(void)
@@ -97,25 +96,40 @@ namespace Res
 			}
 		}
 		if (!file)
+		{
+			Logger::log(Logger::Level::WARNING, "File not found in resource file map: " + p_R->m_Name);
 			return std::shared_ptr<ResourceHandle>();
+		}
 
 		int rawSize = file->getRawResourceSize(*p_R);
 		if (rawSize < 0)
 		{
+			Logger::log(Logger::Level::WARNING, "File size is 0 or less: " + p_R->m_Name);
 			return std::shared_ptr<ResourceHandle>();
 		}
 
 		int allocSize = rawSize + ((loader->addNullZero()) ? (1) : (0));
-		char *rawBuffer = loader->useRawFile() ? Allocate(allocSize) : (char*)m_Cache->allocate(allocSize);
+		char *rawBuffer = loader->useRawFile() ? Allocate(allocSize) : new char[allocSize];
 		memset(rawBuffer, 0, allocSize);
 
-		if (rawBuffer == NULL || file->getRawResource(*p_R, rawBuffer) == 0)
+		if (!rawBuffer || file->getRawResource(*p_R, rawBuffer) == 0)
 		{
+			Logger::log(Logger::Level::WARNING, "Resource cache is out of memory! Dumping memory state.");
+			
+			int ompaloompa = 1;
+			for (auto &res : m_Lru)
+			{
+				Logger::log(Logger::Level::WARNING, "File " + std::to_string(ompaloompa) + ", File name: " + res->getName());
+				++ompaloompa;
+			}
+
+			Logger::log(Logger::Level::WARNING, "Tried to load file: " + p_R->m_Name);
+
 			// resource cache out of memory
 			return std::shared_ptr<ResourceHandle>();
 		}
 
-		char *buffer = NULL;
+		char *buffer = nullptr;
 		unsigned int size = 0;
 
 		if (loader->useRawFile())
@@ -127,7 +141,7 @@ namespace Res
 		{
 			size = loader->getLoadedResourceSize(rawBuffer, rawSize);
 			buffer = Allocate(size);
-			if (rawBuffer == NULL || buffer == NULL)
+			if (!rawBuffer || !buffer)
 			{
 				// resource cache out of memory
 				return std::shared_ptr<ResourceHandle>();
@@ -178,7 +192,14 @@ namespace Res
 
 	char *ResourceManager::Allocate(UINT p_Size)
 	{
-		char *mem = (char*)m_Cache->allocate(p_Size);
+		if (!makeRoom(p_Size))
+			return NULL;
+
+		char *mem = new char[p_Size];
+		if (mem)
+		{
+			m_Allocated += p_Size;
+		}
 
 		return mem;
 	}
@@ -205,37 +226,32 @@ namespace Res
 			Free(handle);
 			m_Lru.pop_front();
 		}
-
-		m_Cache->clear();
 	}
 
 
 	////
 	//// ResourceManager::MakeRoom									- Chapter 8, page 231
 	////
-	//bool ResourceManager::makeRoom(UINT p_Size)
-	//{
-	//	if (p_Size > m_CacheSize)
-	//	{
-	//		return false;
-	//	}
+	bool ResourceManager::makeRoom(UINT p_Size)
+	{
+		if (p_Size > m_CacheSize)
+		{
+			return false;
+		}
 
-	//	// return null if there's no possible way to allocate the memory
-	//	while (p_Size > (m_CacheSize - m_Allocated))
-	//	{
-	//		// The cache is empty, and there's still not enough room.
-	//		if (m_Lru.empty())
-	//			return false;
+		// return null if there's no possible way to allocate the memory
+		while (p_Size > (m_CacheSize - m_Allocated))
+		{
+			// The cache is empty, and there's still not enough room.
+			if (m_Lru.empty())
+				return false;
 
-	//		freeOneResource();
-	//	}
+			freeOneResource();
+		}
 
-	//	return true;
-	//}
-
-	//
-	//	ResourceManager::Free									- Chapter 8, page 228
-	//
+		return true;
+	}
+	
 	void ResourceManager::Free(std::shared_ptr<ResourceHandle> p_Gonner)
 	{
 		m_Lru.remove(p_Gonner);
@@ -253,10 +269,10 @@ namespace Res
 	//
 	//     This is called whenever the memory associated with a resource is actually freed
 	//
-	//void ResourceManager::memoryHasBeenFreed(UINT p_Size)
-	//{
-	//	m_Allocated -= p_Size;
-	//}
+	void ResourceManager::memoryHasBeenFreed(UINT p_Size)
+	{
+		m_Allocated -= p_Size;
+	}
 
 	//
 	// ResourceManager::Match									- not described in the book
