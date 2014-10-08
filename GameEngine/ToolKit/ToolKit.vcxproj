@@ -93,7 +93,9 @@
   <ItemGroup>
     <ClInclude Include="libs\zconf.h" />
     <ClInclude Include="libs\zlib.h" />
+    <ClInclude Include="Source\ResourceManager\OBJResourceLoader.h" />
     <ClInclude Include="Source\ResourceManager\Macros.h" />
+    <ClInclude Include="Source\ResourceManager\OBJResourceExtraData.h" />
     <ClInclude Include="Source\ResourceManager\ResourceZipFile.h" />
     <ClInclude Include="Source\ResourceManager\ResourceManager.h" />
     <ClInclude Include="Source\ResourceManager\DefaultResourceLoader.h" />
@@ -112,6 +114,7 @@
     <ClInclude Include="Source\ResourceManager\ZipFile.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\ResourceManager\OBJResourceLoader.cpp" />
     <ClCompile Include="Source\ResourceManager\ResourceHandle.cpp" />
     <ClCompile Include="Source\ResourceManager\ResourceZipFile.cpp" />
     <ClCompile Include="Source\ResourceManager\Resource.cpp" />
