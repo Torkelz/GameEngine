@@ -107,6 +107,8 @@
     <ClInclude Include="Source\Input\Input.h" />
     <ClInclude Include="Source\Logger.h" />
     <ClInclude Include="Source\Level.h" />
+    <ClInclude Include="Source\Mesh.h" />
+    <ClInclude Include="Source\MeshInstance.h" />
     <ClInclude Include="Source\ShaderDefinitions.h" />
     <ClInclude Include="Source\Buffer.h" />
     <ClInclude Include="Source\Shader.h" />

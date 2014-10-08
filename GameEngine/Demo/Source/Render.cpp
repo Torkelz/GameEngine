@@ -5,7 +5,8 @@
 Render::Render(void) :
 	m_Graphics(nullptr),
 	m_CBCameraFixed(nullptr),
-	m_CBCamera(nullptr)
+	m_CBCamera(nullptr),
+	m_NextModelInstanceID(0)
 {
 }
 
@@ -127,7 +128,11 @@ void Render::initializeMatrices(int p_ScreenWidth, int p_ScreenHeight, float p_N
 		(float)p_ScreenWidth / (float)p_ScreenHeight, p_NearZ, m_FarZ)));
 }
 
-void Render::addMesh( Mesh p_Mesh)
+void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 {
-	m_MeshList.push_back(std::move(p_Mesh));
+	std::string name = p_ResourceHandle.lock()->getName();
+	if (m_MeshList.count(name) <= 0)
+	{
+		//m_MeshList.insert(name, Mesh());
+	}
 }

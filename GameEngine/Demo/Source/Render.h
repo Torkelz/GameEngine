@@ -3,47 +3,20 @@
 #include <Windows.h>
 #include <memory>
 #include <utility>
+#include <map>
 #include "XMFloatUtil.h"
 #include "WrapperFactory.h"
+#include "IResourceManager.h"
+#include "Mesh.h"
+#include "MeshInstance.h"
 
-class Graphics;
+class Graphics; 
+
 
 class Render
 {
 public:
-	struct Mesh
-	{
-		std::shared_ptr<Shader> shader;
-		std::unique_ptr<Buffer> buffer;
 
-		Mesh() :
-			shader(nullptr),
-			buffer(nullptr)
-		{
-
-		}
-		Mesh(Mesh&& p_Other) :
-			buffer(std::move(p_Other.buffer)),
-			shader(p_Other.shader)
-		{
-		}
-
-		Mesh& operator=(Mesh&& p_Other)
-		{
-			std::swap(buffer, p_Other.buffer);
-			std::swap(shader, p_Other.shader);
-
-			return *this;
-		}
-		//Mesh& operator=(const LinearAllocator&)
-		~Mesh()
-		{
-			shader = nullptr;
-			buffer = nullptr;
-		}
-	private:
-		Mesh(const Mesh&);
-	};
 private:
 	Graphics *m_Graphics;
 
@@ -58,7 +31,9 @@ private:
 
 	Buffer *m_CBCameraFixed;
 	Buffer *m_CBCamera;
-	std::vector<Render::Mesh> m_MeshList;
+	UINT m_NextModelInstanceID;
+	std::map<std::string, Mesh> m_MeshList;
+	std::map<UINT, MeshInstance> m_MeshList;
 
 public:
 	Render(void);
@@ -69,7 +44,7 @@ public:
 	void draw(void);
 
 	void updateCamera(Vector3 p_Position, Vector3 p_Forward, Vector3 p_Up);
-	void addMesh( Mesh p_Mesh);
+	void createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle);
 
 private:
 	void createConstantBuffers();
