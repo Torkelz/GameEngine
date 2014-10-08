@@ -16,7 +16,7 @@ class Graphics;
 class Render
 {
 public:
-
+	typedef unsigned int UINT;
 private:
 	Graphics *m_Graphics;
 
@@ -33,7 +33,7 @@ private:
 	Buffer *m_CBCamera;
 	UINT m_NextModelInstanceID;
 	std::map<std::string, Mesh> m_MeshList;
-	std::map<UINT, MeshInstance> m_MeshList;
+	std::map<UINT, MeshInstance> m_MeshInstanceList;
 
 public:
 	Render(void);
@@ -45,6 +45,8 @@ public:
 
 	void updateCamera(Vector3 p_Position, Vector3 p_Forward, Vector3 p_Up);
 	void createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle);
+	int	 createMeshInstance(const std::string p_MeshName);
+	MeshInstance &getMeshInstance(UINT p_InstanceId);
 
 private:
 	void createConstantBuffers();

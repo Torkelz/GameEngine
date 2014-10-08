@@ -1,8 +1,9 @@
 #include "BaseApp.h"
 #include "Logger.h"
-
 #include <sstream>
 #include <iomanip>
+
+#include "ModifyMesh.h"
 
 const std::string BaseApp::m_GameTitle = "Demo 1.45";
 
@@ -25,6 +26,7 @@ void BaseApp::init()
 
 	bool fullscreen = false;
 	m_Render.initialize(m_Window.getHandle(), (int)m_Window.getSize().x, (int)m_Window.getSize().y, fullscreen);
+	ModifyMesh::initialize(&m_Render);
 
 	m_Window.registerCallback(WM_CLOSE, std::bind(&BaseApp::handleWindowClose, this, std::placeholders::_1,
 		std::placeholders::_2, std::placeholders::_3));
@@ -50,6 +52,7 @@ void BaseApp::init()
 	m_CameraPosition = Vector3(0, 0, 0);
 	m_CamerSpeed = 10;
 	m_Level.initialize(&m_Render);
+
 }
 
 void BaseApp::run()

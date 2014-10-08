@@ -1,6 +1,7 @@
 #include "Render.h"
 #include "Graphics.h"
 #include "Utilities.h"
+#include "Logger.h"
 
 Render::Render(void) :
 	m_Graphics(nullptr),
@@ -53,14 +54,14 @@ void Render::draw(void)
 	m_CBCameraFixed->setBuffer(0);
 	m_CBCamera->setBuffer(1);
 	m_Graphics->getDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	for (std::vector<Mesh>::const_iterator &it = m_MeshList.cbegin(); it != m_MeshList.cend(); ++it)
-	{
-		it->shader->setShader();
-		it->buffer->setBuffer(0);
-		m_Graphics->getDeviceContext()->Draw(it->buffer->getNumOfElements(), 0);
-		it->buffer->unsetBuffer(0);
-		it->shader->unSetShader();
-	}
+	//for (std::vector<Mesh>::const_iterator &it = m_MeshList.cbegin(); it != m_MeshList.cend(); ++it)
+	//{
+	//	it->shader->setShader();
+	//	it->buffer->setBuffer(0);
+	//	m_Graphics->getDeviceContext()->Draw(it->buffer->getNumOfElements(), 0);
+	//	it->buffer->unsetBuffer(0);
+	//	it->shader->unSetShader();
+	//}
 	
 	
 
@@ -135,4 +136,35 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 	{
 		//m_MeshList.insert(name, Mesh());
 	}
+}
+
+int Render::createMeshInstance(const std::string p_MeshName)
+{
+	if (m_MeshList.count(p_MeshName) <= 0)
+	{
+		Logger::log(Logger::Level::ERROR_L, "Attempting to create mesh instance without loading the mesh: " + p_MeshName);
+		return -1;
+	}
+
+
+
+	MeshInstance instance;
+	instance.meshName = p_MeshName;
+	instance.position = Vector3(0.f, 0.f, 0.f);
+	instance.rotation = Vector3(0.f, 0.f, 0.f);
+	instance.scale = Vector3(1.f, 1.f, 1.f);
+	int id = m_NextModelInstanceID++;
+
+	m_MeshInstanceList.insert(std::make_pair(id, instance));
+
+	return id;
+}
+
+MeshInstance &Render::getMeshInstance(UINT p_InstanceId)
+{
+	if (m_MeshInstanceList.count(p_InstanceId) <= 0)
+	{
+		return MeshInstance();
+	}
+	return m_MeshInstanceList.at(p_InstanceId);
 }

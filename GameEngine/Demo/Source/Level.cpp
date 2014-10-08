@@ -1,5 +1,5 @@
 #include "Level.h"
-
+#include "ModifyMesh.h"
 
 Level::Level() :
 	m_Render(nullptr)
@@ -21,13 +21,15 @@ void Level::initialize(Render *p_Render)
 	bDesc.type = Buffer::Type::VERTEX_BUFFER;
 	bDesc.usage = Buffer::Usage::DEFAULT;
 
-	Render::Mesh meshi;
+	//Render::Mesh meshi;
 
 
-	meshi.buffer = std::unique_ptr<Buffer>(WrapperFactory::getInstance()->createBuffer(bDesc));
-	meshi.shader = std::shared_ptr<Shader>(WrapperFactory::getInstance()->createShader(L".\\Source\\Shader\\Box.hlsl", "VS,PS", "5_0", ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER));
+	//meshi.buffer = std::unique_ptr<Buffer>(WrapperFactory::getInstance()->createBuffer(bDesc));
+	//meshi.shader = std::shared_ptr<Shader>(WrapperFactory::getInstance()->createShader(L".\\Source\\Shader\\Box.hlsl", "VS,PS", "5_0", ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER));
 
-	m_Render->addMesh(std::move(meshi));
+	//m_Render->addMesh(std::move(meshi));
+
+	ModifyMesh::setMeshPosition(1, Vector3(0, 1, 0));
 }
 
 void Level::update()
