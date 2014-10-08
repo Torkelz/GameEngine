@@ -179,6 +179,6 @@ ToolKitd.lib
 *.exe
 *.dll
 */Bin/
-!*/Bin/hubba.zip
 */Test/
 GameEngine/Demo/logFile.txt
+!GameEngine/GameEngine/Bin/hubba.zip
