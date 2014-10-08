@@ -150,8 +150,8 @@ void Graphics::initialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bo
 	}
 
 	D3D11_VIEWPORT viewport;
-	viewport.Width = p_ScreenWidth;
-	viewport.Height = p_ScreenHeight;
+	viewport.Width = (float)p_ScreenWidth;
+	viewport.Height = (float)p_ScreenHeight;
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 	viewport.TopLeftX = 0.0f;
