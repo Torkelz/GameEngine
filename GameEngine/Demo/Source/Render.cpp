@@ -146,8 +146,6 @@ int Render::createMeshInstance(const std::string p_MeshName)
 		return -1;
 	}
 
-
-
 	MeshInstance instance;
 	instance.meshName = p_MeshName;
 	instance.position = Vector3(0.f, 0.f, 0.f);
@@ -164,6 +162,7 @@ MeshInstance &Render::getMeshInstance(UINT p_InstanceId)
 {
 	if (m_MeshInstanceList.count(p_InstanceId) <= 0)
 	{
+		Logger::log(Logger::Level::WARNING, "Trying to access a meshInstance that have not been created yet." + std::to_string(p_InstanceId));
 		return MeshInstance();
 	}
 	return m_MeshInstanceList.at(p_InstanceId);
