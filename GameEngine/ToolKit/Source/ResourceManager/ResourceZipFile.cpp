@@ -10,14 +10,12 @@ namespace Res
 	ResourceZipFile::~ResourceZipFile()
 	{
 		SAFE_DELETE(m_ZipFile);
-		SAFE_DELETE(m_ResFileName);
 	}
 
-	void ResourceZipFile::initialize(std::wstring *p_ResFileName)
+	void ResourceZipFile::initialize(std::wstring p_ResFileName)
 	{
 		m_ZipFile = nullptr;
 		m_ResFileName = p_ResFileName;
-
 	}
 
 	bool ResourceZipFile::open(void)
@@ -25,12 +23,10 @@ namespace Res
 		m_ZipFile = new ZipFile;
 		if (m_ZipFile)
 		{
-			return m_ZipFile->init(m_ResFileName->c_str());
+			return m_ZipFile->init(m_ResFileName.c_str());
 		}
 		return false;
 	}
-
-
 
 	int ResourceZipFile::getRawResourceSize(const Resource &p_R)
 	{
@@ -77,7 +73,7 @@ namespace Res
 
 	std::string ResourceZipFile::getFilePath(void) const
 	{
-		std::string path((const char*)&m_ResFileName[0], sizeof(wchar_t) / sizeof(char)*m_ResFileName->size());
+		std::string path((const char*)&m_ResFileName[0], sizeof(wchar_t) / sizeof(char)*m_ResFileName.size());
 		return path;
 	}
 }
