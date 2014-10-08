@@ -27,15 +27,15 @@ int main(int /*argc*/, char* /*argv*/[])
 	using namespace Res;
 
 	Allocator::LinearAllocator allocator(TOTAL_SIZE);
-	Allocator::LinearAllocator *resourceAllocator = new(allocator.allocate(16)) Allocator::LinearAllocator();
 	char* resourceBuffer = (char*)allocator.allocate(50 * 1024 * 1024);
-	resourceAllocator->setBuffer(resourceBuffer);
+	Allocator::LinearAllocator *resourceAllocator = new(allocator.allocate(16)) Allocator::LinearAllocator(resourceBuffer, 50 * 1024 * 1024);
 
 	UINT zipHeaderSize = sizeof(ResourceZipFile);
 
 	ResourceZipFile *zip = new(allocator.allocate(zipHeaderSize)) ResourceZipFile();
-	zip->initialize(L"hubba.zip");
-	
+	std::wstring *hubba = new(allocator.allocate(sizeof(L"hubba.zip"))) std::wstring();
+	hubba->assign(L"hubba.zip");
+	zip->initialize(hubba);
 	
 	//ResourceManager man(resourceAllocator);
 	//man.init();
@@ -46,8 +46,6 @@ int main(int /*argc*/, char* /*argv*/[])
 
 	//std::shared_ptr<ResourceHandle> texture = man.getHandle(&res, "hubba");
 	//int size = texture->size();
-
-	zip = nullptr;
 	resourceAllocator->clear();
 	allocator.clear();
 

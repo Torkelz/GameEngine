@@ -78,8 +78,6 @@ namespace Allocator
 		 */
 		UINT getMarker(void) const;
 
-		void setBuffer(char* p_Buffer);
-
 	private:
 		LinearAllocator(const LinearAllocator& p_Other) = delete; // non construction-copyable
 		LinearAllocator& operator=(const LinearAllocator&) = delete; // non copyable
