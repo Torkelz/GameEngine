@@ -26,6 +26,11 @@ namespace Res
 		return m_Resource.m_Name;
 	}
 
+	const std::string &ResourceHandle::getContainerName(void) const
+	{
+		return m_Resource.m_ZipName;
+	}
+
 	ResourceHandle::UINT ResourceHandle::size(void) const
 	{
 		return m_Size;

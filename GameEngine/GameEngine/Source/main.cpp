@@ -26,19 +26,19 @@ int main(int /*argc*/, char* /*argv*/[])
 	using namespace Res;
 
 	ResourceZipFile zip = ResourceZipFile();
-	zip.initialize(L"..\\Resources\\hubba.zip");
+	zip.initialize(L"..\\Resources\\hubba3.zip");
 	
 	ResourceManager man(TOTAL_SIZE);
 
 	man.init();
-	man.loadResource(&zip, "hubba");
+	man.loadResource(&zip, "hubba3");
 
 	man.registerLoader(std::shared_ptr<IResourceLoader>(new OBJResourceLoader()));
 	//Resource res("assignment1.xlsx", "hubba");
 	
-	//Resource re("hubba\\models\\Street Light\\street_lamp.obj", "hubba3");
+	Resource re("hubba\\models\\Street Light\\street_lamp.obj", "hubba3");
 
-	//std::weak_ptr<ResourceHandle> texture = man.getHandle(&res);
+	std::weak_ptr<ResourceHandle> texture = man.getHandle(&re);
 	//int size = texture.lock()->size();
 
 	//man.Free(texture.lock());

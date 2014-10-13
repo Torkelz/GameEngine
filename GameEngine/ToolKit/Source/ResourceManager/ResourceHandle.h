@@ -31,6 +31,7 @@ namespace Res
 		virtual ~ResourceHandle(void);
 
 		const std::string &getName(void) const;
+		const std::string &getContainerName(void) const;
 		UINT size(void) const;
 		char *buffer(void) const;
 		char *writableBuffer(void);

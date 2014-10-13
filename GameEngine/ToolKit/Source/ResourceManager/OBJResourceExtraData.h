@@ -14,7 +14,11 @@ namespace Res
 
 		virtual std::string toString() { return "OBJResourceExtraData"; }
 
-		void setMTLFile(Resource p_MTLResource){ m_MTLFile = p_MTLResource; }
+		void setMTLFile(Resource res)
+		{ 
+			m_MTLFile = res;
+
+		}
 
 	protected:
 

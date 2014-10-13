@@ -33,7 +33,7 @@ namespace Res
 
 	bool OBJResourceLoader::parseOBJ(char *p_ObjStream, size_t p_Length, std::shared_ptr<ResourceHandle> p_Handle)
 	{
-		std::shared_ptr<OBJResourceExtraData> extra = std::static_pointer_cast<OBJResourceExtraData>(p_Handle->getExtra());
+		std::shared_ptr<OBJResourceExtraData> extra(new OBJResourceExtraData());
 
 		std::vector<Vec3> positions;
 		std::vector<Vec3> normals;
@@ -60,7 +60,9 @@ namespace Res
 				lineStream >> s;
 				std::string filepath = p_Handle->getName();
 				std::string materialPath = filepath.substr(0, filepath.find_last_of("\\/")) + "\\" + s;
-				int dummy = 0 ;
+				std::string c = p_Handle->getContainerName();
+
+				extra->setMTLFile(Resource(materialPath, c));
 			}
 			else if (prefix == "v")
 			{
