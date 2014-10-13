@@ -9,7 +9,7 @@ namespace Res
 		friend class OBJResourceLoader;
 
 	public:
-		OBJResourceExtraData();
+		OBJResourceExtraData() {}
 		virtual ~OBJResourceExtraData() {}
 
 		virtual std::string toString() { return "OBJResourceExtraData"; }
