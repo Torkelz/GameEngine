@@ -1,6 +1,6 @@
 #include "Input.h"
 
-#include "..\Logger.h"
+#include "ILogger.h"
 
 void Input::init(InputTranslator::ptr p_Translator)
 {

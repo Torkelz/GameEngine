@@ -89,7 +89,6 @@
     <ClCompile Include="Source\Input\InputState.cpp" />
     <ClCompile Include="Source\Input\InputTranslator.cpp" />
     <ClCompile Include="Source\Input\Input.cpp" />
-    <ClCompile Include="Source\Logger.cpp" />
     <ClCompile Include="Source\Level.cpp" />
     <ClCompile Include="Source\Buffer.cpp" />
     <ClCompile Include="Source\Shader.cpp" />
@@ -107,7 +106,6 @@
     <ClInclude Include="Source\Input\InputTranslator.h" />
     <ClInclude Include="Source\Input\InputTranslatorEnums.h" />
     <ClInclude Include="Source\Input\Input.h" />
-    <ClInclude Include="Source\Logger.h" />
     <ClInclude Include="Source\Level.h" />
     <ClInclude Include="Source\Mesh.h" />
     <ClInclude Include="Source\MeshInstance.h" />

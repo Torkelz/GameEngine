@@ -1,5 +1,5 @@
 #include "BaseApp.h"
-#include "Logger.h"
+#include "ILogger.h"
 #include <sstream>
 #include <iomanip>
 
