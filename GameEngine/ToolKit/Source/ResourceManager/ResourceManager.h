@@ -35,10 +35,8 @@ namespace Res
 		UINT m_Allocated;			// total memory allocated
 
 	protected:
-
 		bool makeRoom(UINT p_Size);
 		char *Allocate(UINT p_Size);
-		void Free(std::shared_ptr<ResourceHandle> p_Gonner);
 
 		std::shared_ptr<ResourceHandle> load(Resource *p_R, std::string p_GUID);
 		std::shared_ptr<ResourceHandle> find(Resource *p_R);
@@ -49,7 +47,7 @@ namespace Res
 		bool wildcardMatch(const char *p_Pattern, const char *p_String);
 
 	public:
-		ResourceManager(UINT p_SizeInMb);
+		ResourceManager(UINT p_Cache);
 		virtual ~ResourceManager(void);
 
 		void init(void);
@@ -63,6 +61,8 @@ namespace Res
 		std::vector<std::string> match(const std::string p_Pattern, std::string p_GUID);
 
 		void flush(void);
+
+		void Free(std::shared_ptr<ResourceHandle> p_Gonner);
 
 		//bool isUsingDevelopmentDirectories(void) const { GCC_ASSERT(m_File); return m_File->isUsingDevelopmentDirectories(); }
 	};

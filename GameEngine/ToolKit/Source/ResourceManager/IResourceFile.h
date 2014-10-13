@@ -9,6 +9,7 @@ namespace Res
 	class IResourceFile
 	{
 	public:
+		virtual void initialize(std::wstring p_ResFileName) = 0;
 		virtual bool open(void) = 0;
 		virtual int getRawResourceSize(const Resource &p_R) = 0;
 		virtual int getRawResource(const Resource &p_R, char *p_Buffer) = 0;

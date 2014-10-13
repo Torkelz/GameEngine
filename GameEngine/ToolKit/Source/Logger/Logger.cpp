@@ -33,7 +33,8 @@ void Logger::logRaw(uint32_t p_Level, const char* p_Message)
 	{
 		if (p_Level >= (uint32_t)out.m_Level)
 		{
-			out.m_Destination << std::put_time(currentLocalTime, "[%Y-%m-%d %H:%M:%S]") << " " << levelNames[(uint32_t)p_Level] << ": " << p_Message << std::endl << std::flush;
+			out.m_Destination << std::put_time(currentLocalTime, "[%Y-%m-%d %H:%M:%S]") << " " <<
+				levelNames[(uint32_t)p_Level] << ": " << p_Message << std::endl << std::flush;
 		}
 	}
 }

@@ -5,17 +5,18 @@
 
 namespace Res
 {
-	ResourceZipFile::ResourceZipFile(const std::wstring p_ResFileName) :
-		m_ZipFile(nullptr), m_ResFileName(p_ResFileName)
-	{
-	}
-
+	ResourceZipFile::ResourceZipFile(){}
 
 	ResourceZipFile::~ResourceZipFile()
 	{
 		SAFE_DELETE(m_ZipFile);
 	}
 
+	void ResourceZipFile::initialize(std::wstring p_ResFileName)
+	{
+		m_ZipFile = nullptr;
+		m_ResFileName = p_ResFileName;
+	}
 
 	bool ResourceZipFile::open(void)
 	{
@@ -26,8 +27,6 @@ namespace Res
 		}
 		return false;
 	}
-
-
 
 	int ResourceZipFile::getRawResourceSize(const Resource &p_R)
 	{

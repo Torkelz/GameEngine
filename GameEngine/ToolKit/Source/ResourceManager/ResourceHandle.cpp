@@ -17,8 +17,8 @@ namespace Res
 	//
 	ResourceHandle::~ResourceHandle(void)
 	{
-		SAFE_DELETE_ARRAY(m_Buffer);
-		m_ResCache->memoryHasBeenFreed(m_Size);
+		if (m_Buffer)
+			delete m_Buffer;
 	}
 
 	const std::string &ResourceHandle::getName(void) const

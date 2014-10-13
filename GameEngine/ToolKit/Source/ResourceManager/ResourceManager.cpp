@@ -6,40 +6,29 @@
 #include "ResourceHandle.h"
 #include "Macros.h"
 
-
+#include "../Logger/Logger.h"
 #include <algorithm>
 #include <cctype>
 
 
 namespace Res
 {
-	//
-	// ResourceManager::ResourceManager							- Chapter 8, page 227
-	//
-	ResourceManager::ResourceManager(UINT p_SizeInMb) :
-		m_CacheSize(p_SizeInMb * 1024 * 1024), m_Allocated(0)
-	{		
-	}
+	ResourceManager::ResourceManager(UINT p_CacheSize) :
+		m_CacheSize(p_CacheSize)
+	{ }
 
-	//
-	// ResourceManager::~ResourceManager							- Chapter 8, page 227
-	//
 	ResourceManager::~ResourceManager(void)
 	{
 		while (!m_Lru.empty())
 		{
 			freeOneResource();
 		}
-
 		for (auto &res : m_FileMap)
 		{
-			SAFE_DELETE(res.second);
+			res.second->~IResourceFile();
 		}
 	}
 
-	//
-	// ResourceManager::Init								- Chapter 8, page 227
-	//
 	void ResourceManager::init(void)
 	{
 		registerLoader(std::shared_ptr<IResourceLoader>(new DefaultResourceLoader()));
@@ -57,28 +46,17 @@ namespace Res
 		return false;
 	}
 
-	//
-	// ResourceManager::RegisterLoader						- Chapter 8, page 225
-	// 
-	//    The loaders are discussed on the page refereced above - this method simply adds the loader
-	//    to the resource cache.
-	//
 	void ResourceManager::registerLoader(std::shared_ptr<IResourceLoader> p_Loader)
 	{
 		m_ResourceLoaders.push_front(p_Loader);
 	}
 
-
-	//
-	// ResourceManager::GetHandle							- Chapter 8, page 227
-	//
 	std::shared_ptr<ResourceHandle> ResourceManager::getHandle(Resource *p_R, std::string p_GUID)
 	{
 		std::shared_ptr<ResourceHandle> handle(find(p_R));
 		if (handle == nullptr)
 		{
 			handle = load(p_R, p_GUID);
-			//GCC_ASSERT(handle);
 		}
 		else
 		{
@@ -87,13 +65,9 @@ namespace Res
 		return handle;
 	}
 
-	//
-	// ResourceManager::Load								- Chapter 8, page 228-230
-	//
 	std::shared_ptr<ResourceHandle> ResourceManager::load(Resource *p_R, std::string p_GUID)
 	{
 		// Create a new resource and add it to the lru list and map
-
 		std::shared_ptr<IResourceLoader> loader;
 		std::shared_ptr<ResourceHandle> handle;
 
@@ -110,7 +84,6 @@ namespace Res
 
 		if (!loader)
 		{
-			//GCC_ASSERT(loader && _T("Default resource loader not found!"));
 			return handle;		// Resource not loaded!
 		}
 
@@ -123,12 +96,15 @@ namespace Res
 			}
 		}
 		if (!file)
+		{
+			Logger::log(Logger::Level::WARNING, "File not found in resource file map: " + p_R->m_Name);
 			return std::shared_ptr<ResourceHandle>();
+		}
 
 		int rawSize = file->getRawResourceSize(*p_R);
 		if (rawSize < 0)
 		{
-			//GCC_ASSERT(rawSize > 0 && "Resource size returned -1 - Resource not found");
+			Logger::log(Logger::Level::WARNING, "File size is 0 or less: " + p_R->m_Name);
 			return std::shared_ptr<ResourceHandle>();
 		}
 
@@ -136,13 +112,24 @@ namespace Res
 		char *rawBuffer = loader->useRawFile() ? Allocate(allocSize) : new char[allocSize];
 		memset(rawBuffer, 0, allocSize);
 
-		if (rawBuffer == NULL || file->getRawResource(*p_R, rawBuffer) == 0)
+		if (!rawBuffer || file->getRawResource(*p_R, rawBuffer) == 0)
 		{
+			Logger::log(Logger::Level::WARNING, "Resource cache is out of memory! Dumping memory state.");
+			
+			int ompaloompa = 1;
+			for (auto &res : m_Lru)
+			{
+				Logger::log(Logger::Level::WARNING, "File " + std::to_string(ompaloompa) + ", File name: " + res->getName());
+				++ompaloompa;
+			}
+
+			Logger::log(Logger::Level::WARNING, "Tried to load file: " + p_R->m_Name);
+
 			// resource cache out of memory
 			return std::shared_ptr<ResourceHandle>();
 		}
 
-		char *buffer = NULL;
+		char *buffer = nullptr;
 		unsigned int size = 0;
 
 		if (loader->useRawFile())
@@ -154,7 +141,7 @@ namespace Res
 		{
 			size = loader->getLoadedResourceSize(rawBuffer, rawSize);
 			buffer = Allocate(size);
-			if (rawBuffer == NULL || buffer == NULL)
+			if (!rawBuffer || !buffer)
 			{
 				// resource cache out of memory
 				return std::shared_ptr<ResourceHandle>();
@@ -185,13 +172,9 @@ namespace Res
 			m_Resources[p_R->m_Name] = handle;
 		}
 
-		//GCC_ASSERT(loader && _T("Default resource loader not found!"));
 		return handle;		// ResourceManager is out of memory!
 	}
 
-	//
-	// ResourceManager::Find									- Chapter 8, page 228
-	//
 	std::shared_ptr<ResourceHandle> ResourceManager::find(Resource *p_R)
 	{
 		ResHandleMap::iterator i = m_Resources.find(p_R->m_Name);
@@ -201,20 +184,12 @@ namespace Res
 		return i->second;
 	}
 
-	//
-	// ResourceManager::Update									- Chapter 8, page 228
-	//
 	void ResourceManager::update(std::shared_ptr<ResourceHandle> p_Handle)
 	{
 		m_Lru.remove(p_Handle);
 		m_Lru.push_front(p_Handle);
 	}
 
-
-
-	//
-	// ResourceManager::Allocate								- Chapter 8, page 230
-	//
 	char *ResourceManager::Allocate(UINT p_Size)
 	{
 		if (!makeRoom(p_Size))
@@ -229,10 +204,6 @@ namespace Res
 		return mem;
 	}
 
-
-	//
-	// ResourceManager::FreeOneResource						- Chapter 8, page 231
-	//
 	void ResourceManager::freeOneResource(void)
 	{
 		ResHandleList::iterator gonner = m_Lru.end();
@@ -247,15 +218,6 @@ namespace Res
 		// be actually free again.
 	}
 
-
-
-	//
-	// ResourceManager::Flush									- not described in the book
-	//
-	//    Frees every handle in the cache - this would be good to call if you are loading a new
-	//    level, or if you wanted to force a refresh of all the data in the cache - which might be 
-	//    good in a development environment.
-	//
 	void ResourceManager::flush(void)
 	{
 		while (!m_Lru.empty())
@@ -267,9 +229,9 @@ namespace Res
 	}
 
 
-	//
-	// ResourceManager::MakeRoom									- Chapter 8, page 231
-	//
+	////
+	//// ResourceManager::MakeRoom									- Chapter 8, page 231
+	////
 	bool ResourceManager::makeRoom(UINT p_Size)
 	{
 		if (p_Size > m_CacheSize)
@@ -289,10 +251,7 @@ namespace Res
 
 		return true;
 	}
-
-	//
-	//	ResourceManager::Free									- Chapter 8, page 228
-	//
+	
 	void ResourceManager::Free(std::shared_ptr<ResourceHandle> p_Gonner)
 	{
 		m_Lru.remove(p_Gonner);
@@ -301,8 +260,8 @@ namespace Res
 		// so the cache can't actually count the memory freed until the
 		// ResourceHandle pointing to it is destroyed.
 
-		//m_Allocated -= gonner->m_Resource.m_size;
-		//delete gonner;
+		m_Allocated -= p_Gonner->size();
+		p_Gonner.reset();
 	}
 
 	//

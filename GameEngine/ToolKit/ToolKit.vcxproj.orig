@@ -93,9 +93,12 @@
   <ItemGroup>
     <ClInclude Include="libs\zconf.h" />
     <ClInclude Include="libs\zlib.h" />
+<<<<<<< HEAD
     <ClInclude Include="Source\Allocator\Deleter.h" />
-    <ClInclude Include="Source\ResourceManager\OBJResourceLoader.h" />
     <ClInclude Include="Source\Logger\Logger.h" />
+=======
+    <ClInclude Include="Source\ResourceManager\OBJResourceLoader.h" />
+>>>>>>> master
     <ClInclude Include="Source\ResourceManager\Macros.h" />
     <ClInclude Include="Source\ResourceManager\OBJResourceExtraData.h" />
     <ClInclude Include="Source\ResourceManager\ResourceZipFile.h" />
@@ -116,8 +119,11 @@
     <ClInclude Include="Source\ResourceManager\ZipFile.h" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ClCompile Include="Source\Logger\Logger.cpp" />
+=======
     <ClCompile Include="Source\ResourceManager\OBJResourceLoader.cpp" />
+>>>>>>> master
     <ClCompile Include="Source\ResourceManager\ResourceHandle.cpp" />
     <ClCompile Include="Source\ResourceManager\ResourceZipFile.cpp" />
     <ClCompile Include="Source\ResourceManager\Resource.cpp" />

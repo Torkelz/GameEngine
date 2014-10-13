@@ -17,9 +17,10 @@ namespace Res
 		std::wstring m_ResFileName;
 
 	public:
-		ResourceZipFile(const std::wstring p_ResFileName);
+		ResourceZipFile();
 		virtual ~ResourceZipFile(void);
 
+		virtual void initialize(std::wstring p_ResFileName);
 		virtual bool open(void);
 		virtual int getRawResourceSize(const Resource &p_R);
 		virtual int getRawResource(const Resource &p_R, char *p_Buffer);

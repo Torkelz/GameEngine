@@ -180,7 +180,10 @@ ToolKitd.lib
 *.dll
 */Bin/
 */Test/
-*.cso
+<<<<<<< HEAD
 GameEngine/Demo/logFile.txt
 !GameEngine/GameEngine/Bin/hubba.zip
-*.orig
+=======
+*.cso
+GameEngine/Demo/logFile.txt
+>>>>>>> master

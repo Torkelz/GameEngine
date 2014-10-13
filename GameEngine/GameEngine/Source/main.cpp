@@ -8,12 +8,11 @@
 #include <iostream>
 
 #include "IResourceManager.h"
-
+#define TOTAL_SIZE 200 * 1024 * 1024
 int main(int /*argc*/, char* /*argv*/[])
 {
 
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
 	Assignment1 ass1;
 
 	//ass1.scenario1Test();
@@ -26,22 +25,24 @@ int main(int /*argc*/, char* /*argv*/[])
 	
 	using namespace Res;
 
-	ResourceZipFile *zip = new ResourceZipFile(L"hubba3.zip");
-	const unsigned int s = 50;
-	ResourceManager man(s);
-
+	ResourceZipFile zip = ResourceZipFile();
+	zip.initialize(L"hubba.zip");
+	
+	ResourceManager man(TOTAL_SIZE);
 
 	man.init();
+	man.loadResource(&zip, "hubba");
 
 	man.registerLoader(std::shared_ptr<IResourceLoader>(new Res::OBJResourceLoader()));
+	Resource res("assignment1.xlsx");
 
 	
-	Resource res("hubba\\models\\Street Light\\street_lamp.obj");
-	man.loadResource(zip, "hubba");
+	Resource re("hubba\\models\\Street Light\\street_lamp.obj");
 
-	std::shared_ptr<ResourceHandle> texture = man.getHandle(&res, "hubba");
-	int size = texture->size();
+	std::weak_ptr<ResourceHandle> texture = man.getHandle(&res, "hubba");
+	int size = texture.lock()->size();
 
+	man.Free(texture.lock());
 
 	return EXIT_SUCCESS;
 }
