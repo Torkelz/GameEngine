@@ -35,7 +35,7 @@ int main(int /*argc*/, char* /*argv*/[])
 	man.init();
 	man.loadResource(&zip, "hubba");
 
-	Resource res("Scenario1Tests.csv");
+	Resource res("assignment1.xlsx");
 
 	std::shared_ptr<ResourceHandle> texture = man.getHandle(&res, "hubba");
 	int size = texture->size();
