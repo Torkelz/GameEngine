@@ -8,6 +8,31 @@ namespace Res
 	{
 	public:
 		typedef unsigned int UINT;
+
+		struct Vec3
+		{
+			float x, y, z;
+			Vec3(float p_X, float p_Y, float p_Z) : x(p_X), y(p_Y), z(p_Z)
+			{}
+			Vec3(){}
+		};
+		struct Vec2
+		{
+			float x, y;
+			Vec2(float p_X, float p_Y) : x(p_X), y(p_Y)
+			{}
+			Vec2(){}
+		};
+
+		struct Vertex
+		{
+			Vec3 pos, normal;
+			Vec2 texCoords;
+			Vertex(Vec3 p_Pos, Vec3 p_Normal, Vec2 p_TexCoords) : pos(p_Pos), normal(p_Normal), texCoords(p_TexCoords)
+			{}
+			Vertex(){}
+		};
+
 	public:
 		virtual std::string getPattern(void);
 		virtual bool useRawFile(void);

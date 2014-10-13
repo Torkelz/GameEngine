@@ -26,12 +26,17 @@ int main(int /*argc*/, char* /*argv*/[])
 	
 	using namespace Res;
 
-	ResourceZipFile *zip = new ResourceZipFile(L"hubba.zip");
+	ResourceZipFile *zip = new ResourceZipFile(L"hubba3.zip");
 	const unsigned int s = 50;
 	ResourceManager man(s);
+
+
 	man.init();
+
+	man.registerLoader(std::shared_ptr<IResourceLoader>(new Res::OBJResourceLoader()));
+
 	
-	Resource res("scenario1Tests.csv");
+	Resource res("hubba\\models\\Street Light\\street_lamp.obj");
 	man.loadResource(zip, "hubba");
 
 	std::shared_ptr<ResourceHandle> texture = man.getHandle(&res, "hubba");

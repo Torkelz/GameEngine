@@ -1,4 +1,7 @@
 #include "OBJResourceLoader.h"
+#include <vector>
+#include <sstream>
+#include <fstream>
 
 namespace Res
 {
@@ -29,6 +32,68 @@ namespace Res
 
 	bool OBJResourceLoader::parseOBJ(char *p_ObjStream, size_t p_Length, std::shared_ptr<ResourceHandle> p_Handle)
 	{
+		char *currentChar = p_ObjStream;
+		size_t read = 0;
+
+		std::vector<Vec3> positions;
+		std::vector<Vec3> normals;
+		std::vector<Vec2> texCoords;
+		std::vector<Vertex> vertices;
+
+		std::string srcMaterial;
+		std::string line;
+		std::string prefix;
+
+		std::stringstream fileStream;
+		fileStream << p_ObjStream;
+
+		while (std::getline(fileStream, line))
+		{
+			prefix = "NULL";
+			std::stringstream lineStream;
+			lineStream << line;
+			lineStream >> prefix;
+			if (prefix == "NULL" || prefix == "#")
+				continue;
+
+			if (prefix == "v")
+			{
+				Vec3 pos;
+				lineStream >> pos.x >> pos.y >> pos.z;
+				positions.push_back(pos);
+			}
+			else if (prefix == "vn")
+			{
+				Vec3 normal;
+				lineStream >> normal.x >> normal.y >> normal.z;
+				normals.push_back(normal);
+			}
+			else if (prefix == "vt")
+			{
+				Vec2 texC;
+				lineStream >> texC.x >> texC.y;
+				texC.y *= -1;
+				texCoords.push_back(texC);
+			}
+			else if (prefix == "f")
+			{
+				UINT iPosition, iTexCoord, iNormal;
+				Vertex vertex;
+				char slash;
+				for (UINT iFace = 0; iFace < 3; iFace++)
+				{
+					lineStream >> iPosition >> slash >> iTexCoord >> slash >> iNormal;
+					vertex.pos = positions[iPosition - 1];
+					vertex.normal = normals[iNormal - 1];
+					vertex.texCoords = texCoords[iTexCoord - 1];
+					vertices.push_back(vertex);
+				}
+			}
+		}
+		positions.clear();
+		normals.clear();
+		texCoords.clear();
+
 		return true;
 	}
 }
