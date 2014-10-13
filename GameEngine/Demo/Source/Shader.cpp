@@ -6,6 +6,7 @@
 #include <d3dcompiler.h>
 #include <vector>
 #include <iostream>
+#include <iterator>
 
 using std::vector;
 
@@ -90,7 +91,8 @@ HRESULT Shader::compileAndCreateShader(LPCWSTR p_Filename, D3D_SHADER_MACRO* p_D
 	else if (m_ShaderType == Type::VERTEX_SHADER)
 	{
 		m_VertexDescription = new D3D11_INPUT_ELEMENT_DESC[m_NumOfElements];
-		std::copy(p_VertexLayout, p_VertexLayout + m_NumOfElements, m_VertexDescription);
+		//std::copy(p_VertexLayout, p_VertexLayout + m_NumOfElements, m_VertexDescription);
+		std::copy(p_VertexLayout, p_VertexLayout + m_NumOfElements, stdext::checked_array_iterator<D3D11_INPUT_ELEMENT_DESC*>(m_VertexDescription, m_NumOfElements));
 	}
 
 	releaseShader(p_ShaderType);

@@ -81,6 +81,12 @@
     <ClInclude Include="Source\ResourceManager\OBJResourceLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Allocator\Deleter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ILogger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Allocator\DoubleEdgeAllocator.cpp">

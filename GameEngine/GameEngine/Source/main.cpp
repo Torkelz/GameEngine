@@ -34,14 +34,14 @@ int main(int /*argc*/, char* /*argv*/[])
 	man.loadResource(&zip, "hubba");
 
 	man.registerLoader(std::shared_ptr<IResourceLoader>(new OBJResourceLoader()));
-	Resource res("assignment1.xlsx", "hubba");
+	//Resource res("assignment1.xlsx", "hubba");
 	
 	//Resource re("hubba\\models\\Street Light\\street_lamp.obj", "hubba3");
 
-	std::weak_ptr<ResourceHandle> texture = man.getHandle(&res);
-	int size = texture.lock()->size();
+	//std::weak_ptr<ResourceHandle> texture = man.getHandle(&res);
+	//int size = texture.lock()->size();
 
-	man.Free(texture.lock());
+	//man.Free(texture.lock());
 
 	return EXIT_SUCCESS;
 }

@@ -1,7 +1,7 @@
 #include "Render.h"
 #include "Graphics.h"
 #include "Utilities.h"
-#include "Logger.h"
+#include "ILogger.h"
 
 Render::Render(void) :
 	m_Graphics(nullptr),

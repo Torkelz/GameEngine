@@ -91,6 +91,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\ILogger.h" />
     <ClInclude Include="libs\zconf.h" />
     <ClInclude Include="libs\zlib.h" />
     <ClInclude Include="Source\Allocator\Deleter.h" />
