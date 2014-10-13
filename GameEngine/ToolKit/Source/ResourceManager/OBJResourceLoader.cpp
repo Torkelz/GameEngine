@@ -1,4 +1,5 @@
 #include "OBJResourceLoader.h"
+#include "ResourceHandle.h"
 #include <vector>
 #include <sstream>
 #include <fstream>
@@ -32,8 +33,7 @@ namespace Res
 
 	bool OBJResourceLoader::parseOBJ(char *p_ObjStream, size_t p_Length, std::shared_ptr<ResourceHandle> p_Handle)
 	{
-		char *currentChar = p_ObjStream;
-		size_t read = 0;
+		std::shared_ptr<OBJResourceExtraData> extra = std::static_pointer_cast<OBJResourceExtraData>(p_Handle->getExtra());
 
 		std::vector<Vec3> positions;
 		std::vector<Vec3> normals;
@@ -46,7 +46,6 @@ namespace Res
 
 		std::stringstream fileStream;
 		fileStream << p_ObjStream;
-
 		while (std::getline(fileStream, line))
 		{
 			prefix = "NULL";
@@ -55,8 +54,15 @@ namespace Res
 			lineStream >> prefix;
 			if (prefix == "NULL" || prefix == "#")
 				continue;
-
-			if (prefix == "v")
+			if (prefix == "mtllib")
+			{
+				std::string s;
+				lineStream >> s;
+				std::string filepath = p_Handle->getName();
+				std::string materialPath = filepath.substr(0, filepath.find_last_of("\\/")) + "\\" + s;
+				int dummy = 0 ;
+			}
+			else if (prefix == "v")
 			{
 				Vec3 pos;
 				lineStream >> pos.x >> pos.y >> pos.z;
