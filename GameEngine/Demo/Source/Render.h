@@ -1,14 +1,22 @@
 #pragma once
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-
+#include <memory>
+#include <utility>
+#include <map>
 #include "XMFloatUtil.h"
 #include "WrapperFactory.h"
+#include "IResourceManager.h"
+#include "Mesh.h"
+#include "MeshInstance.h"
 
-class Graphics;
+class Graphics; 
+
 
 class Render
 {
+public:
+	typedef unsigned int UINT;
 private:
 	Graphics *m_Graphics;
 
@@ -23,14 +31,9 @@ private:
 
 	Buffer *m_CBCameraFixed;
 	Buffer *m_CBCamera;
-
-	struct Vertex
-	{
-		Vector3 position;
-		Vector3 normal;
-	};
-	Buffer *temporarybox;
-	Shader *temporaryShader;
+	UINT m_NextModelInstanceID;
+	std::map<std::string, Mesh> m_MeshList;
+	std::map<UINT, MeshInstance> m_MeshInstanceList;
 
 public:
 	Render(void);
@@ -41,23 +44,14 @@ public:
 	void draw(void);
 
 	void updateCamera(Vector3 p_Position, Vector3 p_Forward, Vector3 p_Up);
+	void createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle);
+	int	 createMeshInstance(const std::string p_MeshName);
+	MeshInstance &getMeshInstance(UINT p_InstanceId);
 
 private:
 	void createConstantBuffers();
 	void updateConstantBuffer(void);
 
 	void initializeMatrices(int p_ScreenWidth, int p_ScreenHeight, float p_NearZ, float p_FarZ);
-
-	Vertex* createBox(int size, DirectX::XMVECTOR center);
-
-	inline Vertex createVertex(DirectX::XMVECTOR _position, DirectX::XMVECTOR _normal)
-	{
-		Vertex v;
-
-		DirectX::XMStoreFloat3(&v.position, _position);
-		DirectX::XMStoreFloat3(&v.normal, _normal);
-
-		return v;
-	}
 };
 

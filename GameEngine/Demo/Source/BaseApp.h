@@ -1,6 +1,7 @@
 #pragma once
 #include "Window.h"
 #include "Render.h"
+#include "Level.h"
 #include "Input\Input.h"
 
 class BaseApp
@@ -22,6 +23,7 @@ private:
 
 	Window m_Window;
 	Render m_Render;
+	Level	m_Level;
 
 
 	//Will be moved to level?

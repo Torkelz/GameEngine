@@ -72,13 +72,17 @@
     <ClInclude Include="libs\zconf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ResourceManager\OBJResourceExtraData.h">
+<<<<<<< HEAD
+    <ClInclude Include="Source\Allocator\Deleter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Logger\Logger.h">
+=======
+    <ClInclude Include="Source\ResourceManager\OBJResourceExtraData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\ResourceManager\OBJResourceLoader.h">
+>>>>>>> master
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -113,10 +117,11 @@
     <ClCompile Include="Source\ResourceManager\ResourceHandle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="Source\Logger\Logger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+=======
     <ClCompile Include="Source\ResourceManager\OBJResourceLoader.cpp">
+>>>>>>> master
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

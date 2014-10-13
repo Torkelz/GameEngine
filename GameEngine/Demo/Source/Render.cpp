@@ -1,11 +1,13 @@
 #include "Render.h"
 #include "Graphics.h"
 #include "Utilities.h"
+#include "Logger.h"
 
 Render::Render(void) :
 	m_Graphics(nullptr),
 	m_CBCameraFixed(nullptr),
-	m_CBCamera(nullptr)
+	m_CBCamera(nullptr),
+	m_NextModelInstanceID(0)
 {
 }
 
@@ -32,15 +34,6 @@ void Render::initialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bool
 	createConstantBuffers();
 
 
-	Buffer::Description bDesc = {};
-	bDesc.initData = createBox(10, DirectX::XMVectorSet(0.f, 0.f, 0.f, 0.f));
-	bDesc.numOfElements = 36;
-	bDesc.sizeOfElement = sizeof(Vertex);
-	bDesc.type = Buffer::Type::VERTEX_BUFFER;
-	bDesc.usage = Buffer::Usage::DEFAULT;
-
-	temporarybox = WrapperFactory::getInstance()->createBuffer(bDesc);
-	temporaryShader = WrapperFactory::getInstance()->createShader(L".\\Source\\Shader\\Box.hlsl", "VS,PS", "5_0", ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER);
 }
 
 void Render::shutdown(void)
@@ -57,18 +50,24 @@ void Render::draw(void)
 	static float normal[] = { 0.5f, 0.5f, 0.5f, 1.f };
 	m_Graphics->begin(normal);
 
-	temporaryShader->setShader();
+	
 	m_CBCameraFixed->setBuffer(0);
 	m_CBCamera->setBuffer(1);
-	temporarybox->setBuffer(0);
-	
 	m_Graphics->getDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	m_Graphics->getDeviceContext()->Draw(36, 0);
+	//for (std::vector<Mesh>::const_iterator &it = m_MeshList.cbegin(); it != m_MeshList.cend(); ++it)
+	//{
+	//	it->shader->setShader();
+	//	it->buffer->setBuffer(0);
+	//	m_Graphics->getDeviceContext()->Draw(it->buffer->getNumOfElements(), 0);
+	//	it->buffer->unsetBuffer(0);
+	//	it->shader->unSetShader();
+	//}
+	
+	
 
 	m_CBCameraFixed->unsetBuffer(0);
 	m_CBCamera->unsetBuffer(1);
-	temporaryShader->unSetShader();
+	
 
 	m_Graphics->end();
 }
@@ -117,8 +116,8 @@ void Render::initializeMatrices(int p_ScreenWidth, int p_ScreenHeight, float p_N
 	m_Eye = Vector3(0, 0, -20);
 	m_FarZ = p_FarZ;
 	m_NearZ = p_NearZ;
-	m_ScreenHeight = p_ScreenHeight;
-	m_ScreenWidth = p_ScreenWidth;
+	m_ScreenHeight = (float)p_ScreenHeight;
+	m_ScreenWidth = (float)p_ScreenWidth;
 	eye = Vector4(m_Eye.x, m_Eye.y, m_Eye.z, 1);
 	lookAt = Vector4(0, 0, 0, 1);
 	up = Vector4(0, 1, 0, 0);
@@ -130,73 +129,41 @@ void Render::initializeMatrices(int p_ScreenWidth, int p_ScreenHeight, float p_N
 		(float)p_ScreenWidth / (float)p_ScreenHeight, p_NearZ, m_FarZ)));
 }
 
-Render::Vertex* Render::createBox(int size, DirectX::XMVECTOR center)
+void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 {
-	using namespace DirectX;
+	std::string name = p_ResourceHandle.lock()->getName();
+	if (m_MeshList.count(name) <= 0)
+	{
+		//m_MeshList.insert(name, Mesh());
+	}
+}
 
-	Vertex* box = new Vertex[36];
-	XMVECTOR normal;
-	XMVECTOR vert0 = center + XMVectorSet(-1.0f*size, -1.0f*size, -1.0f*size, 1); // 0 --- LowerLeftFront
-	XMVECTOR vert1 = center + XMVectorSet(1.0f*size, -1.0f*size, -1.0f*size, 1); // 1 +-- LowerRightFront
-	XMVECTOR vert2 = center + XMVectorSet(-1.0f*size, 1.0f*size, -1.0f*size, 1); // 2 -+- UpperLeftFront
-	XMVECTOR vert3 = center + XMVectorSet(1.0f*size, 1.0f*size, -1.0f*size, 1); // 3 ++- UpperRightFront
-	XMVECTOR vert4 = center + XMVectorSet(-1.0f*size, -1.0f*size, 1.0f*size, 1); // 4 --+ LowerLeftBack
-	XMVECTOR vert5 = center + XMVectorSet(1.0f*size, -1.0f*size, 1.0f*size, 1); // 5 +-+ LowerRightBack
-	XMVECTOR vert6 = center + XMVectorSet(-1.0f*size, 1.0f*size, 1.0f*size, 1); // 6 -++ UpperLeftBack
-	XMVECTOR vert7 = center + XMVectorSet(1.0f*size, 1.0f*size, 1.0f*size, 1); // 7 +++ UpperRightBack
-	// Back
-	normal = XMVectorSet(0, 0, 1, 0);
-	box[0] = createVertex(vert4, normal);
-	box[1] = createVertex(vert6, normal);
-	box[2] = createVertex(vert5, normal);
-	box[3] = createVertex(vert6, normal);
-	box[4] = createVertex(vert7, normal);
-	box[5] = createVertex(vert5, normal);
+int Render::createMeshInstance(const std::string p_MeshName)
+{
+	if (m_MeshList.count(p_MeshName) <= 0)
+	{
+		Logger::log(Logger::Level::ERROR_L, "Attempting to create mesh instance without loading the mesh: " + p_MeshName);
+		return -1;
+	}
 
-	// Front
-	normal = XMVectorSet(0, 0, -1, 0);
+	MeshInstance instance;
+	instance.meshName = p_MeshName;
+	instance.position = Vector3(0.f, 0.f, 0.f);
+	instance.rotation = Vector3(0.f, 0.f, 0.f);
+	instance.scale = Vector3(1.f, 1.f, 1.f);
+	int id = m_NextModelInstanceID++;
 
-	box[6] = createVertex(vert1, normal);
-	box[7] = createVertex(vert3, normal);
-	box[8] = createVertex(vert0, normal);
-	box[9] = createVertex(vert3, normal);
-	box[10] = createVertex(vert2, normal);
-	box[11] = createVertex(vert0, normal);
+	m_MeshInstanceList.insert(std::make_pair(id, instance));
 
-	// Top
-	normal = XMVectorSet(0, 1, 0, 0);
-	box[12] = createVertex(vert3, normal);
-	box[13] = createVertex(vert7, normal);
-	box[14] = createVertex(vert2, normal);
-	box[15] = createVertex(vert7, normal);
-	box[16] = createVertex(vert6, normal);
-	box[17] = createVertex(vert2, normal);
+	return id;
+}
 
-	// Bottom
-	normal = XMVectorSet(0, -1, 0, 0);
-	box[18] = createVertex(vert0, normal);
-	box[19] = createVertex(vert4, normal);
-	box[20] = createVertex(vert1, normal);
-	box[21] = createVertex(vert4, normal);
-	box[22] = createVertex(vert5, normal);
-	box[23] = createVertex(vert1, normal);
-
-	// Right						
-	normal = XMVectorSet(1, 0, 0, 0);
-	box[24] = createVertex(vert5, normal);
-	box[25] = createVertex(vert7, normal);
-	box[26] = createVertex(vert1, normal);
-	box[27] = createVertex(vert7, normal);
-	box[28] = createVertex(vert3, normal);
-	box[29] = createVertex(vert1, normal);
-
-	// Left
-	normal = XMVectorSet(-1, 0, 0, 0);
-	box[30] = createVertex(vert0, normal);
-	box[31] = createVertex(vert2, normal);
-	box[32] = createVertex(vert4, normal);
-	box[33] = createVertex(vert2, normal);
-	box[34] = createVertex(vert6, normal);
-	box[35] = createVertex(vert4, normal);
-	return box;
+MeshInstance &Render::getMeshInstance(UINT p_InstanceId)
+{
+	if (m_MeshInstanceList.count(p_InstanceId) <= 0)
+	{
+		Logger::log(Logger::Level::WARNING, "Trying to access a meshInstance that have not been created yet." + std::to_string(p_InstanceId));
+		return MeshInstance();
+	}
+	return m_MeshInstanceList.at(p_InstanceId);
 }
