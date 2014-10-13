@@ -114,6 +114,7 @@
     <ClInclude Include="Source\ResourceManager\IResourceLoader.h" />
     <ClInclude Include="Source\ResourceManager\ResourceHandle.h" />
     <ClInclude Include="Source\ResourceManager\Resource.h" />
+    <ClInclude Include="Source\ResourceManager\Spinlock.h" />
     <ClInclude Include="Source\ResourceManager\ZipFile.h" />
   </ItemGroup>
   <ItemGroup>

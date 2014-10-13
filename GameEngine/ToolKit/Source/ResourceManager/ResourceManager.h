@@ -4,6 +4,8 @@
 #include <map>
 #include <vector>
 
+#include "Spinlock.h"
+
 namespace Res
 {
 	class IResourceFile;
@@ -33,6 +35,7 @@ namespace Res
 
 		UINT m_CacheSize;			// total memory size
 		UINT m_Allocated;			// total memory allocated
+		SpinLock m_AllocatedLock;	// Thread safing the m_Allocated variable
 
 	protected:
 		bool makeRoom(UINT p_Size);
