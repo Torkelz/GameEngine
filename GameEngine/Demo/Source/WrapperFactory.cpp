@@ -240,11 +240,12 @@ vector<string> WrapperFactory::createEntryPointList(const char *p_EntryPoint)
 	std::vector<char> buffer(strlen(p_EntryPoint) + 1);
 	strcpy_s(buffer.data(), (strlen(p_EntryPoint) + 1), p_EntryPoint);
 	char *tmp;
-	tmp = strtok(buffer.data(), ",");
+	char *junkcontext = nullptr;
+	tmp = strtok_s(buffer.data(), ",", &junkcontext);
 	while (tmp != nullptr)
 	{
 		entryList.push_back(tmp);
-		tmp = strtok(NULL, ",");
+		tmp = strtok_s(NULL, ",", &junkcontext);
 	}
 
 	for (int i = entryList.size() - 1; i >= 0; i--)
