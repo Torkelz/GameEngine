@@ -25,7 +25,7 @@ namespace Res
 		}
 		for (auto &res : m_FileMap)
 		{
-			res.second = nullptr;
+			res.second->~IResourceFile();
 		}
 	}
 
@@ -260,8 +260,8 @@ namespace Res
 		// so the cache can't actually count the memory freed until the
 		// ResourceHandle pointing to it is destroyed.
 
-		//m_Allocated -= gonner->m_Resource.m_size;
-		//delete gonner;
+		m_Allocated -= p_Gonner->size();
+		p_Gonner.reset();
 	}
 
 	//

@@ -13,7 +13,6 @@ int main(int /*argc*/, char* /*argv*/[])
 {
 
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
 	Assignment1 ass1;
 
 	//ass1.scenario1Test();
@@ -26,8 +25,6 @@ int main(int /*argc*/, char* /*argv*/[])
 	
 	using namespace Res;
 
-	Allocator::LinearAllocator allocator(TOTAL_SIZE);
-
 	ResourceZipFile zip = ResourceZipFile();
 	zip.initialize(L"hubba.zip");
 	
@@ -37,9 +34,10 @@ int main(int /*argc*/, char* /*argv*/[])
 
 	Resource res("assignment1.xlsx");
 
-	std::shared_ptr<ResourceHandle> texture = man.getHandle(&res, "hubba");
-	int size = texture->size();
-	allocator.clear();
+	std::weak_ptr<ResourceHandle> texture = man.getHandle(&res, "hubba");
+	int size = texture.lock()->size();
+
+	man.Free(texture.lock());
 
 	return EXIT_SUCCESS;
 }
