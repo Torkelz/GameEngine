@@ -51,12 +51,12 @@ namespace Res
 		m_ResourceLoaders.push_front(p_Loader);
 	}
 
-	std::shared_ptr<ResourceHandle> ResourceManager::getHandle(Resource *p_R, std::string p_GUID)
+	std::shared_ptr<ResourceHandle> ResourceManager::getHandle(Resource *p_R)
 	{
 		std::shared_ptr<ResourceHandle> handle(find(p_R));
 		if (handle == nullptr)
 		{
-			handle = load(p_R, p_GUID);
+			handle = load(p_R);
 		}
 		else
 		{
@@ -65,7 +65,7 @@ namespace Res
 		return handle;
 	}
 
-	std::shared_ptr<ResourceHandle> ResourceManager::load(Resource *p_R, std::string p_GUID)
+	std::shared_ptr<ResourceHandle> ResourceManager::load(Resource *p_R)
 	{
 		// Create a new resource and add it to the lru list and map
 		std::shared_ptr<IResourceLoader> loader;
@@ -90,7 +90,7 @@ namespace Res
 		IResourceFile *file = nullptr;
 		for each (auto &res in m_FileMap)
 		{
-			if (res.first == p_GUID)
+			if (res.first == p_R->m_ZipName)
 			{
 				file = res.second;
 			}

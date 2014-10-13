@@ -11,6 +11,7 @@ namespace Res
 	{
 	public:
 		std::string m_Name;
-		Resource(const std::string &p_Name);
+		std::string m_ZipName;
+		Resource(const std::string &p_Name, const std::string &p_ZipName);
 	};
 }

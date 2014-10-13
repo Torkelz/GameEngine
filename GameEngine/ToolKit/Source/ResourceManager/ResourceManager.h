@@ -38,7 +38,7 @@ namespace Res
 		bool makeRoom(UINT p_Size);
 		char *Allocate(UINT p_Size);
 
-		std::shared_ptr<ResourceHandle> load(Resource *p_R, std::string p_GUID);
+		std::shared_ptr<ResourceHandle> load(Resource *p_R);
 		std::shared_ptr<ResourceHandle> find(Resource *p_R);
 		void update(std::shared_ptr<ResourceHandle> p_Handle);
 
@@ -55,7 +55,7 @@ namespace Res
 
 		void registerLoader(std::shared_ptr<IResourceLoader> p_Loader);
 
-		std::shared_ptr<ResourceHandle> getHandle(Resource *p_R, std::string p_GUID);
+		std::shared_ptr<ResourceHandle> getHandle(Resource *p_R);
 
 		//int preload(const std::string p_Pattern, void(*progressCallback)(int, bool &));
 		std::vector<std::string> match(const std::string p_Pattern, std::string p_GUID);

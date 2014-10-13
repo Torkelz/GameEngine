@@ -33,13 +33,12 @@ int main(int /*argc*/, char* /*argv*/[])
 	man.init();
 	man.loadResource(&zip, "hubba");
 
-	man.registerLoader(std::shared_ptr<IResourceLoader>(new Res::OBJResourceLoader()));
-	Resource res("assignment1.xlsx");
-
+	man.registerLoader(std::shared_ptr<IResourceLoader>(new OBJResourceLoader()));
+	Resource res("assignment1.xlsx", "hubba");
 	
-	Resource re("hubba\\models\\Street Light\\street_lamp.obj");
+	//Resource re("hubba\\models\\Street Light\\street_lamp.obj", "hubba3");
 
-	std::weak_ptr<ResourceHandle> texture = man.getHandle(&res, "hubba");
+	std::weak_ptr<ResourceHandle> texture = man.getHandle(&res);
 	int size = texture.lock()->size();
 
 	man.Free(texture.lock());
