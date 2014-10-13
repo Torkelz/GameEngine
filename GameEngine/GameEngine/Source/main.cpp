@@ -26,7 +26,7 @@ int main(int /*argc*/, char* /*argv*/[])
 	using namespace Res;
 
 	ResourceZipFile zip = ResourceZipFile();
-	zip.initialize(L"hubba.zip");
+	zip.initialize(L"..\\Resources\\hubba.zip");
 	
 	ResourceManager man(TOTAL_SIZE);
 
