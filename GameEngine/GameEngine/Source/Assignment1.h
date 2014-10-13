@@ -8,7 +8,7 @@
 #include <random>
 #include <fstream>
 
-//#define OLDNEW
+#define OLDNEW
 
 #ifdef OLDNEW
 #define DBGNEW(x) new
@@ -77,13 +77,13 @@ public:
 #else
 		fileName = "Scenario1Tests.csv";
 #endif
-		const int nTests = 8;
-		int startValue = 25;
+		const int nTests = 32;
+		int startValue = 100;
 		std::vector<int> tests;
 		for (unsigned int i = 0; i < nTests; ++i)
 		{
 			tests.push_back(startValue);
-			startValue *= 2;
+			startValue += 100;
 		}
 
 		std::ofstream myFile(fileName);
@@ -123,13 +123,13 @@ public:
 		fileName = "Scenario2Tests.csv";
 #endif
 
-		const int nTests = 8;
-		int startValue = 25;
+		const int nTests = 32;
+		int startValue = 100;
 		std::vector<int> tests;
 		for (unsigned int i = 0; i < nTests; ++i)
 		{
 			tests.push_back(startValue);
-			startValue *= 2;
+			startValue += 100;
 		}
 
 		std::ofstream myFile(fileName);
