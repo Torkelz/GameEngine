@@ -32,6 +32,8 @@ namespace Res
 	void ResourceManager::init(void)
 	{
 		registerLoader(std::shared_ptr<IResourceLoader>(new DefaultResourceLoader()));
+		m_AllocatedLock = SpinLock();
+		m_MakeRoomLock = SpinLock();
 	}
 
 	bool ResourceManager::loadResource(IResourceFile *p_Resource, std::string p_GUID)
@@ -195,24 +197,30 @@ namespace Res
 		if (!makeRoom(p_Size))
 			return NULL;
 
+		m_AllocatedLock.lock();
 		char *mem = new char[p_Size];
 		if (mem)
 		{
 			m_Allocated += p_Size;
 		}
+		m_AllocatedLock.unlock();
 
 		return mem;
 	}
 
 	void ResourceManager::freeOneResource(void)
 	{
+		m_AllocatedLock.lock();
 		ResHandleList::iterator gonner = m_Lru.end();
 		gonner--;
 
 		std::shared_ptr<ResourceHandle> handle = *gonner;
-
 		m_Lru.pop_back();
 		m_Resources.erase(handle->m_Resource.m_Name);
+
+		m_Allocated -= handle->size();
+		m_AllocatedLock.unlock();
+		handle.reset();
 		// Note - you can't change the resource cache size yet - the resource bits could still actually be
 		// used by some sybsystem holding onto the ResourceHandle. Only when it goes out of scope can the memory
 		// be actually free again.
@@ -234,8 +242,10 @@ namespace Res
 	////
 	bool ResourceManager::makeRoom(UINT p_Size)
 	{
+		m_MakeRoomLock.lock();
 		if (p_Size > m_CacheSize)
 		{
+			m_MakeRoomLock.unlock();
 			return false;
 		}
 
@@ -244,16 +254,21 @@ namespace Res
 		{
 			// The cache is empty, and there's still not enough room.
 			if (m_Lru.empty())
+			{
+				m_MakeRoomLock.unlock();
 				return false;
+			}
 
 			freeOneResource();
 		}
 
+		m_MakeRoomLock.unlock();
 		return true;
 	}
 	
 	void ResourceManager::Free(std::shared_ptr<ResourceHandle> p_Gonner)
 	{
+		m_AllocatedLock.lock();
 		m_Lru.remove(p_Gonner);
 		m_Resources.erase(p_Gonner->m_Resource.m_Name);
 		// Note - the resource might still be in use by something,
@@ -261,6 +276,7 @@ namespace Res
 		// ResourceHandle pointing to it is destroyed.
 
 		m_Allocated -= p_Gonner->size();
+		m_AllocatedLock.unlock();
 		p_Gonner.reset();
 	}
 
@@ -271,7 +287,9 @@ namespace Res
 	//
 	void ResourceManager::memoryHasBeenFreed(UINT p_Size)
 	{
+		m_AllocatedLock.lock();
 		m_Allocated -= p_Size;
+		m_AllocatedLock.unlock();
 	}
 
 	//

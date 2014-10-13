@@ -36,6 +36,7 @@ namespace Res
 		UINT m_CacheSize;			// total memory size
 		UINT m_Allocated;			// total memory allocated
 		SpinLock m_AllocatedLock;	// Thread safing the m_Allocated variable
+		SpinLock m_MakeRoomLock;	// Thread safing the makeRoom function.
 
 	protected:
 		bool makeRoom(UINT p_Size);
