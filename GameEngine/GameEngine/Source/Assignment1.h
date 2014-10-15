@@ -113,8 +113,6 @@ public:
 	void scenario2Test()
 	{
 		HighPerformanceTimer timer;
-		int numberOfItems = 1000;
-		int* randSeq = new int[numberOfItems];
 
 		std::string fileName;
 #ifdef OLDNEW
