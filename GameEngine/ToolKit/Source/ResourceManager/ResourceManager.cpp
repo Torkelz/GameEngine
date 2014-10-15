@@ -23,10 +23,10 @@ namespace Res
 		{
 			freeOneResource();
 		}
-		for (auto &res : m_FileMap)
-		{
-			res.second->~IResourceFile();
-		}
+		//for (auto &res : m_FileMap)
+		//{
+		//	res.second->~IResourceFile();
+		//}
 	}
 
 	ResourceManager::UINT ResourceManager::getAllocated(void)
@@ -37,8 +37,6 @@ namespace Res
 	void ResourceManager::init(void)
 	{
 		registerLoader(std::shared_ptr<IResourceLoader>(new DefaultResourceLoader()));
-		m_AllocatedLock = SpinLock();
-		m_MakeRoomLock = SpinLock();
 	}
 
 	bool ResourceManager::loadResource(IResourceFile *p_Resource, std::string p_GUID)

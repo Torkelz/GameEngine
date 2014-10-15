@@ -1,27 +1,29 @@
 #pragma once
-
 #include <atomic>
 
 class SpinLock
 {
+private:
 	std::atomic_flag flag;
 
-	public:
-	void lock()
+public:
+	inline void lock()
 	{
 		while (flag.test_and_set(std::memory_order_acquire));
 	}
-	bool try_lock()
+	inline bool try_lock()
 	{
 		return !flag.test_and_set(std::memory_order_acquire);
 	}
-	void unlock()
+	inline void unlock()
 	{
 		flag.clear(std::memory_order_release);
 	}
-	SpinLock()
+
+	inline SpinLock(void)
 	{
 		flag.clear();
 	}
+
 };
 
