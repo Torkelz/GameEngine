@@ -26,7 +26,7 @@ namespace Res
 
 	OBJResourceLoader::UINT OBJResourceLoader::getLoadedResourceSize(char *p_RawBuffer, UINT p_RawSize)
 	{
-		return p_RawSize * 0.5f; //Might be wrong!
+		return (UINT)(p_RawSize * 0.5f); //Might be wrong!
 	}
 
 	bool OBJResourceLoader::loadResource(char *p_RawBuffer, UINT p_RawSize, std::shared_ptr<ResourceHandle> p_Handle)
