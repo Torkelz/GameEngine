@@ -50,7 +50,7 @@ void BaseApp::init()
 
 	m_CameraDirection = Vector3(1, 0, 0);
 	m_CameraPosition = Vector3(0, 0, 0);
-	m_CamerSpeed = 10;
+	m_CamerSpeed = 2;
 	m_Level.initialize(&m_Render);
 
 }
@@ -102,7 +102,7 @@ void BaseApp::run()
 		//m_CameraPosition = m_CameraPosition + m_CameraDirection * m_CamerSpeed;
 
 		
-
+		m_Level.draw();
 		m_Render.updateCamera(m_CameraPosition, m_CameraDirection, Vector3(0, 1, 0));
 		m_Render.draw();
 

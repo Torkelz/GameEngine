@@ -31,9 +31,12 @@ private:
 
 	Buffer *m_CBCameraFixed;
 	Buffer *m_CBCamera;
+	Buffer *m_CBWorld;
+
 	UINT m_NextModelInstanceID;
 	std::map<std::string, Mesh> m_MeshList;
 	std::map<UINT, MeshInstance> m_MeshInstanceList;
+	std::vector<UINT> m_RenderList;
 
 public:
 	Render(void);
@@ -43,10 +46,12 @@ public:
 
 	void draw(void);
 
+	void drawMeshInstance(UINT p_Instance);
+
 	void updateCamera(Vector3 p_Position, Vector3 p_Forward, Vector3 p_Up);
 	void createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle);
 	int	 createMeshInstance(const std::string p_MeshName);
-	MeshInstance &getMeshInstance(UINT p_InstanceId);
+	MeshInstance *getMeshInstance(UINT p_InstanceId);
 
 private:
 	void createConstantBuffers();

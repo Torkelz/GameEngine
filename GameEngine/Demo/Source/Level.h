@@ -15,6 +15,8 @@ private:
 	};
 	Render *m_Render;
 
+	int lamp;
+
 public:
 	Level();
 	~Level();

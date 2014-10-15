@@ -9,6 +9,7 @@ Render::Render(void) :
 	m_Graphics(nullptr),
 	m_CBCameraFixed(nullptr),
 	m_CBCamera(nullptr),
+	m_CBWorld(nullptr),
 	m_NextModelInstanceID(0)
 {
 }
@@ -55,23 +56,42 @@ void Render::draw(void)
 	
 	m_CBCameraFixed->setBuffer(0);
 	m_CBCamera->setBuffer(1);
+	m_CBWorld->setBuffer(2);
+
 	m_Graphics->getDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//for (std::vector<Mesh>::const_iterator &it = m_MeshList.cbegin(); it != m_MeshList.cend(); ++it)
-	//{
-	//	it->shader->setShader();
-	//	it->buffer->setBuffer(0);
-	//	m_Graphics->getDeviceContext()->Draw(it->buffer->getNumOfElements(), 0);
-	//	it->buffer->unsetBuffer(0);
-	//	it->shader->unSetShader();
-	//}
-	
+
+	for (std::vector<UINT>::const_iterator &it = m_RenderList.cbegin(); it != m_RenderList.cend(); ++it)
+	{
+		MeshInstance *mInstance = getMeshInstance(*it);
+		if (!mInstance)
+			continue;
+
+		m_Graphics->getDeviceContext()->UpdateSubresource(m_CBWorld->getBufferPointer(), NULL, nullptr, &mInstance->getWorldMatrix(), 0, 0);
+
+		Mesh *m = &m_MeshList.at(mInstance->meshName);
+
+		m->shader->setShader();
+		m->buffer->setBuffer(0);
+		m->indexBuffer->setBuffer(1);
+		m_Graphics->getDeviceContext()->DrawIndexed(m->indexBuffer->getNumOfElements(), 0, 0);
+		m->buffer->unsetBuffer(0);
+		m->indexBuffer->unsetBuffer(1);
+		m->shader->unSetShader();
+	}
 	
 
 	m_CBCameraFixed->unsetBuffer(0);
 	m_CBCamera->unsetBuffer(1);
-	
+	m_CBWorld->unsetBuffer(2);
 
 	m_Graphics->end();
+
+	m_RenderList.clear();
+}
+
+void Render::drawMeshInstance(UINT p_Instance)
+{
+	m_RenderList.push_back(p_Instance);
 }
 
 void Render::updateCamera(Vector3 p_Position, Vector3 p_Forward, Vector3 p_Up)
@@ -101,6 +121,9 @@ void Render::createConstantBuffers()
 	bDesc.usage = Buffer::Usage::DEFAULT;
 
 	m_CBCamera = WrapperFactory::getInstance()->createBuffer(bDesc);
+
+	bDesc.initData = nullptr;
+	m_CBWorld = WrapperFactory::getInstance()->createBuffer(bDesc);
 }
 
 void Render::updateConstantBuffer(void)
@@ -156,9 +179,9 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 		bDesc.usage = Buffer::Usage::USAGE_IMMUTABLE;
 
 		m.buffer = std::unique_ptr<Buffer>(WrapperFactory::getInstance()->createBuffer(bDesc));
+		m.shader = std::shared_ptr<Shader>(WrapperFactory::getInstance()->createShader(L".\\Source\\Shader\\Lamp.hlsl", "VS,PS", "5_0", ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER));
 
-		int dummy = 0;
-		//m_MeshList.insert(name, m);
+		m_MeshList.insert(std::make_pair(name, std::move(m)));
 	}
 }
 
@@ -182,12 +205,12 @@ int Render::createMeshInstance(const std::string p_MeshName)
 	return id;
 }
 
-MeshInstance &Render::getMeshInstance(UINT p_InstanceId)
+MeshInstance *Render::getMeshInstance(UINT p_InstanceId)
 {
 	if (m_MeshInstanceList.count(p_InstanceId) <= 0)
 	{
 		Logger::log(Logger::Level::WARNING, "Trying to access a meshInstance that have not been created yet." + std::to_string(p_InstanceId));
-		return MeshInstance();
+		return nullptr;
 	}
-	return m_MeshInstanceList.at(p_InstanceId);
+	return &m_MeshInstanceList.at(p_InstanceId);
 }

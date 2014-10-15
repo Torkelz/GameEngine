@@ -13,7 +13,8 @@ namespace Res
 
 		struct Vertex
 		{
-			DirectX::XMFLOAT3 pos, normal;
+			DirectX::XMFLOAT3 pos;
+			DirectX::XMFLOAT3 normal;
 			DirectX::XMFLOAT2 texCoords;
 			Vertex(DirectX::XMFLOAT3 p_Pos, DirectX::XMFLOAT3 p_Normal, DirectX::XMFLOAT2 p_TexCoords) : pos(p_Pos), normal(p_Normal), texCoords(p_TexCoords)
 			{}

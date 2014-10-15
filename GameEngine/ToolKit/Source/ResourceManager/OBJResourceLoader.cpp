@@ -106,7 +106,7 @@ namespace Res
 				bool calcNormal = false;
 				for (UINT iFace = 0; iFace < 3; iFace++)
 				{
-					int iValues[3] = { -1, -1, -1 };
+					int iValues[3] = { 0, 0, 0 };
 
 					for (unsigned int i = 0; i < 3; i++)
 					{
@@ -124,9 +124,7 @@ namespace Res
 						}
 					}
 
-					int hash = 73 * iValues[0];
-					if (iValues[1] >= 0) hash += 89 * iValues[1];
-					if (iValues[2] >= 0) hash += 151 * iValues[2];
+					int hash = 73 * iValues[0] + 89 * iValues[1] + 151 * iValues[2];
 
 
 					if (vertexMap.count(hash) > 0)

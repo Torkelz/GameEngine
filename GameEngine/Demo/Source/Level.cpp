@@ -21,35 +21,30 @@ void Level::initialize(Render *p_Render)
 	bDesc.type = Buffer::Type::VERTEX_BUFFER;
 	bDesc.usage = Buffer::Usage::DEFAULT;
 
-	//Render::Mesh meshi;
-
-
-	//meshi.buffer = std::unique_ptr<Buffer>(WrapperFactory::getInstance()->createBuffer(bDesc));
-	//meshi.shader = std::shared_ptr<Shader>(WrapperFactory::getInstance()->createShader(L".\\Source\\Shader\\Box.hlsl", "VS,PS", "5_0", ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER));
-
-	//m_Render->addMesh(std::move(meshi));
-
 
 	using namespace Res;
 
 	ResourceZipFile zip = ResourceZipFile();
 	zip.initialize(L"..\\Resources\\hubba3.zip");
 
-	ResourceManager man(100000000);
+	ResourceManager man(1000000000);
 
 	man.init();
 	man.loadResource(&zip, "hubba3");
 
 	man.registerLoader(std::shared_ptr<IResourceLoader>(new OBJResourceLoader()));
-	//Resource res("assignment1.xlsx", "hubba");
 
 	Resource re("hubba\\models\\Street Light\\street_lamp.obj", "hubba3");
 
 	std::weak_ptr<ResourceHandle> texture = man.getHandle(&re);
 
-	ModifyMesh::setMeshPosition(1, Vector3(0, 1, 0));
 
 	m_Render->createMesh(texture);
+
+	lamp = m_Render->createMeshInstance(texture.lock()->getName());
+	ModifyMesh::setMeshPosition(lamp, Vector3(0, 0, 0));
+	ModifyMesh::setMeshScale(lamp, Vector3(3, 3, 3));
+	ModifyMesh::setMeshRotation(lamp, Vector3(0, -45, 0));
 }
 
 void Level::update()
@@ -59,6 +54,7 @@ void Level::update()
 
 void Level::draw()
 {
+	m_Render->drawMeshInstance(lamp);
 }
 
 Level::Vertex* Level::createBox(int size, DirectX::XMVECTOR center)
