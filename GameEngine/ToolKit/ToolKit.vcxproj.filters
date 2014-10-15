@@ -87,6 +87,9 @@
     <ClInclude Include="include\ILogger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\ResourceManager\Spinlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Allocator\DoubleEdgeAllocator.cpp">

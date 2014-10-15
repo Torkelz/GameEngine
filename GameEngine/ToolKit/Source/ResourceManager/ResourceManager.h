@@ -4,6 +4,8 @@
 #include <map>
 #include <vector>
 
+#include "Spinlock.h"
+
 namespace Res
 {
 	class IResourceFile;
@@ -33,6 +35,8 @@ namespace Res
 
 		UINT m_CacheSize;			// total memory size
 		UINT m_Allocated;			// total memory allocated
+		SpinLock m_AllocatedLock;	// Thread safing the m_Allocated variable
+		SpinLock m_MakeRoomLock;	// Thread safing the makeRoom function.
 
 	protected:
 		bool makeRoom(UINT p_Size);
@@ -49,6 +53,12 @@ namespace Res
 	public:
 		ResourceManager(UINT p_Cache);
 		virtual ~ResourceManager(void);
+
+		/*
+		* Only for testing purposes.
+		* @return the total memory allocated by resources
+		*/
+		UINT getAllocated(void);
 
 		void init(void);
 		bool loadResource(IResourceFile *p_Resource, std::string p_GUID);
