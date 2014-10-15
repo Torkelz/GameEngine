@@ -29,6 +29,11 @@ namespace Res
 		}
 	}
 
+	ResourceManager::UINT ResourceManager::getAllocated(void)
+	{
+		return m_Allocated;
+	}
+
 	void ResourceManager::init(void)
 	{
 		registerLoader(std::shared_ptr<IResourceLoader>(new DefaultResourceLoader()));

@@ -54,6 +54,12 @@ namespace Res
 		ResourceManager(UINT p_Cache);
 		virtual ~ResourceManager(void);
 
+		/*
+		* Only for testing purposes.
+		* @return the total memory allocated by resources
+		*/
+		UINT getAllocated(void);
+
 		void init(void);
 		bool loadResource(IResourceFile *p_Resource, std::string p_GUID);
 
