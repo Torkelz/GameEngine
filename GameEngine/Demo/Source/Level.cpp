@@ -29,7 +29,27 @@ void Level::initialize(Render *p_Render)
 
 	//m_Render->addMesh(std::move(meshi));
 
+
+	using namespace Res;
+
+	ResourceZipFile zip = ResourceZipFile();
+	zip.initialize(L"..\\Resources\\hubba3.zip");
+
+	ResourceManager man(100000000);
+
+	man.init();
+	man.loadResource(&zip, "hubba3");
+
+	man.registerLoader(std::shared_ptr<IResourceLoader>(new OBJResourceLoader()));
+	//Resource res("assignment1.xlsx", "hubba");
+
+	Resource re("hubba\\models\\Street Light\\street_lamp.obj", "hubba3");
+
+	std::weak_ptr<ResourceHandle> texture = man.getHandle(&re);
+
 	ModifyMesh::setMeshPosition(1, Vector3(0, 1, 0));
+
+	m_Render->createMesh(texture);
 }
 
 void Level::update()

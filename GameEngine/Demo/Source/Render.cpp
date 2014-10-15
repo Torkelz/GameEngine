@@ -3,6 +3,8 @@
 #include "Utilities.h"
 #include "ILogger.h"
 
+#include <memory>
+
 Render::Render(void) :
 	m_Graphics(nullptr),
 	m_CBCameraFixed(nullptr),
@@ -134,7 +136,29 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 	std::string name = p_ResourceHandle.lock()->getName();
 	if (m_MeshList.count(name) <= 0)
 	{
-		//m_MeshList.insert(name, Mesh());
+		std::shared_ptr<Res::OBJResourceExtraData> extra =
+			std::static_pointer_cast<Res::OBJResourceExtraData>(p_ResourceHandle.lock()->getExtra());
+
+		Mesh m;
+		Buffer::Description bDesc = {};
+		bDesc.initData = p_ResourceHandle.lock()->buffer();
+		bDesc.numOfElements = extra->getBufferSeperator() / sizeof(int);
+		bDesc.sizeOfElement = sizeof(int);
+		bDesc.type = Buffer::Type::INDEX_BUFFER;
+		bDesc.usage = Buffer::Usage::USAGE_IMMUTABLE;
+
+		m.indexBuffer = std::unique_ptr<Buffer>(WrapperFactory::getInstance()->createBuffer(bDesc));
+
+		bDesc.initData = p_ResourceHandle.lock()->buffer() + extra->getBufferSeperator();
+		bDesc.numOfElements = (extra->getBufferTotalSize() - extra->getBufferSeperator()) / sizeof(Res::OBJResourceLoader::Vertex);
+		bDesc.sizeOfElement = sizeof(Res::OBJResourceLoader::Vertex);
+		bDesc.type = Buffer::Type::VERTEX_BUFFER;
+		bDesc.usage = Buffer::Usage::USAGE_IMMUTABLE;
+
+		m.buffer = std::unique_ptr<Buffer>(WrapperFactory::getInstance()->createBuffer(bDesc));
+
+		int dummy = 0;
+		//m_MeshList.insert(name, m);
 	}
 }
 
