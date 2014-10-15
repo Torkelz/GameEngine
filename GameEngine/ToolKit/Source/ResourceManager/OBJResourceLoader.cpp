@@ -179,9 +179,9 @@ namespace Res
 		//std::copy(p_Handle->buffer(), p_Handle->buffer() + index.size(), l.begin());
 		//l.assign(p_Handle->buffer(), p_Handle->buffer() + index.size());
 
-		//int ret = memcmp(p_Handle->writableBuffer(), index.data(), index.size() * sizeof(int));
-
-		
- 		return true;
+		int ret = memcmp(p_Handle->writableBuffer(), index.data(), index.size() * sizeof(int));
+		int ret2 = memcmp(p_Handle->writableBuffer() + index.size()*sizeof(int), vertices.data(), vertices.size() * sizeof(Vertex));
+				
+ 		return (ret == ret2 && ret == 0) ? true: false;
 	}
 }
