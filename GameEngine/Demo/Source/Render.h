@@ -11,6 +11,7 @@
 #include "MeshInstance.h"
 
 class Graphics; 
+class Res::ResourceManager;
 
 
 class Render
@@ -38,10 +39,12 @@ private:
 	std::map<UINT, MeshInstance> m_MeshInstanceList;
 	std::vector<UINT> m_RenderList;
 
+	Res::ResourceManager *m_ResourceManager;
+
 public:
 	Render(void);
 	~Render(void);
-	void initialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bool p_Fullscreen);
+	void initialize(HWND p_Hwnd, Res::ResourceManager *p_ResourceManager, int p_ScreenWidth, int p_ScreenHeight, bool p_Fullscreen);
 	void shutdown(void);
 
 	void draw(void);

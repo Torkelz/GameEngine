@@ -2,6 +2,7 @@
 #include "Graphics.h"
 #include "Utilities.h"
 #include "ILogger.h"
+#include "IResourceManager.h"
 
 #include <memory>
 
@@ -19,8 +20,10 @@ Render::~Render(void)
 {
 }
 
-void Render::initialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bool p_Fullscreen)
+void Render::initialize(HWND p_Hwnd, Res::ResourceManager *p_ResoureManager, int p_ScreenWidth, int p_ScreenHeight, bool p_Fullscreen)
 {
+	m_ResourceManager = p_ResoureManager;
+
 	if (m_Graphics)
 	{
 		m_Graphics->shutdown();
@@ -65,6 +68,7 @@ void Render::draw(void)
 		MeshInstance *mInstance = getMeshInstance(*it);
 		if (!mInstance)
 			continue;
+
 
 		m_Graphics->getDeviceContext()->UpdateSubresource(m_CBWorld->getBufferPointer(), NULL, nullptr, &mInstance->getWorldMatrix(), 0, 0);
 
@@ -180,6 +184,11 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 
 		m.buffer = std::unique_ptr<Buffer>(WrapperFactory::getInstance()->createBuffer(bDesc));
 		m.shader = std::shared_ptr<Shader>(WrapperFactory::getInstance()->createShader(L".\\Source\\Shader\\Lamp.hlsl", "VS,PS", "5_0", ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER));
+
+		std::weak_ptr<Res::ResourceHandle> mtl = m_ResourceManager->getHandle(&extra->getMTLFile());
+
+		std::shared_ptr<Res::MTLResourceExtraData> extraMTL =
+			std::static_pointer_cast<Res::MTLResourceExtraData>(mtl.lock()->getExtra());
 
 		m_MeshList.insert(std::make_pair(name, std::move(m)));
 	}

@@ -4,6 +4,7 @@
 #include "Render.h"
 #include "ModifyMesh.h"
 
+class Res::ResourceManager;
 
 class Level
 {
@@ -17,10 +18,12 @@ private:
 
 	int lamp;
 
+	Res::ResourceManager *m_ResourceManager;
+
 public:
 	Level();
 	~Level();
-	void initialize(Render *p_Render);
+	void initialize(Render *p_Render, Res::ResourceManager *p_ResourceManager);
 	void update();
 	void draw();
 
