@@ -25,7 +25,7 @@ void Level::initialize(Render *p_Render)
 	using namespace Res;
 
 	ResourceZipFile zip = ResourceZipFile();
-	zip.initialize(L"..\\Resources\\Optimus.zip");
+	zip.initialize(L"..\\Resources\\hubba3.zip");
 
 	ResourceManager man(1000000000);
 
