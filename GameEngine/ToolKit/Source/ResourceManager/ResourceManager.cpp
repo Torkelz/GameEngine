@@ -250,7 +250,7 @@ namespace Res
 	char *ResourceManager::Allocate(UINT p_Size)
 	{
 		if (!makeRoom(p_Size))
-			return NULL;
+			return nullptr;
 
 		m_AllocatedLock.lock();
 		char *mem = new char[p_Size];
@@ -274,8 +274,8 @@ namespace Res
 		m_Resources.erase(handle->m_Resource.m_Name);
 
 		m_Allocated -= handle->size();
-		m_AllocatedLock.unlock();
 		handle.reset();
+		m_AllocatedLock.unlock();
 		// Note - you can't change the resource cache size yet - the resource bits could still actually be
 		// used by some sybsystem holding onto the ResourceHandle. Only when it goes out of scope can the memory
 		// be actually free again.
