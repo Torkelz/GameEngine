@@ -34,20 +34,20 @@ bool Assignment2::runTest(void)
 
 	UINT allocated = m_ResourceManager->getAllocated();
 
-	m_TotalSize += texture1.lock()->size();
-	m_TotalSize += texture2.lock()->size();
-	m_TotalSize += texture3.lock()->size();
-	m_TotalSize += texture5.lock()->size();
-	m_TotalSize += texture6.lock()->size();
-	m_TotalSize += texture7.lock()->size();
+	m_TotalSize += texture1->size();
+	m_TotalSize += texture2->size();
+	m_TotalSize += texture3->size();
+	m_TotalSize += texture5->size();
+	m_TotalSize += texture6->size();
+	m_TotalSize += texture7->size();
 
-	m_ResourceManager->Free(texture1.lock());
-	m_ResourceManager->Free(texture2.lock());
-	m_ResourceManager->Free(texture3.lock());
-	//m_ResourceManager->Free(texture4.lock());
-	m_ResourceManager->Free(texture5.lock());
-	m_ResourceManager->Free(texture6.lock());
-	m_ResourceManager->Free(texture7.lock());
+	m_ResourceManager->Free(texture1);
+	m_ResourceManager->Free(texture2);
+	m_ResourceManager->Free(texture3);
+	m_ResourceManager->Free(texture4);
+	m_ResourceManager->Free(texture5);
+	m_ResourceManager->Free(texture6);
+	m_ResourceManager->Free(texture7);
 
 	return allocated == m_TotalSize;
 }

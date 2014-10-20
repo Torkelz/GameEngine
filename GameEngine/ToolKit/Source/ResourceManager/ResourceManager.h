@@ -16,7 +16,7 @@ namespace Res
 	//
 	//  class ResCache										- Chapter 8, page 225
 	//
-	typedef std::list<std::shared_ptr <ResourceHandle>> ResHandleList;					// lru list
+	typedef std::list<std::shared_ptr<ResourceHandle>> ResHandleList;					// lru list
 	typedef std::map<std::string, std::shared_ptr<ResourceHandle>> ResHandleMap;		// maps indentifiers to resource data
 	typedef std::list<std::shared_ptr<IResourceLoader>> ResourceLoaders;
 

@@ -331,8 +331,8 @@ namespace Res
 		// ResourceHandle pointing to it is destroyed.
 
 		m_Allocated -= p_Gonner->size();
-		m_AllocatedLock.unlock();
 		p_Gonner.reset();
+		m_AllocatedLock.unlock();
 	}
 
 	//
