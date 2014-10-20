@@ -1,7 +1,7 @@
 #pragma once
 #include "IResourceExtraData.h"
 #include "Resource.h"
-#include <map>
+#include <vector>
 
 namespace Res
 {
@@ -19,7 +19,7 @@ namespace Res
 		{ 
 			m_MTLFile = res;
 		}
-		void setFaceGroupData(std::map<int, std::string> p_Data)
+		void setFaceGroupData(std::vector<int> p_Data)
 		{
 			m_FaceGroups = p_Data;
 		}
@@ -36,7 +36,7 @@ namespace Res
 		{
 			return m_MTLFile;
 		}
-		std::map<int, std::string> getFaceGroupData(std::map<int, std::string> p_Data)
+		std::vector<int> getFaceGroupData()
 		{
 			return m_FaceGroups;
 		}
@@ -53,7 +53,7 @@ namespace Res
 
 	private:
 		Resource m_MTLFile;
-		std::map<int, std::string> m_FaceGroups;
+		std::vector<int> m_FaceGroups;
 		unsigned int m_Seperator;
 		unsigned int m_TotalSize;
 	};

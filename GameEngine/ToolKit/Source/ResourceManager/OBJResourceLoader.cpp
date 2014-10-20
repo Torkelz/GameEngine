@@ -50,7 +50,7 @@ namespace Res
 		std::map<int, int> vertexMap;
 
 
-		std::map<int, std::string> faceGroups;
+		std::vector<int> faceGroups;
 		std::vector<int> index;
 		std::vector<Vertex> vertices;
 
@@ -79,7 +79,7 @@ namespace Res
 			{
 				std::string s;
 				lineStream >> s;
-				faceGroups.insert(std::make_pair(index.size(), s));
+				faceGroups.push_back(index.size());
 			}
 			else if (prefix == "v")
 			{

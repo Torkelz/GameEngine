@@ -80,7 +80,25 @@ void Render::draw(void)
 		m->shader->setShader();
 		m->buffer->setBuffer(0);
 		m->indexBuffer->setBuffer(1);
-		m_Graphics->getDeviceContext()->DrawIndexed(m->indexBuffer->getNumOfElements(), 0, 0);
+
+		for (unsigned int i = 0; i < m->faceGroups.size(); ++i)
+		{
+			int numelements = 0;
+
+			if (i + 1 < m->faceGroups.size())
+				numelements = m->faceGroups.at(i + 1) - m->faceGroups.at(i);
+			else
+				numelements = m->indexBuffer->getNumOfElements() - m->faceGroups.at(i);
+
+
+
+			m_Graphics->getDeviceContext()->DrawIndexed(numelements, m->faceGroups.at(i), 0);
+			
+		}
+		//m->indexBuffer->setBuffer(1);
+		//m_Graphics->getDeviceContext()->DrawIndexed(m->indexBuffer->getNumOfElements(), 0, 0);
+		
+		
 		m->buffer->unsetBuffer(0);
 		m->indexBuffer->unsetBuffer(1);
 		m->shader->unSetShader();
@@ -169,6 +187,8 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 		std::shared_ptr<Res::OBJResourceExtraData> extra =
 			std::static_pointer_cast<Res::OBJResourceExtraData>(p_ResourceHandle.lock()->getExtra());
 
+
+
 		Mesh m;
 		Buffer::Description bDesc = {};
 		bDesc.initData = p_ResourceHandle.lock()->buffer();
@@ -194,10 +214,18 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 			std::static_pointer_cast<Res::MTLResourceExtraData>(mtl.lock()->getExtra());
 
 		m.materials = extraMTL->getMaterials();
-		for (Res::Material &mat : m.materials)
+
+		//std::vector<int> faceGroups = extra->getFaceGroupData();
+		m.faceGroups = extra->getFaceGroupData();
+		for (unsigned int i = 0; i < m.materials.size(); ++i)
 		{
 			ID3D11ShaderResourceView *view = nullptr;
-			std::weak_ptr<Res::ResourceHandle> kdTexture = m_ResourceManager->getHandle(&mat.map_Kd);
+			std::weak_ptr<Res::ResourceHandle> kdTexture = m_ResourceManager->getHandle(&m.materials.at(i).map_Kd);
+			if (!kdTexture.lock())
+			{
+				throw GraphicsException("Error while loading texture: " + m.materials.at(i).map_Kd.m_Name, __LINE__, __FILE__);
+			}
+
 			HRESULT res = DirectX::CreateWICTextureFromMemory(m_Graphics->getDevice(), m_Graphics->getDeviceContext(),
 				(const uint8_t*)kdTexture.lock()->buffer(), kdTexture.lock()->size(), nullptr, &view);
 
@@ -206,7 +234,20 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 				throw GraphicsException("Error while creating shaderresourceview from memory: " + kdTexture.lock()->getName(), __LINE__, __FILE__);
 			}
 
+			//bDesc.initData = p_ResourceHandle.lock()->buffer() + faceGroups.at(i);
+
+			//int numelements = (extra->getBufferSeperator() / sizeof(int)) - faceGroups.at(i);
+
+			//if (i + 1 < faceGroups.size())
+			//	numelements = faceGroups.at(i + 1) - faceGroups.at(i);
+
+			//bDesc.numOfElements = numelements;
+			//bDesc.sizeOfElement = sizeof(int);
+			//bDesc.type = Buffer::Type::INDEX_BUFFER;
+			//bDesc.usage = Buffer::Usage::USAGE_IMMUTABLE;
+			
 			m.diffusemaps.push_back(view);
+			//m.indexBuffer.push_back(std::unique_ptr<Buffer>(WrapperFactory::getInstance()->createBuffer(bDesc)));
 		}
 
 
