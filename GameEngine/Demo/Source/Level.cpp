@@ -30,7 +30,7 @@ void Level::initialize(Render *p_Render)
 	ResourceManager man(1000000000);
 
 	man.init();
-	man.loadResource(&zip, "hubba3");
+	man.loadZipLib(&zip, "hubba3");
 
 	man.registerLoader(std::shared_ptr<IResourceLoader>(new OBJResourceLoader()));
 
