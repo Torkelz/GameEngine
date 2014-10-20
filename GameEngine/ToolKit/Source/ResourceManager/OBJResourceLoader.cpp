@@ -26,13 +26,20 @@ namespace Res
 
 	OBJResourceLoader::UINT OBJResourceLoader::getLoadedResourceSize(char *p_RawBuffer, UINT p_RawSize)
 	{
-		return (UINT)(p_RawSize * 0.5f); //Might be wrong!
+		return p_RawSize; //Might be wrong!
 	}
 
 	bool OBJResourceLoader::loadResource(char *p_RawBuffer, UINT p_RawSize, std::shared_ptr<ResourceHandle> p_Handle)
 	{
 		return parseOBJ(p_RawBuffer, p_RawSize, p_Handle);
 	}
+
+	struct membuf : std::streambuf
+	{
+		membuf(char* begin, char* end) {
+			this->setg(begin, begin, end);
+		}
+	};
 
 	bool OBJResourceLoader::parseOBJ(char *p_ObjStream, size_t p_Length, std::shared_ptr<ResourceHandle> p_Handle)
 	{
@@ -54,8 +61,9 @@ namespace Res
 		std::vector<int> index;
 		std::vector<Vertex> vertices;
 
-		std::stringstream fileStream;
-		fileStream << p_ObjStream;
+		membuf mem(p_ObjStream, p_ObjStream + p_Length);
+		std::istream fileStream(&mem);
+
 		while (std::getline(fileStream, line))
 		{
 			prefix = "NULL";
@@ -164,6 +172,13 @@ namespace Res
 				}
 			}
 		}
+
+		if (index.empty() || vertices.empty())
+		{
+			throw std::length_error("Error while parsing " + p_Handle->getName() + ", probably cause is carrier returns in the file. Replace all \r\n with \n.");
+		}
+
+
 		extra->setFaceGroupData(faceGroups);
 		extra->setBufferSeperator(index.size() * sizeof(int));
 		size_t totalSize = index.size() * sizeof(int) + vertices.size()*sizeof(Vertex);
@@ -171,11 +186,6 @@ namespace Res
 
 		memcpy(p_Handle->writableBuffer(), index.data(), index.size()*sizeof(int));
 		memcpy(p_Handle->writableBuffer() + index.size() * sizeof(int), vertices.data(), vertices.size()*sizeof(Vertex));
-
-		//std::vector<int> l; 
-		//l.resize(index.size());
-		//std::copy(p_Handle->buffer(), p_Handle->buffer() + index.size(), l.begin());
-		//l.assign(p_Handle->buffer(), p_Handle->buffer() + index.size());
 
 		int ret = memcmp(p_Handle->writableBuffer(), index.data(), index.size() * sizeof(int));
 		int ret2 = memcmp(p_Handle->writableBuffer() + index.size()*sizeof(int), vertices.data(), vertices.size() * sizeof(Vertex));

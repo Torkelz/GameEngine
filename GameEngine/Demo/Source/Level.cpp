@@ -34,7 +34,8 @@ void Level::initialize(Render *p_Render)
 
 	man.registerLoader(std::shared_ptr<IResourceLoader>(new OBJResourceLoader()));
 
-	Resource re("hubba\\models\\Street Light\\street_lamp.obj", "hubba3");
+	Resource re("hubba\\models\\optimus.obj", "hubba3");
+	//Resource re("Optimus\\VH-Optimus.obj", "hubba3");
 
 	std::weak_ptr<ResourceHandle> texture = man.getHandle(&re);
 
@@ -43,8 +44,8 @@ void Level::initialize(Render *p_Render)
 
 	lamp = m_Render->createMeshInstance(texture.lock()->getName());
 	ModifyMesh::setMeshPosition(lamp, Vector3(0, 0, 0));
-	ModifyMesh::setMeshScale(lamp, Vector3(3, 3, 3));
-	ModifyMesh::setMeshRotation(lamp, Vector3(0, -45, 0));
+	ModifyMesh::setMeshScale(lamp, Vector3(1, 1, 1));
+	//ModifyMesh::setMeshRotation(lamp, Vector3(0, -45, 0));
 }
 
 void Level::update()
