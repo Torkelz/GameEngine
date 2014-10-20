@@ -37,7 +37,6 @@ bool Assignment2::runTest(void)
 	m_TotalSize += texture1.lock()->size();
 	m_TotalSize += texture2.lock()->size();
 	m_TotalSize += texture3.lock()->size();
-	m_TotalSize += texture4.lock()->size();
 	m_TotalSize += texture5.lock()->size();
 	m_TotalSize += texture6.lock()->size();
 	m_TotalSize += texture7.lock()->size();
@@ -45,7 +44,7 @@ bool Assignment2::runTest(void)
 	m_ResourceManager->Free(texture1.lock());
 	m_ResourceManager->Free(texture2.lock());
 	m_ResourceManager->Free(texture3.lock());
-	m_ResourceManager->Free(texture4.lock());
+	//m_ResourceManager->Free(texture4.lock());
 	m_ResourceManager->Free(texture5.lock());
 	m_ResourceManager->Free(texture6.lock());
 	m_ResourceManager->Free(texture7.lock());
@@ -75,12 +74,13 @@ void Assignment2::allocThread2()
 	zip.initialize(L"..\\Resources\\hubba.zip");
 	m_ResourceManager->loadZipLib(&zip, "hubba");
 
-	Resource assignment("assignment1.xlsx", "hubba");
+	//Resource assignment("assignment1.xlsx", "hubba");
+	Resource halo2("halo2.jpg", "hubba");
 	Resource metroid1("metroid.jpg", "hubba");
 	Resource metroid2("metroid2.jpg", "hubba");
 	Resource metroid3("metroid3.jpg", "hubba");
 
-	texture4 = m_ResourceManager->getHandle(&assignment);
+	texture4 = m_ResourceManager->getHandle(&halo2);
 	texture5 = m_ResourceManager->getHandle(&metroid1);
 	texture6 = m_ResourceManager->getHandle(&metroid2);
 	texture7 = m_ResourceManager->getHandle(&metroid3);

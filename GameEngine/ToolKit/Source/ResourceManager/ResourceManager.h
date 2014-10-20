@@ -33,9 +33,11 @@ namespace Res
 		ResourceLoaders m_ResourceLoaders;
 		std::map<std::string, IResourceFile*> m_FileMap;
 		std::map<std::string, UINT> m_GUID_Table;
+		std::map<UINT, std::string> m_LoadedResources;
 
 		UINT m_CacheSize;			// total memory size
 		UINT m_Allocated;			// total memory allocated
+		SpinLock m_HandleLock;		// Thread safing the getHandle method.
 		SpinLock m_AllocatedLock;	// Thread safing the m_Allocated variable
 		SpinLock m_MakeRoomLock;	// Thread safing the makeRoom function.
 		SpinLock m_ZipLibLock;		// Thread safing zib library load of header.

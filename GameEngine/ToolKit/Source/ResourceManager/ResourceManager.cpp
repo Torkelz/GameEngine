@@ -80,6 +80,7 @@ namespace Res
 
 	std::shared_ptr<ResourceHandle> ResourceManager::getHandle(Resource *p_R)
 	{
+		m_HandleLock.lock();
 		std::shared_ptr<ResourceHandle> handle(find(p_R));
 		if (handle == nullptr)
 		{
@@ -89,6 +90,7 @@ namespace Res
 		{
 			update(handle);
 		}
+		m_HandleLock.unlock();
 		return handle;
 	}
 
@@ -197,6 +199,15 @@ namespace Res
 		{
 			m_Lru.push_front(handle);
 			m_Resources[p_R->m_Name] = handle;
+
+			std::map<std::string, UINT>::iterator it_all = m_GUID_Table.find(p_R->m_ZipName + "/" + p_R->m_Name);
+			if (it_all == m_GUID_Table.end())
+			{
+				Logger::log(Logger::Level::FATAL, "Can't find GUID for file " + p_R->m_Name + "in archive " + p_R->m_ZipName + "."); 
+			}
+
+			UINT guid = it_all->second;
+			m_LoadedResources.insert(std::pair<UINT, std::string>(guid, p_R->m_Name));
 		}
 
 		return handle;		// ResourceManager is out of memory!
@@ -204,9 +215,28 @@ namespace Res
 
 	std::shared_ptr<ResourceHandle> ResourceManager::find(Resource *p_R)
 	{
-		ResHandleMap::iterator i = m_Resources.find(p_R->m_Name);
-		if (i == m_Resources.end())
+		std::map<std::string, UINT>::iterator it_all = m_GUID_Table.find(p_R->m_ZipName + "/" + p_R->m_Name);
+		if (it_all == m_GUID_Table.end())
+		{
 			return std::shared_ptr<ResourceHandle>();
+		}
+		UINT guid = it_all->second;
+
+		std::map<UINT, std::string>::iterator it_loaded = m_LoadedResources.find(guid);
+		if (it_loaded == m_LoadedResources.end())
+		{
+			return std::shared_ptr<ResourceHandle>();
+		}
+		std::string path = it_loaded->second;
+		std::size_t pos = path.find("/");
+		std::string internalPath = path.substr(pos + 1);
+
+
+		ResHandleMap::iterator i = m_Resources.find(internalPath);
+		if (i == m_Resources.end())
+		{
+			return std::shared_ptr<ResourceHandle>();
+		}
 
 		return i->second;
 	}
