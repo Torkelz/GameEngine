@@ -3,6 +3,9 @@
 #include "Utilities.h"
 #include "ILogger.h"
 #include "IResourceManager.h"
+#include "WICTextureLoader.h"
+#include "UserExceptions.h"
+
 
 #include <memory>
 
@@ -189,6 +192,23 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 
 		std::shared_ptr<Res::MTLResourceExtraData> extraMTL =
 			std::static_pointer_cast<Res::MTLResourceExtraData>(mtl.lock()->getExtra());
+
+		m.materials = extraMTL->getMaterials();
+		for (Res::Material &mat : m.materials)
+		{
+			ID3D11ShaderResourceView *view = nullptr;
+			std::weak_ptr<Res::ResourceHandle> kdTexture = m_ResourceManager->getHandle(&mat.map_Kd);
+			HRESULT res = DirectX::CreateWICTextureFromMemory(m_Graphics->getDevice(), m_Graphics->getDeviceContext(),
+				(const uint8_t*)kdTexture.lock()->buffer(), kdTexture.lock()->size(), nullptr, &view);
+
+			if (FAILED(res))
+			{
+				throw GraphicsException("Error while creating shaderresourceview from memory: " + kdTexture.lock()->getName(), __LINE__, __FILE__);
+			}
+
+			m.diffusemaps.push_back(view);
+		}
+
 
 		m_MeshList.insert(std::make_pair(name, std::move(m)));
 	}

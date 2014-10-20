@@ -92,7 +92,11 @@ namespace Res
 			{
 				std::string s;
 				lineStream >> s;
-				mats.back().map_Kd = Resource(s, p_Handle->getContainerName());
+
+				std::string filepath = p_Handle->getName();
+				std::string materialPath = filepath.substr(0, filepath.find_last_of("\\/")) + "\\" + s;
+
+				mats.back().map_Kd = Resource(materialPath, p_Handle->getContainerName());
 			}
 		}
 

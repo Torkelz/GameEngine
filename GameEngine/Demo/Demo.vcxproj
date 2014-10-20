@@ -98,6 +98,7 @@
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Window.cpp" />
     <ClCompile Include="Source\WrapperFactory.cpp" />
+    <ClCompile Include="Source\WICTextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\ModifyMesh.h" />
@@ -120,6 +121,7 @@
     <ClInclude Include="Source\Window.h" />
     <ClInclude Include="Source\WrapperFactory.h" />
     <ClInclude Include="Source\XMFloatUtil.h" />
+    <ClInclude Include="Source\WICTextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Shader\Lamp.hlsl">

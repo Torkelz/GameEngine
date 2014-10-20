@@ -2,12 +2,15 @@
 #include <memory>
 #include "Buffer.h"
 #include "Shader.h"
+#include "IResourceManager.h"
 
 struct Mesh
 {
 	std::shared_ptr<Shader> shader;
 	std::unique_ptr<Buffer> buffer;
 	std::unique_ptr<Buffer> indexBuffer;
+	std::vector<ID3D11ShaderResourceView*> diffusemaps;
+	std::vector<Res::Material> materials;
 
 	Mesh() :
 		shader(nullptr),
