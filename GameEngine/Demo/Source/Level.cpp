@@ -34,8 +34,8 @@ void Level::initialize(Render *p_Render)
 
 	man.registerLoader(std::shared_ptr<IResourceLoader>(new OBJResourceLoader()));
 
-	//Resource re("hubba\\models\\optimus.obj", "hubba3");
-	Resource re("Optimus\\VH-Optimus.obj", "hubba3");
+	Resource re("hubba\\models\\optimus.obj", "hubba3");
+	//Resource re("Optimus\\VH-Optimus.obj", "hubba3");
 
 	std::weak_ptr<ResourceHandle> texture = man.getHandle(&re);
 
