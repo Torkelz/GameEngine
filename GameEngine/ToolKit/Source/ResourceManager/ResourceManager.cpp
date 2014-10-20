@@ -121,11 +121,11 @@ namespace Res
 		{
 			Logger::log(Logger::Level::WARNING, "Resource cache is out of memory! Dumping memory state.");
 			
-			int ompaloompa = 1;
+			int resourceNum = 1;
 			for (auto &res : m_Lru)
 			{
-				Logger::log(Logger::Level::WARNING, "File " + std::to_string(ompaloompa) + ", File name: " + res->getName());
-				++ompaloompa;
+				Logger::log(Logger::Level::WARNING, "File " + std::to_string(resourceNum) + ", File name: " + res->getName());
+				++resourceNum;
 			}
 
 			Logger::log(Logger::Level::WARNING, "Tried to load file: " + p_R->m_Name);

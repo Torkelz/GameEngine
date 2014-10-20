@@ -45,6 +45,7 @@ int main(int /*argc*/, char* /*argv*/[])
 
 	//man.Free(texture.lock());
 	*/
+	
 	Assignment2 ass2;
 	ass2.initialize(TOTAL_SIZE);
 
