@@ -41,8 +41,7 @@ void Render::initialize(HWND p_Hwnd, Res::ResourceManager *p_ResoureManager, int
 	initializeMatrices(p_ScreenWidth, p_ScreenHeight, nearZ, farZ);
 
 	createConstantBuffers();
-
-
+	createSamplerState();
 }
 
 void Render::shutdown(void)
@@ -65,6 +64,8 @@ void Render::draw(void)
 	m_CBWorld->setBuffer(2);
 
 	m_Graphics->getDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	m_Graphics->getDeviceContext()->PSSetSamplers(0, 1, &m_SamplerState);
 
 	for (std::vector<UINT>::const_iterator &it = m_RenderList.cbegin(); it != m_RenderList.cend(); ++it)
 	{
@@ -90,7 +91,7 @@ void Render::draw(void)
 			else
 				numelements = m->indexBuffer->getNumOfElements() - m->faceGroups.at(i);
 
-
+			m_Graphics->getDeviceContext()->PSSetShaderResources(0, 1, &m->diffusemaps.at(i));
 
 			m_Graphics->getDeviceContext()->DrawIndexed(numelements, m->faceGroups.at(i), 0);
 			
@@ -149,6 +150,20 @@ void Render::createConstantBuffers()
 
 	bDesc.initData = nullptr;
 	m_CBWorld = WrapperFactory::getInstance()->createBuffer(bDesc);
+}
+
+void Render::createSamplerState()
+{
+	D3D11_SAMPLER_DESC sd;
+	ZeroMemory(&sd, sizeof(sd));
+	sd.Filter = D3D11_FILTER_ANISOTROPIC;
+	sd.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sd.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sd.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sd.MinLOD = 0;
+	sd.MaxLOD = D3D11_FLOAT32_MAX;
+	m_Graphics->getDevice()->CreateSamplerState(&sd, &m_SamplerState);
 }
 
 void Render::updateConstantBuffer(void)

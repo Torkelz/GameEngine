@@ -24,6 +24,7 @@ struct Mesh
 		buffer(std::move(p_Other.buffer)),
 		shader(p_Other.shader),
 		indexBuffer(std::move(p_Other.indexBuffer)),
+		diffusemaps(std::move(p_Other.diffusemaps)),
 		faceGroups(std::move(p_Other.faceGroups))
 	{
 	}
@@ -33,6 +34,7 @@ struct Mesh
 		std::swap(buffer, p_Other.buffer);
 		std::swap(shader, p_Other.shader);
 		std::swap(indexBuffer, p_Other.indexBuffer);
+		std::swap(diffusemaps, p_Other.diffusemaps);
 		std::swap(faceGroups, p_Other.faceGroups);
 
 		return *this;

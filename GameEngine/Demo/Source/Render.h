@@ -41,6 +41,8 @@ private:
 
 	Res::ResourceManager *m_ResourceManager;
 
+	ID3D11SamplerState *m_SamplerState;
+
 public:
 	Render(void);
 	~Render(void);
@@ -58,6 +60,7 @@ public:
 
 private:
 	void createConstantBuffers();
+	void createSamplerState();
 	void updateConstantBuffer(void);
 
 	void initializeMatrices(int p_ScreenWidth, int p_ScreenHeight, float p_NearZ, float p_FarZ);
