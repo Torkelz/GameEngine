@@ -32,11 +32,13 @@ namespace Res
 		ResHandleMap m_Resources;
 		ResourceLoaders m_ResourceLoaders;
 		std::map<std::string, IResourceFile*> m_FileMap;
+		std::map<std::string, UINT> m_GUID_Table;
 
 		UINT m_CacheSize;			// total memory size
 		UINT m_Allocated;			// total memory allocated
 		SpinLock m_AllocatedLock;	// Thread safing the m_Allocated variable
 		SpinLock m_MakeRoomLock;	// Thread safing the makeRoom function.
+		SpinLock m_ZipLibLock;		// Thread safing zib library load of header.
 
 	protected:
 		bool makeRoom(UINT p_Size);
@@ -61,7 +63,7 @@ namespace Res
 		UINT getAllocated(void);
 
 		void init(void);
-		bool loadResource(IResourceFile *p_Resource, std::string p_GUID);
+		bool loadZipLib(IResourceFile *p_Resource, std::string p_ZipLib);
 
 		void registerLoader(std::shared_ptr<IResourceLoader> p_Loader);
 

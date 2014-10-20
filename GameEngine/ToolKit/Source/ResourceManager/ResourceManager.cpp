@@ -10,6 +10,9 @@
 #include <algorithm>
 #include <cctype>
 
+#include <fstream>
+
+
 
 namespace Res
 {
@@ -39,12 +42,31 @@ namespace Res
 		registerLoader(std::shared_ptr<IResourceLoader>(new DefaultResourceLoader()));
 	}
 
-	bool ResourceManager::loadResource(IResourceFile *p_Resource, std::string p_GUID)
+	bool ResourceManager::loadZipLib(IResourceFile *p_Resource, std::string p_ZipLibr)
 	{
 		if (p_Resource->open())
 		{
-			m_FileMap.insert(std::pair<std::string, IResourceFile*>(p_GUID, p_Resource));
-
+			m_ZipLibLock.lock();
+			m_FileMap.insert(std::pair<std::string, IResourceFile*>(p_ZipLibr, p_Resource));
+			std::ifstream fileStream;
+			std::string guidName = std::string("..\\Resources\\" + p_ZipLibr + ".guid");
+			
+			fileStream.open(guidName.c_str());
+			{
+				std::string line;
+				std::string guid;
+				std::string internalPath;
+				fileStream >> guid >> internalPath;
+				internalPath = std::string(p_ZipLibr + "/" + internalPath);
+				while (std::getline(fileStream, line))
+				{
+					m_GUID_Table.insert(std::pair<std::string, UINT>(internalPath, std::atoi(guid.c_str())));
+					fileStream >> guid >> internalPath;
+					internalPath = std::string(p_ZipLibr + "/" + internalPath);
+				}
+				m_GUID_Table.insert(std::pair<std::string, UINT>(internalPath, std::atoi(guid.c_str())));
+			}
+			m_ZipLibLock.unlock();
 			return true;
 		}
 
