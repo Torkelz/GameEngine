@@ -51,7 +51,7 @@ namespace Res
 		void update(std::shared_ptr<ResourceHandle> p_Handle);
 
 		void freeOneResource(void);
-		void memoryHasBeenFreed(UINT p_Size);
+		void memoryHasBeenFreed(UINT p_Size, std::string p_ZipPathName);
 		bool wildcardMatch(const char *p_Pattern, const char *p_String);
 
 	public:
