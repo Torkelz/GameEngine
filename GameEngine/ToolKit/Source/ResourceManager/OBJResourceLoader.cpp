@@ -34,13 +34,6 @@ namespace Res
 		return parseOBJ(p_RawBuffer, p_RawSize, p_Handle);
 	}
 
-	struct membuf : std::streambuf
-	{
-		membuf(char* begin, char* end) {
-			this->setg(begin, begin, end);
-		}
-	};
-
 	bool OBJResourceLoader::parseOBJ(char *p_ObjStream, size_t p_Length, std::shared_ptr<ResourceHandle> p_Handle)
 	{
 		using namespace DirectX;
@@ -57,7 +50,7 @@ namespace Res
 		std::map<int, int> vertexMap;
 
 
-		std::map<int, std::string> faceGroups;
+		std::vector<int> faceGroups;
 		std::vector<int> index;
 		std::vector<Vertex> vertices;
 
@@ -86,7 +79,7 @@ namespace Res
 			{
 				std::string s;
 				lineStream >> s;
-				faceGroups.insert(std::make_pair(index.size(), s));
+				faceGroups.push_back(index.size());
 			}
 			else if (prefix == "v")
 			{
@@ -186,7 +179,7 @@ namespace Res
 
 		memcpy(p_Handle->writableBuffer(), index.data(), index.size()*sizeof(int));
 		memcpy(p_Handle->writableBuffer() + index.size() * sizeof(int), vertices.data(), vertices.size()*sizeof(Vertex));
-
+		
 		int ret = memcmp(p_Handle->writableBuffer(), index.data(), index.size() * sizeof(int));
 		int ret2 = memcmp(p_Handle->writableBuffer() + index.size()*sizeof(int), vertices.data(), vertices.size() * sizeof(Vertex));
 				

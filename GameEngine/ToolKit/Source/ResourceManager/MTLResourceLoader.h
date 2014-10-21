@@ -1,26 +1,15 @@
 #pragma once
 #include "IResourceLoader.h"
-#include "OBJResourceExtraData.h"
-
+#include "MTLResourceExtraData.h"
 #include <DirectXMath.h>
 
 namespace Res
 {
-	class OBJResourceLoader : public IResourceLoader
+	class MTLResourceLoader : public IResourceLoader
 	{
 	public:
-		typedef unsigned int UINT;
-
-		struct Vertex
-		{
-			DirectX::XMFLOAT3 pos;
-			DirectX::XMFLOAT3 normal;
-			DirectX::XMFLOAT2 texCoords;
-			Vertex(DirectX::XMFLOAT3 p_Pos, DirectX::XMFLOAT3 p_Normal, DirectX::XMFLOAT2 p_TexCoords) : pos(p_Pos), normal(p_Normal), texCoords(p_TexCoords)
-			{}
-			Vertex(){}
-		};
-
+		typedef unsigned int UINT;	
+		
 	public:
 		virtual std::string getPattern(void);
 		virtual bool useRawFile(void);
@@ -28,7 +17,6 @@ namespace Res
 		virtual UINT getLoadedResourceSize(char *p_RawBuffer, UINT p_RawSize);
 		virtual bool loadResource(char *p_RawBuffer, UINT p_RawSize, std::shared_ptr<ResourceHandle> p_Handle);
 	private:
-
 		struct membuf : std::streambuf
 		{
 			membuf(char* begin, char* end) {
@@ -36,7 +24,7 @@ namespace Res
 			}
 		};
 
-		bool parseOBJ(char *p_ObjStream, size_t p_Length, std::shared_ptr<ResourceHandle> p_Handle);
+		bool parseMTL(char *p_MtlStream, size_t p_Length, std::shared_ptr<ResourceHandle> p_Handle);
 	};
 }
 

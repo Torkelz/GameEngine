@@ -2,6 +2,10 @@
 #include "Graphics.h"
 #include "Utilities.h"
 #include "ILogger.h"
+#include "IResourceManager.h"
+#include "WICTextureLoader.h"
+#include "UserExceptions.h"
+
 
 #include <memory>
 
@@ -19,8 +23,10 @@ Render::~Render(void)
 {
 }
 
-void Render::initialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bool p_Fullscreen)
+void Render::initialize(HWND p_Hwnd, Res::ResourceManager *p_ResoureManager, int p_ScreenWidth, int p_ScreenHeight, bool p_Fullscreen)
 {
+	m_ResourceManager = p_ResoureManager;
+
 	if (m_Graphics)
 	{
 		m_Graphics->shutdown();
@@ -35,8 +41,7 @@ void Render::initialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bool
 	initializeMatrices(p_ScreenWidth, p_ScreenHeight, nearZ, farZ);
 
 	createConstantBuffers();
-
-
+	createSamplerState();
 }
 
 void Render::shutdown(void)
@@ -60,11 +65,14 @@ void Render::draw(void)
 
 	m_Graphics->getDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	m_Graphics->getDeviceContext()->PSSetSamplers(0, 1, &m_SamplerState);
+
 	for (std::vector<UINT>::const_iterator &it = m_RenderList.cbegin(); it != m_RenderList.cend(); ++it)
 	{
 		MeshInstance *mInstance = getMeshInstance(*it);
 		if (!mInstance)
 			continue;
+
 
 		m_Graphics->getDeviceContext()->UpdateSubresource(m_CBWorld->getBufferPointer(), NULL, nullptr, &mInstance->getWorldMatrix(), 0, 0);
 
@@ -73,7 +81,25 @@ void Render::draw(void)
 		m->shader->setShader();
 		m->buffer->setBuffer(0);
 		m->indexBuffer->setBuffer(1);
-		m_Graphics->getDeviceContext()->DrawIndexed(m->indexBuffer->getNumOfElements(), 0, 0);
+
+		for (unsigned int i = 0; i < m->faceGroups.size(); ++i)
+		{
+			int numelements = 0;
+
+			if (i + 1 < m->faceGroups.size())
+				numelements = m->faceGroups.at(i + 1) - m->faceGroups.at(i);
+			else
+				numelements = m->indexBuffer->getNumOfElements() - m->faceGroups.at(i);
+
+			m_Graphics->getDeviceContext()->PSSetShaderResources(0, 1, &m->diffusemaps.at(i));
+
+			m_Graphics->getDeviceContext()->DrawIndexed(numelements, m->faceGroups.at(i), 0);
+			
+		}
+		//m->indexBuffer->setBuffer(1);
+		//m_Graphics->getDeviceContext()->DrawIndexed(m->indexBuffer->getNumOfElements(), 0, 0);
+		
+		
 		m->buffer->unsetBuffer(0);
 		m->indexBuffer->unsetBuffer(1);
 		m->shader->unSetShader();
@@ -126,6 +152,20 @@ void Render::createConstantBuffers()
 	m_CBWorld = WrapperFactory::getInstance()->createBuffer(bDesc);
 }
 
+void Render::createSamplerState()
+{
+	D3D11_SAMPLER_DESC sd;
+	ZeroMemory(&sd, sizeof(sd));
+	sd.Filter = D3D11_FILTER_ANISOTROPIC;
+	sd.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sd.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sd.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sd.MinLOD = 0;
+	sd.MaxLOD = D3D11_FLOAT32_MAX;
+	m_Graphics->getDevice()->CreateSamplerState(&sd, &m_SamplerState);
+}
+
 void Render::updateConstantBuffer(void)
 {
 	m_Graphics->getDeviceContext()->UpdateSubresource(m_CBCamera->getBufferPointer(), NULL, NULL, &m_ViewMatrix, sizeof(DirectX::XMFLOAT4X4), NULL);
@@ -162,6 +202,8 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 		std::shared_ptr<Res::OBJResourceExtraData> extra =
 			std::static_pointer_cast<Res::OBJResourceExtraData>(p_ResourceHandle.lock()->getExtra());
 
+
+
 		Mesh m;
 		Buffer::Description bDesc = {};
 		bDesc.initData = p_ResourceHandle.lock()->buffer();
@@ -180,6 +222,49 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 
 		m.buffer = std::unique_ptr<Buffer>(WrapperFactory::getInstance()->createBuffer(bDesc));
 		m.shader = std::shared_ptr<Shader>(WrapperFactory::getInstance()->createShader(L".\\Source\\Shader\\Lamp.hlsl", "VS,PS", "5_0", ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER));
+
+		std::weak_ptr<Res::ResourceHandle> mtl = m_ResourceManager->getHandle(&extra->getMTLFile());
+
+		std::shared_ptr<Res::MTLResourceExtraData> extraMTL =
+			std::static_pointer_cast<Res::MTLResourceExtraData>(mtl.lock()->getExtra());
+
+		m.materials = extraMTL->getMaterials();
+
+		//std::vector<int> faceGroups = extra->getFaceGroupData();
+		m.faceGroups = extra->getFaceGroupData();
+		for (unsigned int i = 0; i < m.materials.size(); ++i)
+		{
+			ID3D11ShaderResourceView *view = nullptr;
+			std::weak_ptr<Res::ResourceHandle> kdTexture = m_ResourceManager->getHandle(&m.materials.at(i).map_Kd);
+			if (!kdTexture.lock())
+			{
+				throw GraphicsException("Error while loading texture: " + m.materials.at(i).map_Kd.m_Name, __LINE__, __FILE__);
+			}
+
+			HRESULT res = DirectX::CreateWICTextureFromMemory(m_Graphics->getDevice(), m_Graphics->getDeviceContext(),
+				(const uint8_t*)kdTexture.lock()->buffer(), kdTexture.lock()->size(), nullptr, &view);
+
+			if (FAILED(res))
+			{
+				throw GraphicsException("Error while creating shaderresourceview from memory: " + kdTexture.lock()->getName(), __LINE__, __FILE__);
+			}
+
+			//bDesc.initData = p_ResourceHandle.lock()->buffer() + faceGroups.at(i);
+
+			//int numelements = (extra->getBufferSeperator() / sizeof(int)) - faceGroups.at(i);
+
+			//if (i + 1 < faceGroups.size())
+			//	numelements = faceGroups.at(i + 1) - faceGroups.at(i);
+
+			//bDesc.numOfElements = numelements;
+			//bDesc.sizeOfElement = sizeof(int);
+			//bDesc.type = Buffer::Type::INDEX_BUFFER;
+			//bDesc.usage = Buffer::Usage::USAGE_IMMUTABLE;
+			
+			m.diffusemaps.push_back(view);
+			//m.indexBuffer.push_back(std::unique_ptr<Buffer>(WrapperFactory::getInstance()->createBuffer(bDesc)));
+		}
+
 
 		m_MeshList.insert(std::make_pair(name, std::move(m)));
 	}

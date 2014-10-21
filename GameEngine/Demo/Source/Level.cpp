@@ -11,9 +11,11 @@ Level::~Level()
 {
 }
 
-void Level::initialize(Render *p_Render)
+void Level::initialize(Render *p_Render, Res::ResourceManager *p_ResourceManager)
 {
 	m_Render = p_Render;
+	m_ResourceManager = p_ResourceManager;
+
 	Buffer::Description bDesc = {};
 	bDesc.initData = createBox(10, DirectX::XMVectorSet(0.f, 0.f, 0.f, 0.f));
 	bDesc.numOfElements = 36;
@@ -27,25 +29,23 @@ void Level::initialize(Render *p_Render)
 	ResourceZipFile zip = ResourceZipFile();
 	zip.initialize(L"..\\Resources\\hubba3.zip");
 
-	ResourceManager man(1000000000);
+	
+	p_ResourceManager->loadZipLib(&zip, "hubba3");
 
-	man.init();
-	man.loadZipLib(&zip, "hubba3");
 
-	man.registerLoader(std::shared_ptr<IResourceLoader>(new OBJResourceLoader()));
-
+	
+	
 	Resource re("hubba\\models\\optimus.obj", "hubba3");
-	//Resource re("Optimus\\VH-Optimus.obj", "hubba3");
 
-	std::weak_ptr<ResourceHandle> texture = man.getHandle(&re);
+	std::weak_ptr<ResourceHandle> model = m_ResourceManager->getHandle(&re);
+	
 
+	m_Render->createMesh(model);
 
-	m_Render->createMesh(texture);
-
-	lamp = m_Render->createMeshInstance(texture.lock()->getName());
+	lamp = m_Render->createMeshInstance(model.lock()->getName());
 	ModifyMesh::setMeshPosition(lamp, Vector3(0, 0, 0));
-	ModifyMesh::setMeshScale(lamp, Vector3(1, 1, 1));
-	//ModifyMesh::setMeshRotation(lamp, Vector3(0, -45, 0));
+	ModifyMesh::setMeshScale(lamp, Vector3(3, 3, 3));
+	ModifyMesh::setMeshRotation(lamp, Vector3(0, -45, 0));
 }
 
 void Level::update()

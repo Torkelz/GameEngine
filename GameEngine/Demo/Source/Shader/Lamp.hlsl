@@ -1,5 +1,8 @@
 #pragma pack_matrix(row_major)
 
+SamplerState textureSampler : register(s0);
+Texture2D diffuseTex : register(t0);
+
 cbuffer b0 : register(c0)
 {
 	float4x4 projection;
@@ -40,7 +43,9 @@ VSOutput VS(VSInput input)
 
 float4 PS(VSOutput input) : SV_Target
 {
-	float3 light = float3(0, 0, 50);
+	float4 texColor = diffuseTex.Sample(textureSampler, input.texCoord);
+
+	float3 light = float3(-10, 0, 0);
 	float3 litColor = 0;
 	//The vector from surface to the light
 	float3 lightVec = input.wpos - light;
@@ -55,7 +60,7 @@ float4 PS(VSOutput input) : SV_Target
 	float d = length(lightVec);
 	float fade;
 	if (d > 500)
-		return float4(float3(0.5f, 0.5f, 0.5f) * float3(1,0.5f,0), 1);
+		return float4(float3(0.5f, 0.5f, 0.5f) * texColor.xyz, 1);
 	fade = 1 - (d / 500);
 	//Normalize light vector
 	lightVec /= d;
@@ -74,10 +79,6 @@ float4 PS(VSOutput input) : SV_Target
 			specFac *= scalar;
 		litColor += specular.xyz * specFac;
 	}
-	litColor = litColor * float3(1, 0.5f, 0);
+	litColor = litColor * texColor.xyz;
 	return float4(litColor*fade, 1);
-
-
-
-	return float4(1, 0.5f, 0, 1);
 }
