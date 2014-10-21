@@ -227,6 +227,11 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 
 		m.indexBuffer = std::unique_ptr<Buffer>(WrapperFactory::getInstance()->createBuffer(bDesc));
 
+		if (!m.indexBuffer)
+		{
+			throw GraphicsException("Failed to create index buffer: " + p_ResourceHandle.lock()->getName(), __LINE__, __FILE__);
+		}
+
 		bDesc.initData = p_ResourceHandle.lock()->buffer() + extra->getBufferSeperator();
 		bDesc.numOfElements = (extra->getBufferTotalSize() - extra->getBufferSeperator()) / sizeof(Res::OBJResourceLoader::Vertex);
 		bDesc.sizeOfElement = sizeof(Res::OBJResourceLoader::Vertex);
@@ -234,6 +239,12 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 		bDesc.usage = Buffer::Usage::USAGE_IMMUTABLE;
 
 		m.buffer = std::unique_ptr<Buffer>(WrapperFactory::getInstance()->createBuffer(bDesc));
+
+		if (!m.buffer)
+		{
+			throw GraphicsException("Failed to create vertex buffer: " + p_ResourceHandle.lock()->getName(), __LINE__, __FILE__);
+		}
+
 		m.shader = std::shared_ptr<Shader>(WrapperFactory::getInstance()->createShader(L".\\Source\\Shader\\Lamp.hlsl", "VS,PS", "5_0", ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER));
 
 		std::weak_ptr<Res::ResourceHandle> mtl = m_ResourceManager->getHandle(&extra->getMTLFile());
