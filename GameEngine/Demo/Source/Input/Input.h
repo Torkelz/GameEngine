@@ -43,6 +43,13 @@ public:
 	*/
 	const std::vector<InputRecord>& getFrameInputs() const;
 
+	/**
+	* Lock the mouse pointer to the center of the screen or unlock it.
+	*
+	* @param p_State true for lock.
+	*/
+	void lockMouse(bool p_State);
+
 private:
 	/**
 	* Handle records.

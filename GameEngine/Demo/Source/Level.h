@@ -26,19 +26,7 @@ public:
 	void initialize(Render *p_Render, Res::ResourceManager *p_ResourceManager);
 	void update();
 	void draw();
-
-	
+		
 private:
-	Vertex* createBox(int size, DirectX::XMVECTOR center);
-
-	inline Vertex createVertex(DirectX::XMVECTOR _position, DirectX::XMVECTOR _normal)
-	{
-		Vertex v;
-
-		DirectX::XMStoreFloat3(&v.position, _position);
-		DirectX::XMStoreFloat3(&v.normal, _normal);
-
-		return v;
-	}
 };
 

@@ -14,13 +14,29 @@ Render::Render(void) :
 	m_CBCameraFixed(nullptr),
 	m_CBCamera(nullptr),
 	m_CBWorld(nullptr),
-	m_NextModelInstanceID(0)
+	m_NextModelInstanceID(0),
+	m_ResourceManager(nullptr),
+	m_SamplerState(nullptr)
 {
 }
 
 
 Render::~Render(void)
 {
+	SAFE_DELETE(m_Graphics);
+	SAFE_DELETE(m_CBCamera);
+	SAFE_DELETE(m_CBCameraFixed);
+	SAFE_DELETE(m_CBWorld);
+	SAFE_RELEASE(m_SamplerState);
+	m_ResourceManager = nullptr;
+	for (auto &m : m_MeshList)
+	{
+		for (ID3D11ShaderResourceView* s : m.second.diffusemaps)
+		{
+			SAFE_RELEASE(s);
+		}
+	}
+
 }
 
 void Render::initialize(HWND p_Hwnd, Res::ResourceManager *p_ResoureManager, int p_ScreenWidth, int p_ScreenHeight, bool p_Fullscreen)
@@ -35,7 +51,7 @@ void Render::initialize(HWND p_Hwnd, Res::ResourceManager *p_ResoureManager, int
 	m_Graphics = new Graphics();
 	m_Graphics->initialize(p_Hwnd, p_ScreenWidth, p_ScreenHeight, p_Fullscreen);
 
-	float nearZ = 8.0f;
+	float nearZ = 1.0f;
 	float farZ = 100000.0f;
 	m_FOV = 2 * 3.1415f / 360.0f * 45; //45 degrees
 	initializeMatrices(p_ScreenWidth, p_ScreenHeight, nearZ, farZ);
@@ -95,10 +111,7 @@ void Render::draw(void)
 
 			m_Graphics->getDeviceContext()->DrawIndexed(numelements, m->faceGroups.at(i), 0);
 			
-		}
-		//m->indexBuffer->setBuffer(1);
-		//m_Graphics->getDeviceContext()->DrawIndexed(m->indexBuffer->getNumOfElements(), 0, 0);
-		
+		}		
 		
 		m->buffer->unsetBuffer(0);
 		m->indexBuffer->unsetBuffer(1);
@@ -214,6 +227,11 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 
 		m.indexBuffer = std::unique_ptr<Buffer>(WrapperFactory::getInstance()->createBuffer(bDesc));
 
+		if (!m.indexBuffer)
+		{
+			throw GraphicsException("Failed to create index buffer: " + p_ResourceHandle.lock()->getName(), __LINE__, __FILE__);
+		}
+
 		bDesc.initData = p_ResourceHandle.lock()->buffer() + extra->getBufferSeperator();
 		bDesc.numOfElements = (extra->getBufferTotalSize() - extra->getBufferSeperator()) / sizeof(Res::OBJResourceLoader::Vertex);
 		bDesc.sizeOfElement = sizeof(Res::OBJResourceLoader::Vertex);
@@ -221,6 +239,12 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 		bDesc.usage = Buffer::Usage::USAGE_IMMUTABLE;
 
 		m.buffer = std::unique_ptr<Buffer>(WrapperFactory::getInstance()->createBuffer(bDesc));
+
+		if (!m.buffer)
+		{
+			throw GraphicsException("Failed to create vertex buffer: " + p_ResourceHandle.lock()->getName(), __LINE__, __FILE__);
+		}
+
 		m.shader = std::shared_ptr<Shader>(WrapperFactory::getInstance()->createShader(L".\\Source\\Shader\\Lamp.hlsl", "VS,PS", "5_0", ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER));
 
 		std::weak_ptr<Res::ResourceHandle> mtl = m_ResourceManager->getHandle(&extra->getMTLFile());
@@ -230,7 +254,6 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 
 		m.materials = extraMTL->getMaterials();
 
-		//std::vector<int> faceGroups = extra->getFaceGroupData();
 		m.faceGroups = extra->getFaceGroupData();
 		for (unsigned int i = 0; i < m.materials.size(); ++i)
 		{
@@ -248,21 +271,8 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 			{
 				throw GraphicsException("Error while creating shaderresourceview from memory: " + kdTexture.lock()->getName(), __LINE__, __FILE__);
 			}
-
-			//bDesc.initData = p_ResourceHandle.lock()->buffer() + faceGroups.at(i);
-
-			//int numelements = (extra->getBufferSeperator() / sizeof(int)) - faceGroups.at(i);
-
-			//if (i + 1 < faceGroups.size())
-			//	numelements = faceGroups.at(i + 1) - faceGroups.at(i);
-
-			//bDesc.numOfElements = numelements;
-			//bDesc.sizeOfElement = sizeof(int);
-			//bDesc.type = Buffer::Type::INDEX_BUFFER;
-			//bDesc.usage = Buffer::Usage::USAGE_IMMUTABLE;
 			
 			m.diffusemaps.push_back(view);
-			//m.indexBuffer.push_back(std::unique_ptr<Buffer>(WrapperFactory::getInstance()->createBuffer(bDesc)));
 		}
 
 

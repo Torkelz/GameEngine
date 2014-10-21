@@ -49,15 +49,25 @@ void BaseApp::init()
 	translator->addKeyboardMapping(83, "moveBackward");
 	translator->addKeyboardMapping(65, "moveLeft");
 	translator->addKeyboardMapping(68, "moveRight");
+	translator->addKeyboardMapping(32, "moveUp");
+	translator->addKeyboardMapping(VK_LCONTROL, "moveDown");
 
+
+	translator->addMouseMapping(Axis::HORIZONTAL, false, "lookLeft");
+	translator->addMouseMapping(Axis::HORIZONTAL, true, "lookRight");
+	translator->addMouseMapping(Axis::VERTICAL, true, "lookUp");
+	translator->addMouseMapping(Axis::VERTICAL, false, "lookDown");
+
+	translator->addMouseButtonMapping(MouseButton::LEFT, "mouseLeftDown");
+	translator->addMouseButtonMapping(MouseButton::LEFT, "mouseLeftRelease");
 
 	m_InputQueue.init(std::move(translator));
 
 	m_CameraDirection = Vector3(1, 0, 0);
 	m_CameraPosition = Vector3(0, 0, 0);
-	m_CamerSpeed = 2;
+	m_CameraUp = Vector3(0,1,0);
+	m_CameraSpeed = 0.5f;
 	m_Level.initialize(&m_Render, &man);
-
 }
 
 void BaseApp::run()
@@ -74,44 +84,32 @@ void BaseApp::run()
 
 		handleInput();
 
-		/*updateLogic();
-
-		render();*/
 		const InputState& state = m_InputQueue.getCurrentState();
 		float forward = state.getValue("moveForward") - state.getValue("moveBackward");
 		float right = state.getValue("moveRight") - state.getValue("moveLeft");
 		float up = state.getValue("moveUp") - state.getValue("moveDown");
-
+		
 		if (up != 0.0f || right != 0.0f || forward != 0.0f)
 		{
+			using namespace DirectX;
 
-			DirectX::XMVECTOR dir = DirectX::XMVectorSet(forward, right, up, 0);
-			DirectX::XMVECTOR lengthSq = DirectX::XMVector3LengthSq(dir);
+			XMVECTOR dir = XMVectorSet(m_CameraDirection.x, 0, m_CameraDirection.z, 0);
+			XMVECTOR cPos = XMLoadFloat3(&m_CameraPosition);
+			XMVECTOR rightVec = XMVector3Cross(XMVectorSet(0, 1, 0, 0), dir);
 
-			if (DirectX::XMVectorGetX(lengthSq) > 1.f)
-			{
-				const float div = 1.f / sqrtf(DirectX::XMVectorGetX(lengthSq));
-				using DirectX::operator*=;
-				dir *= div;
-			}
-			DirectX::XMStoreFloat3(&m_CameraDirection, dir);
+			rightVec *= right;
+			dir *= forward;
 
-			DirectX::XMVECTOR cPos = DirectX::XMLoadFloat3(&m_CameraPosition);
-			using DirectX::operator*;
-			using DirectX::operator+;
+			dir = XMVector3Normalize(dir + rightVec);
 
-			cPos = cPos + DirectX::XMLoadFloat3(&m_CameraDirection) * m_CamerSpeed;
-			DirectX::XMStoreFloat3(&m_CameraPosition, cPos);
+			cPos = cPos + dir * m_CameraSpeed;
+			XMStoreFloat3(&m_CameraPosition, cPos);
 		}
-
-		//m_CameraPosition = m_CameraPosition + m_CameraDirection * m_CamerSpeed;
-
-		
+				
 		m_Level.draw();
 		m_Render.updateCamera(m_CameraPosition, m_CameraDirection, Vector3(0, 1, 0));
 		m_Render.draw();
-
-
+		
 		updateDebugInfo();
 	}
 }
@@ -209,6 +207,10 @@ void BaseApp::updateTimer()
 
 void BaseApp::handleInput()
 {
+	const InputState& state = m_InputQueue.getCurrentState();
+
+	float viewSensitivity = 0.005f;
+
 	for (auto& in : m_InputQueue.getFrameInputs())
 	{
 		std::ostringstream msg;
@@ -221,7 +223,42 @@ void BaseApp::handleInput()
 			{
 				m_ShouldQuit = true;
 			}
+			
 		}
+		if (in.m_Action == "moveDown" && state.getValue("moveDown") > 0.5f)
+		{
+			m_CameraPosition.y -= m_CameraSpeed;
+		}
+		else if (in.m_Action == "moveUp" && state.getValue("moveUp") > 0.5f)
+		{
+			m_CameraPosition.y += m_CameraSpeed;
+		}
+
+		if (state.getValue("mouseLeftDown") > 0.5f)
+		{
+			m_InputQueue.lockMouse(true);
+			if (in.m_Action == "lookRight")
+			{
+				movePlayerView(in.m_Value * viewSensitivity, 0.f);
+			}
+			else if (in.m_Action == "lookLeft")
+			{
+				movePlayerView(-in.m_Value * viewSensitivity, 0.f);
+			}
+			else if (in.m_Action == "lookUp")
+			{
+				movePlayerView(0.f, -in.m_Value * viewSensitivity);
+			}
+			else if (in.m_Action == "lookDown")
+			{
+				movePlayerView(0.f, in.m_Value * viewSensitivity);
+			}
+			
+			
+		}
+		else 
+			m_InputQueue.lockMouse(false);
+		
 	}
 }
 
@@ -236,4 +273,35 @@ Vector2 BaseApp::getWindowSize() const
 
 	const static Vector2 size = Vector2(1280, 720);
 	return size;
+}
+
+void BaseApp::movePlayerView(float p_Yaw, float p_Pitch)
+{
+	using namespace DirectX;
+
+	XMVECTOR vUp = XMVector3Normalize(XMLoadFloat3(&m_CameraUp));
+	XMFLOAT3 forward = m_CameraDirection;
+	XMVECTOR vForward = XMVector3Normalize(XMLoadFloat3(&forward));
+	XMVECTOR vRight = XMVector3Cross(vUp, vForward);
+
+	XMVECTOR rotationYaw = XMQuaternionRotationRollPitchYaw(0.f, p_Yaw, 0.f);
+	XMVECTOR rotationPitch = XMQuaternionRotationAxis(vRight, p_Pitch);
+	XMVECTOR rotation = XMQuaternionMultiply(rotationPitch, rotationYaw);
+	XMVECTOR newUp = XMVector3Rotate(vUp, rotation);
+
+	XMStoreFloat3(&forward, XMVector3Rotate(vForward, rotation));
+	XMStoreFloat3(&m_CameraUp, newUp);
+
+	if (forward.y > 0.9f || forward.y < -0.9f ||
+		XMVectorGetX(XMVector3Dot(XMVectorSet(0.f, 1.f, 0.f, 0.f), newUp)) < 0.f)
+	{
+		return;
+	}
+
+	//XMStoreFloat3(&m_CameraDirection, vForward);
+	m_CameraDirection = forward;
+
+	m_Render.updateCamera(m_CameraPosition, m_CameraDirection, m_CameraUp);
+	//look->setLookForward(forward);
+	//look->setLookUp(up);
 }

@@ -26,10 +26,10 @@ private:
 	Level	m_Level;
 
 
-	//Will be moved to level?
 	Vector3 m_CameraPosition;
 	Vector3 m_CameraDirection;
-	float m_CamerSpeed;
+	Vector3 m_CameraUp;
+	float m_CameraSpeed;
 
 public:
 	BaseApp(void);
@@ -48,6 +48,8 @@ private:
 	void resetTimer();
 	void updateTimer();
 	void handleInput();
+	void movePlayerView(float p_Yaw, float p_Pitch);
+
 	std::string getGameTitle() const;
 
 	Vector2 getWindowSize() const;

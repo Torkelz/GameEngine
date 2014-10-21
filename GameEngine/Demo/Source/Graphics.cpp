@@ -24,6 +24,16 @@ Graphics::Graphics(void)
 
 Graphics::~Graphics(void)
 {
+	SAFE_RELEASE(m_Device);
+	SAFE_RELEASE(m_DeviceContext);
+	SAFE_RELEASE(m_SwapChain);
+	SAFE_RELEASE(m_RenderTargetView);
+	SAFE_RELEASE(m_Sampler);
+	SAFE_RELEASE(m_RasterState);
+	SAFE_RELEASE(m_DepthStencilBuffer);
+	SAFE_RELEASE(m_DepthStencilState);
+	SAFE_RELEASE(m_DepthStencilView);
+
 }
 
 void Graphics::initialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bool p_Fullscreen)
