@@ -42,12 +42,19 @@ bool Assignment2::runTest(void)
 	m_TotalSize += texture7->size();
 
 	m_ResourceManager->Free(texture1);
+	texture1.reset();
 	m_ResourceManager->Free(texture2);
+	texture2.reset();
 	m_ResourceManager->Free(texture3);
+	texture3.reset();
 	m_ResourceManager->Free(texture4);
+	texture4.reset();
 	m_ResourceManager->Free(texture5);
+	texture5.reset();
 	m_ResourceManager->Free(texture6);
+	texture6.reset();
 	m_ResourceManager->Free(texture7);
+	texture7.reset();
 
 	return allocated == m_TotalSize;
 }

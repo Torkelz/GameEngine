@@ -17,8 +17,7 @@ namespace Res
 	//
 	ResourceHandle::~ResourceHandle(void)
 	{
-		std::string zipPathName = std::string(m_Resource.m_ZipName + "/" + m_Resource.m_Name);
-		m_ResCache->memoryHasBeenFreed(m_Size, zipPathName);
+		m_ResCache->memoryHasBeenFreed(m_Size, m_Resource.m_Name);
 		if (m_Buffer)
 			delete m_Buffer;
 	}
