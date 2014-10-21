@@ -14,13 +14,29 @@ Render::Render(void) :
 	m_CBCameraFixed(nullptr),
 	m_CBCamera(nullptr),
 	m_CBWorld(nullptr),
-	m_NextModelInstanceID(0)
+	m_NextModelInstanceID(0),
+	m_ResourceManager(nullptr),
+	m_SamplerState(nullptr)
 {
 }
 
 
 Render::~Render(void)
 {
+	SAFE_DELETE(m_Graphics);
+	SAFE_DELETE(m_CBCamera);
+	SAFE_DELETE(m_CBCameraFixed);
+	SAFE_DELETE(m_CBWorld);
+	SAFE_RELEASE(m_SamplerState);
+	m_ResourceManager = nullptr;
+	for (auto &m : m_MeshList)
+	{
+		for (ID3D11ShaderResourceView* s : m.second.diffusemaps)
+		{
+			SAFE_RELEASE(s);
+		}
+	}
+
 }
 
 void Render::initialize(HWND p_Hwnd, Res::ResourceManager *p_ResoureManager, int p_ScreenWidth, int p_ScreenHeight, bool p_Fullscreen)
