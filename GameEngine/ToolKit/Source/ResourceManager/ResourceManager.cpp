@@ -187,7 +187,7 @@ namespace Res
 		if (handle)
 		{
 			m_Lru.push_front(handle);
-			m_Resources[p_R->m_Name] = handle;
+			m_Resources.insert(std::pair<std::string, std::shared_ptr<ResourceHandle>>(p_R->m_ZipName + "/" + p_R->m_Name, handle));
 
 			std::map<std::string, UINT>::iterator it_all = m_GUID_Table.find(p_R->m_ZipName + "/" + p_R->m_Name);
 			if (it_all == m_GUID_Table.end())
@@ -196,7 +196,7 @@ namespace Res
 			}
 
 			UINT guid = it_all->second;
-			m_LoadedResources.insert(std::pair<UINT, std::string>(guid, p_R->m_Name));
+			m_LoadedResources.insert(std::pair<UINT, std::string>(guid, p_R->m_ZipName + "/" + p_R->m_Name));
 		}
 
 		return handle;
@@ -217,11 +217,11 @@ namespace Res
 			return std::shared_ptr<ResourceHandle>();
 		}
 		std::string path = it_loaded->second;
-		std::size_t pos = path.find("/");
-		std::string internalPath = path.substr(pos + 1);
+		//std::size_t pos = path.find("/");
+		//std::string internalPath = path.substr(pos + 1);
 
 
-		ResHandleMap::iterator i = m_Resources.find(internalPath);
+		ResHandleMap::iterator i = m_Resources.find(path);
 		if (i == m_Resources.end())
 		{
 			return std::shared_ptr<ResourceHandle>();
@@ -260,7 +260,20 @@ namespace Res
 
 		m_Resources.erase(handle->m_Resource.m_Name);
 
+
+		std::string fullPath = handle->getContainerName() + "/" + handle->getName();
+		std::pair<UINT, std::string> resource;
+		for (auto& res : m_LoadedResources)
+		{
+			if (res.second == fullPath)
+			{
+				resource = res;
+				break;
+			}
+		}
+
 		handle.reset();
+		m_LoadedResources.erase(resource.first);
 		// Note - you can't change the resource cache size yet - the resource bits could still actually be
 		// used by some sybsystem holding onto the ResourceHandle. Only when it goes out of scope can the memory
 		// be actually free again.
@@ -305,27 +318,27 @@ namespace Res
 		// Note - the resource might still be in use by something,
 		// so the cache can't actually count the memory freed until the
 		// ResourceHandle pointing to it is destroyed.
-
-		p_Gonner.reset();
-		m_HandleLock.unlock();
-	}
-
-	void ResourceManager::memoryHasBeenFreed(UINT p_Size, std::string p_ZipPathName)
-	{
-		m_HandleLock.lock();
-
+		std::string fullPath = p_Gonner->getContainerName() + "/" + p_Gonner->getName();
 		std::pair<UINT, std::string> resource;
 		for (auto& res : m_LoadedResources)
 		{
-			if (res.second == p_ZipPathName)
+			if (res.second == fullPath)
 			{
 				resource = res;
 				break;
 			}
 		}
 
-		m_LoadedResources.erase(resource.first);
+		p_Gonner.reset();
+		
 
+		
+		m_HandleLock.unlock();
+	}
+
+	void ResourceManager::memoryHasBeenFreed(UINT p_Size, std::string p_ZipPathName)
+	{
+		m_HandleLock.lock();
 		m_Allocated -= p_Size;
 		m_HandleLock.unlock();
 	}
