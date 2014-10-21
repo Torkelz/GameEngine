@@ -35,7 +35,7 @@ void Render::initialize(HWND p_Hwnd, Res::ResourceManager *p_ResoureManager, int
 	m_Graphics = new Graphics();
 	m_Graphics->initialize(p_Hwnd, p_ScreenWidth, p_ScreenHeight, p_Fullscreen);
 
-	float nearZ = 8.0f;
+	float nearZ = 1.0f;
 	float farZ = 100000.0f;
 	m_FOV = 2 * 3.1415f / 360.0f * 45; //45 degrees
 	initializeMatrices(p_ScreenWidth, p_ScreenHeight, nearZ, farZ);

@@ -45,6 +45,7 @@ float4 PS(VSOutput input) : SV_Target
 {
 	float4 texColor = diffuseTex.Sample(textureSampler, input.texCoord);
 
+	return texColor;
 	float3 light = float3(-10, 0, 0);
 	float3 litColor = 0;
 	//The vector from surface to the light
