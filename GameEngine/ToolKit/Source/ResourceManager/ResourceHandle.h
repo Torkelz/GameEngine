@@ -9,9 +9,6 @@ namespace Res
 {
 	class IResourceExtraData;
 
-	//
-	//  class ResourceHandle			- Chapter 8, page 222
-	//
 	class ResourceHandle
 	{
 		friend class ResourceManager;

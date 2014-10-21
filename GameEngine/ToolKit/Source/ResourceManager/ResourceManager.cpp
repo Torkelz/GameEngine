@@ -12,8 +12,6 @@
 
 #include <fstream>
 
-
-
 namespace Res
 {
 	ResourceManager::ResourceManager(UINT p_CacheSize) :
@@ -26,10 +24,6 @@ namespace Res
 		{
 			freeOneResource();
 		}
-		//for (auto &res : m_FileMap)
-		//{
-		//	res.second->~IResourceFile();
-		//}
 	}
 
 	ResourceManager::UINT ResourceManager::getAllocated(void)
@@ -178,11 +172,6 @@ namespace Res
 			handle = std::shared_ptr<ResourceHandle>(new ResourceHandle(*p_R, buffer, size, this));
 			bool success = loader->loadResource(rawBuffer, rawSize, handle);
 
-			// [mrmike] - This was added after the chapter went to copy edit. It is used for those
-			//            resoruces that are converted to a useable format upon load, such as a compressed
-			//            file. If the raw buffer from the resource file isn't needed, it shouldn't take up
-			//            any additional memory, so we release it.
-			//
 			if (loader->discardRawBufferAfterLoad())
 			{
 				SAFE_DELETE_ARRAY(rawBuffer);
@@ -210,7 +199,7 @@ namespace Res
 			m_LoadedResources.insert(std::pair<UINT, std::string>(guid, p_R->m_Name));
 		}
 
-		return handle;		// ResourceManager is out of memory!
+		return handle;
 	}
 
 	std::shared_ptr<ResourceHandle> ResourceManager::find(Resource *p_R)
@@ -273,7 +262,6 @@ namespace Res
 
 		std::string zipPathName = std::string(handle->m_Resource.m_ZipName + "/" + handle->m_Resource.m_Name);
 
-		//m_Allocated -= handle->size();
 		handle.reset();
 		// Note - you can't change the resource cache size yet - the resource bits could still actually be
 		// used by some sybsystem holding onto the ResourceHandle. Only when it goes out of scope can the memory
@@ -290,10 +278,6 @@ namespace Res
 		}
 	}
 
-
-	//
-	// ResourceManager::MakeRoom									- Chapter 8, page 231
-	//
 	bool ResourceManager::makeRoom(UINT p_Size)
 	{
 		if (p_Size > m_CacheSize)
@@ -324,16 +308,10 @@ namespace Res
 		// so the cache can't actually count the memory freed until the
 		// ResourceHandle pointing to it is destroyed.
 
-		//m_Allocated -= p_Gonner->size();
 		p_Gonner.reset();
 		m_HandleLock.unlock();
 	}
 
-	//
-	//  ResourceManager::MemoryHasBeenFreed					- not described in the book
-	//
-	//     This is called whenever the memory associated with a resource is actually freed
-	//
 	void ResourceManager::memoryHasBeenFreed(UINT p_Size, std::string p_ZipPathName)
 	{
 		m_HandleLock.lock();
@@ -354,12 +332,6 @@ namespace Res
 		m_HandleLock.unlock();
 	}
 
-	//
-	// ResourceManager::Match									- not described in the book
-	//
-	//   Searches the resource cache assets for files matching the pattern. Useful for providing a 
-	//   a list of levels for a main menu screen, for example.
-	//
 	std::vector<std::string> ResourceManager::match(const std::string p_Pattern, std::string p_GUID)
 	{
 		std::vector<std::string> matchingNames;
@@ -388,38 +360,6 @@ namespace Res
 		}
 		return matchingNames;
 	}
-
-
-	//
-	// ResourceManager::Preload								- Chapter 8, page 236
-	//
-	//int ResourceManager::preload(const std::string p_Pattern, void(*progressCallback)(int, bool &))
-	//{
-	//	if (m_File == NULL)
-	//		return 0;
-	//
-	//	int numFiles = m_File->getNumResources();
-	//	int loaded = 0;
-	//	bool cancel = false;
-	//	for (int i = 0; i<numFiles; ++i)
-	//	{
-	//		Resource resource(m_File->getResourceName(i));
-	//
-	//		if (wildcardMatch(p_Pattern.c_str(), resource.m_Name.c_str()))
-	//		{
-	//			std::shared_ptr<ResourceHandle> handle = g_pApp->m_ResourceManager->getHandle(&resource);
-	//			++loaded;
-	//		}
-	//
-	//		if (progressCallback != NULL)
-	//		{
-	//			progressCallback(i * 100 / numFiles, cancel);
-	//		}
-	//	}
-	//	return loaded;
-	//}
-
-
 
 	bool ResourceManager::wildcardMatch(const char *pat, const char *str) {
 		int i, star;

@@ -13,9 +13,6 @@ namespace Res
 	class ResourceHandle;
 	class Resource;
 
-	//
-	//  class ResCache										- Chapter 8, page 225
-	//
 	typedef std::list<std::shared_ptr<ResourceHandle>> ResHandleList;					// lru list
 	typedef std::map<std::string, std::shared_ptr<ResourceHandle>> ResHandleMap;		// maps indentifiers to resource data
 	typedef std::list<std::shared_ptr<IResourceLoader>> ResourceLoaders;
@@ -37,10 +34,7 @@ namespace Res
 
 		UINT m_CacheSize;			// total memory size
 		UINT m_Allocated;			// total memory allocated
-		SpinLock m_HandleLock;		// Thread safing the getHandle method.
-		SpinLock m_AllocatedLock;	// Thread safing the m_Allocated variable
-		SpinLock m_MakeRoomLock;	// Thread safing the makeRoom function.
-		SpinLock m_ZipLibLock;		// Thread safing zib library load of header.
+		SpinLock m_HandleLock;		// Thread safing the resource manager.
 
 	protected:
 		bool makeRoom(UINT p_Size);
@@ -53,7 +47,6 @@ namespace Res
 		void freeOneResource(void);
 		void memoryHasBeenFreed(UINT p_Size, std::string p_ZipPathName);
 		bool wildcardMatch(const char *p_Pattern, const char *p_String);
-
 	public:
 		ResourceManager(UINT p_Cache);
 		virtual ~ResourceManager(void);
@@ -70,14 +63,11 @@ namespace Res
 		void registerLoader(std::shared_ptr<IResourceLoader> p_Loader);
 
 		std::shared_ptr<ResourceHandle> getHandle(Resource *p_R);
-
-		//int preload(const std::string p_Pattern, void(*progressCallback)(int, bool &));
 		std::vector<std::string> match(const std::string p_Pattern, std::string p_GUID);
 
-		void flush(void);
-
 		void Free(std::shared_ptr<ResourceHandle> p_Gonner);
-
-		//bool isUsingDevelopmentDirectories(void) const { GCC_ASSERT(m_File); return m_File->isUsingDevelopmentDirectories(); }
+		
+		// Possibly unsafe to use with threads.
+		void flush(void);
 	};
 }

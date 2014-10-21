@@ -4,17 +4,11 @@
 
 namespace Res
 {
-	//
-	// ResourceHandle::ResourceHandle							- Chapter 8, page 223
-	//
 	ResourceHandle::ResourceHandle(Resource &p_Resource, char *p_Buffer, UINT p_Size, ResourceManager *p_ResCache)
 		: m_Resource(p_Resource), m_Buffer(p_Buffer), m_Size(p_Size), m_Extra(nullptr), m_ResCache(p_ResCache)
 	{
 	}
 
-	//
-	// ResourceHandle::ResourceHandle							- Chapter 8, page 223
-	//
 	ResourceHandle::~ResourceHandle(void)
 	{
 		m_ResCache->memoryHasBeenFreed(m_Size, m_Resource.m_Name);

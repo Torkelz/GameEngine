@@ -21,9 +21,6 @@ namespace Res
 	// --------------------------------------------------------------------------
 
 #pragma pack(1)
-	// --------------------------------------------------------------------------
-	// struct ZipFile::TZipLocalHeader					- Chapter 8, page 215
-	// --------------------------------------------------------------------------
 	struct ZipFile::TZipLocalHeader
 	{
 		enum
@@ -43,9 +40,6 @@ namespace Res
 		word    xtraLen;          // Extra field follows filename.
 	};
 
-	// --------------------------------------------------------------------------
-	// struct ZipFile::TZipDirHeader					- Chapter 8, page 215
-	// --------------------------------------------------------------------------
 	struct ZipFile::TZipDirHeader
 	{
 		enum
@@ -62,9 +56,6 @@ namespace Res
 		word    cmntLen;
 	};
 
-	// --------------------------------------------------------------------------
-	// struct ZipFile::TZipDirFileHeader					- Chapter 8, page 215
-	// --------------------------------------------------------------------------
 	struct ZipFile::TZipDirFileHeader
 	{
 		enum
@@ -108,12 +99,6 @@ namespace Res
 			fclose(m_File);
 	}
 
-
-	// --------------------------------------------------------------------------
-	// Function:      Init
-	// Purpose:       Initialize the object and read the zip file directory.
-	// Parameters:    A stdio FILE* used for reading.
-	// --------------------------------------------------------------------------
 	bool ZipFile::init(const std::wstring &p_ResFileName)
 	{
 		end();
@@ -203,13 +188,6 @@ namespace Res
 		return i->second;
 	}
 
-
-
-	// --------------------------------------------------------------------------
-	// Function:      End
-	// Purpose:       Finish the object
-	// Parameters:    
-	// --------------------------------------------------------------------------
 	void ZipFile::end(void)
 	{
 		m_ZipContentsMap.clear();
@@ -222,11 +200,6 @@ namespace Res
 		return m_NumEntries;
 	}
 
-	// --------------------------------------------------------------------------
-	// Function:      GetFilename
-	// Purpose:       Return the name of a file
-	// Parameters:    The file index and the buffer where to store the filename
-	// --------------------------------------------------------------------------
 	std::string ZipFile::getFilename(int p_Index)  const
 	{
 		std::string fileName = "";
@@ -240,12 +213,6 @@ namespace Res
 		return fileName;
 	}
 
-
-	// --------------------------------------------------------------------------
-	// Function:      GetFileLen
-	// Purpose:       Return the length of a file so a buffer can be allocated
-	// Parameters:    The file index.
-	// --------------------------------------------------------------------------
 	int ZipFile::getFileLen(int p_Index) const
 	{
 		if (p_Index < 0 || p_Index >= m_NumEntries)
@@ -254,11 +221,6 @@ namespace Res
 			return m_AppDir[p_Index]->ucSize;
 	}
 
-	// --------------------------------------------------------------------------
-	// Function:      ReadFile
-	// Purpose:       Uncompress a complete file
-	// Parameters:    The file index and the pre-allocated buffer
-	// --------------------------------------------------------------------------
 	bool ZipFile::readFile(int p_Index, void *p_Buffer)
 	{
 		if (p_Buffer == NULL || p_Index < 0 || p_Index >= m_NumEntries)
@@ -326,13 +288,6 @@ namespace Res
 		return ret;
 	}
 
-
-
-	// --------------------------------------------------------------------------
-	// Function:      ReadLargeFile
-	// Purpose:       Uncompress a complete file with callbacks.
-	// Parameters:    The file index and the pre-allocated buffer
-	// --------------------------------------------------------------------------
 	bool ZipFile::readLargeFile(int p_Index, void *p_Buffer, void(*progressCallback)(int, bool&))
 	{
 		if (p_Buffer == NULL || p_Index < 0 || p_Index >= m_NumEntries)
@@ -416,103 +371,4 @@ namespace Res
 		delete[] pcData;
 		return ret;
 	}
-
-
-	/*******************************************************
-	Example useage:
-
-	void MakePath(const char *pszPath)
-	{
-	if (pszPath[0] == '\0')
-	return;
-
-	char buf[1000];
-	const char *p = pszPath;
-
-	//  printf("MakePath(\"%s\")\n", pszPath);
-
-	// Skip machine name in network paths like \\MyMachine\blah...
-	if (p[0] == '\\' && p[1] == '\\')
-	p = strchr(p+2, '\\');
-
-	while (p != NULL && *p != '\0')
-	{
-	p = strchr(p, '\\');
-
-	if (p)
-	{
-	memcpy(buf, pszPath, p - pszPath);
-	buf[p - pszPath] = 0;
-	p++;
-	}
-	else
-	strcpy(buf, pszPath);
-
-	if (buf[0] != '\0' && strcmp(buf, ".") && strcmp(buf, ".."))
-	{
-	//      printf("  Making path: \"%s\"\n", buf);
-	mkdir(buf);
-	}
-	}
-	}
-
-
-
-	void main(int argc, const char *argv[])
-	{
-	if (argc > 1)
-	{
-	FILE *f = fopen(argv[1], "rb");
-	if (f)
-	{
-	ZipFile zip;
-
-	if (true != zip.Init(f))
-	printf("Bad Zip file: \"%s\"\n", argv[1]);
-	else
-	{
-	for (int i = 0; i < zip.GetNumFiles(); i++)
-	{
-	int len = zip.GetFileLen(i);
-	char fname[1000];
-
-	zip.GetFilename(i, fname);
-
-	printf("File \"%s\" (%d bytes): ", fname, len);
-
-	char *pData = new char[len];
-	if (!pData)
-	printf("OUT OF MEMORY\n");
-	else if (true == zip.ReadFile(i, pData))
-	{
-	printf("OK\n");
-	char dpath[1000];
-
-	sprintf(dpath, "Data\\%s", fname);
-	char *p = strrchr(dpath, '\\');
-	if (p)
-	{
-	*p = '\0';
-	MakePath(dpath);
-	*p = '\\';
-	}
-	FILE *fo = fopen(dpath, "wb");
-	if (fo)
-	{
-	fwrite(pData, len, 1, fo);
-	fclose(fo);
-	}
-	}
-	else
-	printf("ERROR\n");
-	delete[] pData;
-	}
-	zip.End();
-	}
-
-	fclose(f);
-	}
-	}
-	}
-	******************************************************/
 }

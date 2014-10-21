@@ -7,10 +7,6 @@ namespace Res
 {
 	class ZipFile;
 
-	//
-	//  class ResourceZipFile	- not discussed in the book
-	//
-	//    This class implements the IResourceFile interface with a ZipFile.
 	class ResourceZipFile : public IResourceFile
 	{
 		ZipFile *m_ZipFile;
@@ -26,7 +22,6 @@ namespace Res
 		virtual int getRawResource(const Resource &p_R, char *p_Buffer);
 		virtual int getNumResources(void) const;
 		virtual std::string getResourceName(int p_Num) const;
-		//virtual bool isUsingDevelopmentDirectories(void) const { return false; }
 		virtual std::string getFilePath(void) const;
 	};
 }

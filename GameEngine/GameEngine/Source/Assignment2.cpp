@@ -81,7 +81,6 @@ void Assignment2::allocThread2()
 	zip.initialize(L"..\\Resources\\hubba.zip");
 	m_ResourceManager->loadZipLib(&zip, "hubba");
 
-	//Resource assignment("assignment1.xlsx", "hubba");
 	Resource halo2("halo2.jpg", "hubba");
 	Resource metroid1("metroid.jpg", "hubba");
 	Resource metroid2("metroid2.jpg", "hubba");
