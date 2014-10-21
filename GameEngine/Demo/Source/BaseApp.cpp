@@ -49,6 +49,9 @@ void BaseApp::init()
 	translator->addKeyboardMapping(83, "moveBackward");
 	translator->addKeyboardMapping(65, "moveLeft");
 	translator->addKeyboardMapping(68, "moveRight");
+	translator->addKeyboardMapping(32, "moveUp");
+	translator->addKeyboardMapping(VK_LCONTROL, "moveDown");
+
 
 	translator->addMouseMapping(Axis::HORIZONTAL, false, "lookLeft");
 	translator->addMouseMapping(Axis::HORIZONTAL, true, "lookRight");
@@ -56,13 +59,14 @@ void BaseApp::init()
 	translator->addMouseMapping(Axis::VERTICAL, false, "lookDown");
 
 	translator->addMouseButtonMapping(MouseButton::LEFT, "mouseLeftDown");
+	translator->addMouseButtonMapping(MouseButton::LEFT, "mouseLeftRelease");
 
 	m_InputQueue.init(std::move(translator));
 
 	m_CameraDirection = Vector3(1, 0, 0);
 	m_CameraPosition = Vector3(0, 0, 0);
 	m_CameraUp = Vector3(0,1,0);
-	m_CamerSpeed = 2;
+	m_CameraSpeed = 0.5f;
 	m_Level.initialize(&m_Render, &man);
 }
 
@@ -85,9 +89,6 @@ void BaseApp::run()
 		float right = state.getValue("moveRight") - state.getValue("moveLeft");
 		float up = state.getValue("moveUp") - state.getValue("moveDown");
 		
-		
-
-
 		if (up != 0.0f || right != 0.0f || forward != 0.0f)
 		{
 			using namespace DirectX;
@@ -101,7 +102,7 @@ void BaseApp::run()
 
 			dir = XMVector3Normalize(dir + rightVec);
 
-			cPos = cPos + dir * m_CamerSpeed;
+			cPos = cPos + dir * m_CameraSpeed;
 			XMStoreFloat3(&m_CameraPosition, cPos);
 		}
 				
@@ -222,10 +223,20 @@ void BaseApp::handleInput()
 			{
 				m_ShouldQuit = true;
 			}
+			
 		}
-		
+		if (in.m_Action == "moveDown" && state.getValue("moveDown") > 0.5f)
+		{
+			m_CameraPosition.y -= m_CameraSpeed;
+		}
+		else if (in.m_Action == "moveUp" && state.getValue("moveUp") > 0.5f)
+		{
+			m_CameraPosition.y += m_CameraSpeed;
+		}
+
 		if (state.getValue("mouseLeftDown") > 0.5f)
 		{
+			m_InputQueue.lockMouse(true);
 			if (in.m_Action == "lookRight")
 			{
 				movePlayerView(in.m_Value * viewSensitivity, 0.f);
@@ -242,7 +253,12 @@ void BaseApp::handleInput()
 			{
 				movePlayerView(0.f, in.m_Value * viewSensitivity);
 			}
+			
+			
 		}
+		else 
+			m_InputQueue.lockMouse(false);
+		
 	}
 }
 

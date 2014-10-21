@@ -29,7 +29,7 @@ private:
 	Vector3 m_CameraPosition;
 	Vector3 m_CameraDirection;
 	Vector3 m_CameraUp;
-	float m_CamerSpeed;
+	float m_CameraSpeed;
 
 public:
 	BaseApp(void);

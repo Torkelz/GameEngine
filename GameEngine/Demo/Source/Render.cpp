@@ -95,10 +95,7 @@ void Render::draw(void)
 
 			m_Graphics->getDeviceContext()->DrawIndexed(numelements, m->faceGroups.at(i), 0);
 			
-		}
-		//m->indexBuffer->setBuffer(1);
-		//m_Graphics->getDeviceContext()->DrawIndexed(m->indexBuffer->getNumOfElements(), 0, 0);
-		
+		}		
 		
 		m->buffer->unsetBuffer(0);
 		m->indexBuffer->unsetBuffer(1);
@@ -230,7 +227,6 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 
 		m.materials = extraMTL->getMaterials();
 
-		//std::vector<int> faceGroups = extra->getFaceGroupData();
 		m.faceGroups = extra->getFaceGroupData();
 		for (unsigned int i = 0; i < m.materials.size(); ++i)
 		{
@@ -248,21 +244,8 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 			{
 				throw GraphicsException("Error while creating shaderresourceview from memory: " + kdTexture.lock()->getName(), __LINE__, __FILE__);
 			}
-
-			//bDesc.initData = p_ResourceHandle.lock()->buffer() + faceGroups.at(i);
-
-			//int numelements = (extra->getBufferSeperator() / sizeof(int)) - faceGroups.at(i);
-
-			//if (i + 1 < faceGroups.size())
-			//	numelements = faceGroups.at(i + 1) - faceGroups.at(i);
-
-			//bDesc.numOfElements = numelements;
-			//bDesc.sizeOfElement = sizeof(int);
-			//bDesc.type = Buffer::Type::INDEX_BUFFER;
-			//bDesc.usage = Buffer::Usage::USAGE_IMMUTABLE;
 			
 			m.diffusemaps.push_back(view);
-			//m.indexBuffer.push_back(std::unique_ptr<Buffer>(WrapperFactory::getInstance()->createBuffer(bDesc)));
 		}
 
 

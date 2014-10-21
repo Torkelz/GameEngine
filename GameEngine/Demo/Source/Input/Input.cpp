@@ -49,3 +49,8 @@ void Input::handleRecords(InputRecord p_Record)
 	m_InputState.updateRecord(p_Record);
 
 }
+
+void Input::lockMouse(bool p_State)
+{
+	m_Translator->lockMouse(p_State);
+}
