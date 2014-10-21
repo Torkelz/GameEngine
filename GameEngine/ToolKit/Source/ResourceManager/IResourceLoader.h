@@ -7,9 +7,6 @@ namespace Res
 {
 	class ResourceHandle;
 
-	//
-	// class IResourceLoader					- Chapter 8, page 224
-	//
 	class IResourceLoader
 	{
 	public:

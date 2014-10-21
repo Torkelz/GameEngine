@@ -1,9 +1,6 @@
 #pragma once
 #include "IResourceLoader.h"
 
-//
-// class DefaultResourceLoader							- Chapter 8, page 225
-//
 namespace Res
 {
 	class DefaultResourceLoader : public IResourceLoader

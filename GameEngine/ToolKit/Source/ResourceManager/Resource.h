@@ -4,9 +4,6 @@
 
 namespace Res
 {
-	//
-	//  class Resource			- Chapter 8, page 220
-	//
 	class Resource
 	{
 	public:
