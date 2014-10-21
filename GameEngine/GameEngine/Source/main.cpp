@@ -16,7 +16,8 @@ int main(int /*argc*/, char* /*argv*/[])
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//Assignment1 ass1;
 
-	//ass1.scenario1Test();
+	//OLD STUFF
+	/*//ass1.scenario1Test();
 	//ass1.scenario2Test();
 	//if (!ass1.threadTestPoolAllocator())
 	//	std::cout << "Alligator are not thread safe!" << std::endl;
@@ -43,6 +44,8 @@ int main(int /*argc*/, char* /*argv*/[])
 	//int size = texture.lock()->size();
 
 	//man.Free(texture.lock());
+	*/
+	
 	Assignment2 ass2;
 	ass2.initialize(TOTAL_SIZE);
 

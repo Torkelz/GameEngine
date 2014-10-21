@@ -30,8 +30,8 @@ void Level::initialize(Render *p_Render, Res::ResourceManager *p_ResourceManager
 	zip.initialize(L"..\\Resources\\hubba3.zip");
 
 	
+	p_ResourceManager->loadZipLib(&zip, "hubba3");
 
-	m_ResourceManager->loadResource(&zip, "hubba3");
 
 	
 	

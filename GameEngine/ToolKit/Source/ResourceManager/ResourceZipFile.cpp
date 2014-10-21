@@ -37,8 +37,6 @@ namespace Res
 		return m_ZipFile->getFileLen(resourceNum);
 	}
 
-
-
 	int ResourceZipFile::getRawResource(const Resource &p_R, char *p_Buffer)
 	{
 		int size = 0;
@@ -51,15 +49,10 @@ namespace Res
 		return size;
 	}
 
-
-
 	int ResourceZipFile::getNumResources(void) const
 	{
 		return (m_ZipFile == NULL) ? 0 : m_ZipFile->getNumFiles();
 	}
-
-
-
 
 	std::string ResourceZipFile::getResourceName(int p_Num) const
 	{

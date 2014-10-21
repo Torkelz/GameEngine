@@ -10,6 +10,9 @@
 #include <algorithm>
 #include <cctype>
 
+#include <fstream>
+
+
 
 namespace Res
 {
@@ -39,12 +42,31 @@ namespace Res
 		registerLoader(std::shared_ptr<IResourceLoader>(new DefaultResourceLoader()));
 	}
 
-	bool ResourceManager::loadResource(IResourceFile *p_Resource, std::string p_GUID)
+	bool ResourceManager::loadZipLib(IResourceFile *p_Resource, std::string p_ZipLibr)
 	{
 		if (p_Resource->open())
 		{
-			m_FileMap.insert(std::pair<std::string, IResourceFile*>(p_GUID, p_Resource));
-
+			m_ZipLibLock.lock();
+			m_FileMap.insert(std::pair<std::string, IResourceFile*>(p_ZipLibr, p_Resource));
+			std::ifstream fileStream;
+			std::string guidName = std::string("..\\Resources\\" + p_ZipLibr + ".guid");
+			
+			fileStream.open(guidName.c_str());
+			{
+				std::string line;
+				std::string guid;
+				std::string internalPath;
+				fileStream >> guid >> internalPath;
+				internalPath = std::string(p_ZipLibr + "/" + internalPath);
+				while (std::getline(fileStream, line))
+				{
+					m_GUID_Table.insert(std::pair<std::string, UINT>(internalPath, std::atoi(guid.c_str())));
+					fileStream >> guid >> internalPath;
+					internalPath = std::string(p_ZipLibr + "/" + internalPath);
+				}
+				m_GUID_Table.insert(std::pair<std::string, UINT>(internalPath, std::atoi(guid.c_str())));
+			}
+			m_ZipLibLock.unlock();
 			return true;
 		}
 
@@ -58,6 +80,7 @@ namespace Res
 
 	std::shared_ptr<ResourceHandle> ResourceManager::getHandle(Resource *p_R)
 	{
+		m_HandleLock.lock();
 		std::shared_ptr<ResourceHandle> handle(find(p_R));
 		if (handle == nullptr)
 		{
@@ -67,6 +90,7 @@ namespace Res
 		{
 			update(handle);
 		}
+		m_HandleLock.unlock();
 		return handle;
 	}
 
@@ -121,11 +145,11 @@ namespace Res
 		{
 			Logger::log(Logger::Level::WARNING, "Resource cache is out of memory! Dumping memory state.");
 			
-			int ompaloompa = 1;
+			int resourceNum = 1;
 			for (auto &res : m_Lru)
 			{
-				Logger::log(Logger::Level::WARNING, "File " + std::to_string(ompaloompa) + ", File name: " + res->getName());
-				++ompaloompa;
+				Logger::log(Logger::Level::WARNING, "File " + std::to_string(resourceNum) + ", File name: " + res->getName());
+				++resourceNum;
 			}
 
 			Logger::log(Logger::Level::WARNING, "Tried to load file: " + p_R->m_Name);
@@ -175,6 +199,15 @@ namespace Res
 		{
 			m_Lru.push_front(handle);
 			m_Resources[p_R->m_Name] = handle;
+
+			std::map<std::string, UINT>::iterator it_all = m_GUID_Table.find(p_R->m_ZipName + "/" + p_R->m_Name);
+			if (it_all == m_GUID_Table.end())
+			{
+				Logger::log(Logger::Level::FATAL, "Can't find GUID for file " + p_R->m_Name + "in archive " + p_R->m_ZipName + "."); 
+			}
+
+			UINT guid = it_all->second;
+			m_LoadedResources.insert(std::pair<UINT, std::string>(guid, p_R->m_Name));
 		}
 
 		return handle;		// ResourceManager is out of memory!
@@ -182,9 +215,28 @@ namespace Res
 
 	std::shared_ptr<ResourceHandle> ResourceManager::find(Resource *p_R)
 	{
-		ResHandleMap::iterator i = m_Resources.find(p_R->m_Name);
-		if (i == m_Resources.end())
+		std::map<std::string, UINT>::iterator it_all = m_GUID_Table.find(p_R->m_ZipName + "/" + p_R->m_Name);
+		if (it_all == m_GUID_Table.end())
+		{
 			return std::shared_ptr<ResourceHandle>();
+		}
+		UINT guid = it_all->second;
+
+		std::map<UINT, std::string>::iterator it_loaded = m_LoadedResources.find(guid);
+		if (it_loaded == m_LoadedResources.end())
+		{
+			return std::shared_ptr<ResourceHandle>();
+		}
+		std::string path = it_loaded->second;
+		std::size_t pos = path.find("/");
+		std::string internalPath = path.substr(pos + 1);
+
+
+		ResHandleMap::iterator i = m_Resources.find(internalPath);
+		if (i == m_Resources.end())
+		{
+			return std::shared_ptr<ResourceHandle>();
+		}
 
 		return i->second;
 	}
@@ -198,7 +250,7 @@ namespace Res
 	char *ResourceManager::Allocate(UINT p_Size)
 	{
 		if (!makeRoom(p_Size))
-			return NULL;
+			return nullptr;
 
 		m_AllocatedLock.lock();
 		char *mem = new char[p_Size];
@@ -222,8 +274,8 @@ namespace Res
 		m_Resources.erase(handle->m_Resource.m_Name);
 
 		m_Allocated -= handle->size();
-		m_AllocatedLock.unlock();
 		handle.reset();
+		m_AllocatedLock.unlock();
 		// Note - you can't change the resource cache size yet - the resource bits could still actually be
 		// used by some sybsystem holding onto the ResourceHandle. Only when it goes out of scope can the memory
 		// be actually free again.
@@ -279,8 +331,8 @@ namespace Res
 		// ResourceHandle pointing to it is destroyed.
 
 		m_Allocated -= p_Gonner->size();
-		m_AllocatedLock.unlock();
 		p_Gonner.reset();
+		m_AllocatedLock.unlock();
 	}
 
 	//
