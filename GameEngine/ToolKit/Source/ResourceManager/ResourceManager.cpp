@@ -260,8 +260,6 @@ namespace Res
 
 		m_Resources.erase(handle->m_Resource.m_Name);
 
-		std::string zipPathName = std::string(handle->m_Resource.m_ZipName + "/" + handle->m_Resource.m_Name);
-
 		handle.reset();
 		// Note - you can't change the resource cache size yet - the resource bits could still actually be
 		// used by some sybsystem holding onto the ResourceHandle. Only when it goes out of scope can the memory
