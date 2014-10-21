@@ -24,10 +24,10 @@ void Assignment2::initialize(UINT p_CacheSize)
 	m_ResourceManager->init();
 }
 
-bool Assignment2::runTest(void)
+bool Assignment2::runScenario1(void)
 {
-	std::thread thread1([&]{ allocThread1(); });
-	std::thread thread2([&]{ allocThread2(); });
+	std::thread thread1([&]{ scenario1Thread1(); });
+	std::thread thread2([&]{ scenario1Thread2(); });
 
 	thread1.join();
 	thread2.join();
@@ -59,7 +59,14 @@ bool Assignment2::runTest(void)
 	return allocated == m_TotalSize;
 }
 
-void Assignment2::allocThread1()
+bool Assignment2::runScenario2(void)
+{
+
+
+	return true;
+}
+
+void Assignment2::scenario1Thread1(void)
 {
 	ResourceZipFile zip = ResourceZipFile();
 	zip.initialize(L"..\\Resources\\hibba.zip");
@@ -72,10 +79,9 @@ void Assignment2::allocThread1()
 	texture1 = m_ResourceManager->getHandle(&halo1);
 	texture2 = m_ResourceManager->getHandle(&halo2);
 	texture3 = m_ResourceManager->getHandle(&halo3);
-
 }
 
-void Assignment2::allocThread2()
+void Assignment2::scenario1Thread2(void)
 {
 	ResourceZipFile zip = ResourceZipFile();
 	zip.initialize(L"..\\Resources\\hubba.zip");
@@ -90,4 +96,9 @@ void Assignment2::allocThread2()
 	texture5 = m_ResourceManager->getHandle(&metroid1);
 	texture6 = m_ResourceManager->getHandle(&metroid2);
 	texture7 = m_ResourceManager->getHandle(&metroid3);
+}
+
+void Assignment2::scenario2(void)
+{
+
 }

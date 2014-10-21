@@ -46,10 +46,20 @@ int main(int /*argc*/, char* /*argv*/[])
 	//man.Free(texture.lock());
 	*/
 	
-	Assignment2 ass2;
-	ass2.initialize(TOTAL_SIZE);
+	Assignment2 scenario1;
+	scenario1.initialize(TOTAL_SIZE);
 
-	bool result = ass2.runTest();
+	int result = EXIT_SUCCESS;
+	if (!scenario1.runScenario1())
+	{
+		result = EXIT_FAILURE;
+	}
 
-	return EXIT_SUCCESS;
+	if (!scenario1.runScenario2())
+	{
+		result += EXIT_FAILURE + 1;
+	}
+
+
+	return result;
 }

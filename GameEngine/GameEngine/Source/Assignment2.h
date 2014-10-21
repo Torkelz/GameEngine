@@ -21,9 +21,11 @@ public:
 	~Assignment2(void);
 
 	void initialize(UINT p_CacheSize);
-	bool runTest(void);
+	bool runScenario1(void);
+	bool runScenario2(void);
 
-	void allocThread1();
-	void allocThread2();
-
+private:
+	void scenario1Thread1(void);
+	void scenario1Thread2(void);
+	void scenario2(void);
 };
