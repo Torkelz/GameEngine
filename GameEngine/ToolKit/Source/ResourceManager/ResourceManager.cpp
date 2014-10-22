@@ -15,7 +15,8 @@
 namespace Res
 {
 	ResourceManager::ResourceManager(UINT p_CacheSize) :
-		m_CacheSize(p_CacheSize)
+		m_CacheSize(p_CacheSize),
+		m_Allocated(0)
 	{ }
 
 	ResourceManager::~ResourceManager(void)
@@ -257,12 +258,12 @@ namespace Res
 
 		std::shared_ptr<ResourceHandle> handle = *gonner;
 		m_Lru.pop_back();
-
+		std::string name = handle->m_Resource.m_Name;
 		m_Resources.erase(handle->m_Resource.m_Name);
 
-		std::string zipPathName = std::string(handle->m_Resource.m_ZipName + "/" + handle->m_Resource.m_Name);
-
 		handle.reset();
+
+		Logger::log(Logger::Level::DEBUG_L, "Resource Manager out of memory. releasing " + name + " to make room");
 		// Note - you can't change the resource cache size yet - the resource bits could still actually be
 		// used by some sybsystem holding onto the ResourceHandle. Only when it goes out of scope can the memory
 		// be actually free again.
@@ -314,7 +315,6 @@ namespace Res
 
 	void ResourceManager::memoryHasBeenFreed(UINT p_Size, std::string p_ZipPathName)
 	{
-		m_HandleLock.lock();
 
 		std::pair<UINT, std::string> resource;
 		for (auto& res : m_LoadedResources)
@@ -329,7 +329,6 @@ namespace Res
 		m_LoadedResources.erase(resource.first);
 
 		m_Allocated -= p_Size;
-		m_HandleLock.unlock();
 	}
 
 	std::vector<std::string> ResourceManager::match(const std::string p_Pattern, std::string p_GUID)

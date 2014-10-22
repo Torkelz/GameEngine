@@ -14,6 +14,7 @@ BaseApp::BaseApp(void)
 
 BaseApp::~BaseApp(void)
 {
+	SAFE_DELETE(m_Resourcemanager);
 }
 
 void BaseApp::init()
@@ -24,13 +25,13 @@ void BaseApp::init()
 	m_Window.init(getGameTitle(), getWindowSize());
 	m_NewWindowSize = m_Window.getSize();
 
-	Res::ResourceManager man(1000000000);
-	man.init();
-	man.registerLoader(std::shared_ptr<Res::IResourceLoader>(new Res::OBJResourceLoader()));
-	man.registerLoader(std::shared_ptr<Res::IResourceLoader>(new Res::MTLResourceLoader()));
+	m_Resourcemanager = new Res::ResourceManager(1024 * 15000);
+	m_Resourcemanager->init();
+	m_Resourcemanager->registerLoader(std::shared_ptr<Res::IResourceLoader>(new Res::OBJResourceLoader()));
+	m_Resourcemanager->registerLoader(std::shared_ptr<Res::IResourceLoader>(new Res::MTLResourceLoader()));
 
 	bool fullscreen = false;
-	m_Render.initialize(m_Window.getHandle(), &man, (int)m_Window.getSize().x, (int)m_Window.getSize().y, fullscreen);
+	m_Render.initialize(m_Window.getHandle(), m_Resourcemanager, (int)m_Window.getSize().x, (int)m_Window.getSize().y, fullscreen);
 	ModifyMesh::initialize(&m_Render);
 
 	m_Window.registerCallback(WM_CLOSE, std::bind(&BaseApp::handleWindowClose, this, std::placeholders::_1,
@@ -67,7 +68,7 @@ void BaseApp::init()
 	m_CameraPosition = Vector3(0, 0, 0);
 	m_CameraUp = Vector3(0,1,0);
 	m_CameraSpeed = 0.5f;
-	m_Level.initialize(&m_Render, &man);
+	m_Level.initialize(&m_Render, m_Resourcemanager, &m_CameraPosition);
 }
 
 void BaseApp::run()
@@ -105,7 +106,7 @@ void BaseApp::run()
 			cPos = cPos + dir * m_CameraSpeed;
 			XMStoreFloat3(&m_CameraPosition, cPos);
 		}
-				
+		m_Level.update();
 		m_Level.draw();
 		m_Render.updateCamera(m_CameraPosition, m_CameraDirection, Vector3(0, 1, 0));
 		m_Render.draw();
