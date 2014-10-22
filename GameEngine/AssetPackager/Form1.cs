@@ -11,42 +11,42 @@ using System.Windows.Forms;
 
 namespace AssetPackager
 {
-    public partial class Form1 : Form
+    public partial class AssetPackager : Form
     {
-        public Form1()
+        public AssetPackager()
         {
             InitializeComponent();
         }
 
+        private List<FileStream> _fileStreams = new List<FileStream>();
         private void loadFiles_Click(object sender, EventArgs e)
         {
             if(sender == null)
                 return;
 
-            Stream myStream;
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
-            openFileDialog1.InitialDirectory = "C:\\Git\\GameEngine\\GameEngine\\Resources";
-            openFileDialog1.Filter = "All files (*.*)|*.*";
-            openFileDialog1.FilterIndex = 1;
-            openFileDialog1.RestoreDirectory = true;
-
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            
+            OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                try
+                InitialDirectory = "C:\\Git\\GameEngine\\GameEngine\\Resources",
+                Filter = "All files (*.*)|*.*",
+                FilterIndex = 1,
+                Multiselect = true,
+                RestoreDirectory = true
+            };
+
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+                return;
+            try
+            {
+                foreach (String file in openFileDialog.FileNames)
                 {
-                    if ((myStream = openFileDialog1.OpenFile()) != null)
-                    {
-                        using (myStream)
-                        {
-                            // Insert code to read the stream here.
-                        }
-                    }
+                    _fileStreams.Add(File.Open(file, FileMode.Append));
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
-                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
             }
         }
     }

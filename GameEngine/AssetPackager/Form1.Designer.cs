@@ -1,6 +1,6 @@
 ﻿namespace AssetPackager
 {
-    partial class Form1
+    partial class AssetPackager
     {
         /// <summary>
         /// Required designer variable.
@@ -51,15 +51,15 @@
             this.createFiles.Text = "Create package";
             this.createFiles.UseVisualStyleBackColor = true;
             // 
-            // Form1
+            // AssetPackager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(898, 512);
+            this.ClientSize = new System.Drawing.Size(784, 461);
             this.Controls.Add(this.createFiles);
             this.Controls.Add(this.loadFiles);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "AssetPackager";
+            this.Text = "Asset Packager";
             this.ResumeLayout(false);
 
         }
