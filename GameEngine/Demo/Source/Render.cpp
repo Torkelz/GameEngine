@@ -29,14 +29,6 @@ Render::~Render(void)
 	SAFE_DELETE(m_CBWorld);
 	SAFE_RELEASE(m_SamplerState);
 	m_ResourceManager = nullptr;
-	for (auto &m : m_MeshList)
-	{
-		for (ID3D11ShaderResourceView* s : m.second.diffusemaps)
-		{
-			SAFE_RELEASE(s);
-		}
-	}
-
 }
 
 void Render::initialize(HWND p_Hwnd, Res::ResourceManager *p_ResoureManager, int p_ScreenWidth, int p_ScreenHeight, bool p_Fullscreen)
@@ -309,6 +301,22 @@ MeshInstance *Render::getMeshInstance(UINT p_InstanceId)
 		return nullptr;
 	}
 	return &m_MeshInstanceList.at(p_InstanceId);
+}
+
+void Render::changeTexture(std::string p_MeshName, int p_DiffuseIndex, std::shared_ptr<Res::ResourceHandle> p_TextureHandle)
+{
+	if (m_MeshList.count(p_MeshName) > 0)
+	{
+		ID3D11ShaderResourceView* srv = nullptr;
+		HRESULT res = DirectX::CreateWICTextureFromMemory(m_Graphics->getDevice(), m_Graphics->getDeviceContext(),
+			(const uint8_t*)p_TextureHandle->buffer(), p_TextureHandle->size(), nullptr, &srv);
+
+		if (FAILED(res))
+		{
+			throw GraphicsException("Error while creating shaderresourceview from memory: " + p_TextureHandle->getName(), __LINE__, __FILE__);
+		}
+		m_MeshList.at(p_MeshName).setSRV(srv, p_DiffuseIndex);
+	}
 }
 
 Graphics *Render::getGraphics()

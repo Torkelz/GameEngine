@@ -11,19 +11,27 @@ Level::~Level()
 {
 }
 
-void Level::initialize(Render *p_Render, Res::ResourceManager *p_ResourceManager)
+void Level::initialize(Render *p_Render, Res::ResourceManager *p_ResourceManager, Vector3 *p_CameraPos)
 {
+	green = false;
+	red = false;
+	blue = true;
 	m_Render = p_Render;
 	m_ResourceManager = p_ResourceManager;
-
+	m_CameraPos = p_CameraPos;
 	using namespace Res;
-	ResourceZipFile zip = ResourceZipFile();
-	zip.initialize(L"..\\Resources\\hubba3.zip");
+	m_OptimusRed = Resource("hubba\\models\\optimusred.bmp", "hubba3");
+	m_OptimusGreen = Resource("hubba\\models\\optimusgreen.bmp", "hubba3");
+	m_OptimusObj = Resource("hubba\\models\\optimus.obj", "hubba3");
+	m_OptimusBlue = Resource("hubba\\models\\optimusp.bmp", "hubba3");
+
+
+	m_zip.initialize(L"..\\Resources\\hubba3.zip");
 	
-	p_ResourceManager->loadZipLib(&zip, "hubba3");	
+	m_ResourceManager->loadZipLib(&m_zip, "hubba3");
 	
-	Resource re("hubba\\models\\optimus.obj", "hubba3");
-	std::weak_ptr<ResourceHandle> model = m_ResourceManager->getHandle(&re);	
+	
+	std::weak_ptr<ResourceHandle> model = m_ResourceManager->getHandle(&m_OptimusObj);
 
 	m_Render->createMesh(model);
 
@@ -42,6 +50,35 @@ void Level::initialize(Render *p_Render, Res::ResourceManager *p_ResourceManager
 void Level::update(float p_Dt)
 {
 	m_Particles.update(p_Dt);
+	Vector3 meshPos = m_Render->getMeshInstance(lamp)->position;
+	using DirectX::operator-;
+	DirectX::XMVECTOR vDist = DirectX::XMLoadFloat3(&meshPos) - DirectX::XMLoadFloat3(m_CameraPos);
+	float dist = DirectX::XMVector3Length(vDist).m128_f32[0];
+
+	if (dist < 10 && !blue)
+	{
+		m_Render->changeTexture("hubba\\models\\optimus.obj", 0, m_ResourceManager->getHandle(&m_OptimusBlue));
+		green = false;
+		red = false;
+		blue = true;
+	}
+	if (dist > 10 && dist < 20 && !green)
+	{
+
+		m_Render->changeTexture("hubba\\models\\optimus.obj", 0, m_ResourceManager->getHandle(&m_OptimusGreen));
+		green = true;
+		red = false;
+		blue = false;
+	}
+
+	if (dist > 20 && !red)
+	{
+		m_Render->changeTexture("hubba\\models\\optimus.obj", 0, m_ResourceManager->getHandle(&m_OptimusRed));
+		green = false;
+		red = true;
+		blue = false;
+
+	}
 }
 
 void Level::draw()
