@@ -83,9 +83,16 @@ namespace AssetPackager
             if (sender == null)
                 return;
 
+            String packageName = NameBox.Text;
+            if (packageName == "")
+            {
+                MessageBox.Show("Error: Please enter a name!");
+                return;
+            }
+
             try
             {
-                using (FileStream fs = new FileStream("C:\\Git\\GameEngine\\GameEngine\\Resources\\ToolTip.mtxp", FileMode.CreateNew))//File.Create("C:\\Git\\GameEngine\\GameEngine\\Resources\\ToolTip.mtxp"))
+                using (FileStream fs = new FileStream("C:\\Git\\GameEngine\\GameEngine\\Resources\\" + packageName + ".mcap", FileMode.CreateNew))
                 {
                     using (BinaryWriter writer = new BinaryWriter(fs, Encoding.ASCII))
                     {
@@ -94,7 +101,10 @@ namespace AssetPackager
                         int position = 0;
                         for (int i = 0; i < filePaths.Count(); ++i)
                         {
-                            writer.Write(System.Text.Encoding.ASCII.GetBytes(filePaths[i] + "\t"));
+                            int ll = filePaths[i].LastIndexOf("\\");
+                            string ss = filePaths[i].Substring(ll + 1);
+
+                            writer.Write(System.Text.Encoding.ASCII.GetBytes(ss + "\t"));
                             writer.Write(System.Text.Encoding.ASCII.GetBytes(position.ToString() + "\t"));
                             int size = (int)dataz[i].Length;
                             writer.Write(System.Text.Encoding.ASCII.GetBytes(size.ToString() + "\n"));
