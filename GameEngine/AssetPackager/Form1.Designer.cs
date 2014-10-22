@@ -40,7 +40,7 @@
             this.loadFiles.TabIndex = 0;
             this.loadFiles.Text = "Load files...";
             this.loadFiles.UseVisualStyleBackColor = true;
-            this.loadFiles.Click += new System.EventHandler(this.loadFiles_Click);
+            this.loadFiles.Click += new System.EventHandler(this.loadFiles_OnClick);
             // 
             // createFiles
             // 
@@ -50,6 +50,7 @@
             this.createFiles.TabIndex = 1;
             this.createFiles.Text = "Create package";
             this.createFiles.UseVisualStyleBackColor = true;
+            this.createFiles.Click += new System.EventHandler(this.createPackage_OnClick);
             // 
             // AssetPackager
             // 
