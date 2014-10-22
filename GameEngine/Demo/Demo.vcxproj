@@ -85,6 +85,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Particles.cpp" />
     <ClCompile Include="Source\ModifyMesh.cpp" />
     <ClCompile Include="Source\Input\InputState.cpp" />
     <ClCompile Include="Source\Input\InputTranslator.cpp" />
@@ -101,6 +102,7 @@
     <ClCompile Include="Source\WICTextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Particles.h" />
     <ClInclude Include="Source\ModifyMesh.h" />
     <ClInclude Include="Source\Input\InputRecord.h" />
     <ClInclude Include="Source\Input\InputState.h" />

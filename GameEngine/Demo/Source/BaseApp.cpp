@@ -105,7 +105,7 @@ void BaseApp::run()
 			cPos = cPos + dir * m_CameraSpeed;
 			XMStoreFloat3(&m_CameraPosition, cPos);
 		}
-				
+		m_Level.update(m_DeltaTime);
 		m_Level.draw();
 		m_Render.updateCamera(m_CameraPosition, m_CameraDirection, Vector3(0, 1, 0));
 		m_Render.draw();
