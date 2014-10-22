@@ -14,10 +14,20 @@ int main(int /*argc*/, char* /*argv*/[])
 {
 
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+	Allocator::LinearAllocator alloc(1024);
+
+	std::vector<short*> buffer(128, nullptr);
+
+	for (unsigned int i = 0; i < buffer.size(); i++)
+	{
+		buffer.at(i) = alloc.allocate<short>(8);
+	}
+	int lol = 0;
 	//Assignment1 ass1;
 
 	//OLD STUFF
-	/*//ass1.scenario1Test();
+	//ass1.scenario1Test();
 	//ass1.scenario2Test();
 	//if (!ass1.threadTestPoolAllocator())
 	//	std::cout << "Alligator are not thread safe!" << std::endl;
@@ -44,22 +54,22 @@ int main(int /*argc*/, char* /*argv*/[])
 	//int size = texture.lock()->size();
 
 	//man.Free(texture.lock());
-	*/
-	
-	Assignment2 scenario1;
-	scenario1.initialize(TOTAL_SIZE);
+	//*/
+	//
+	//Assignment2 scenario1;
+	//scenario1.initialize(TOTAL_SIZE);
 
-	int result = EXIT_SUCCESS;
-	if (!scenario1.runScenario1())
-	{
-		result = EXIT_FAILURE;
-	}
+	//int result = EXIT_SUCCESS;
+	//if (!scenario1.runScenario1())
+	//{
+	//	result = EXIT_FAILURE;
+	//}
 
-	if (!scenario1.runScenario2())
-	{
-		result += EXIT_FAILURE + 1;
-	}
+	//if (!scenario1.runScenario2())
+	//{
+	//	result += EXIT_FAILURE + 1;
+	//}
 
 
-	return result;
+	return 0;
 }
