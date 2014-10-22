@@ -30,7 +30,7 @@ private:
 	Vector3 m_CameraDirection;
 	Vector3 m_CameraUp;
 	float m_CameraSpeed;
-
+	Res::ResourceManager *m_Resourcemanager;
 public:
 	BaseApp(void);
 	~BaseApp(void);

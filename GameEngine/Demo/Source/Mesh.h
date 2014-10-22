@@ -2,6 +2,7 @@
 #include <memory>
 #include "Buffer.h"
 #include "Shader.h"
+#include "Utilities.h"
 #include "IResourceManager.h"
 
 struct Mesh
@@ -43,7 +44,18 @@ struct Mesh
 	{
 		shader = nullptr;
 		buffer = nullptr;
+
+		for (ID3D11ShaderResourceView* s : diffusemaps)
+		{
+			SAFE_RELEASE(s);
+		}
 	}
+	void setSRV(ID3D11ShaderResourceView* p_newSRV, int p_DiffuseIndex)
+	{
+		std::swap(diffusemaps.at(p_DiffuseIndex), p_newSRV);
+		SAFE_RELEASE(p_newSRV);
+	}
+	
 private:
 	Mesh(const Mesh&);
 };

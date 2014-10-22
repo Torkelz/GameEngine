@@ -43,6 +43,12 @@ private:
 
 	ID3D11SamplerState *m_SamplerState;
 
+	struct cbCamera
+	{
+		DirectX::XMFLOAT4X4 view;
+		DirectX::XMFLOAT4 eyePos;
+	};
+
 public:
 	Render(void);
 	~Render(void);
@@ -57,11 +63,20 @@ public:
 	void createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle);
 	int	 createMeshInstance(const std::string p_MeshName);
 	MeshInstance *getMeshInstance(UINT p_InstanceId);
+	void changeTexture(std::string p_MeshName, int p_DiffuseIndex, std::shared_ptr<Res::ResourceHandle> p_TextureHandle);
+
+	Graphics *getGraphics();
+
+	void begin(void);
+	void end(void);
+
+	void setCameraBuffers();
+	void unsetCameraBuffers();
 
 private:
 	void createConstantBuffers();
 	void createSamplerState();
-	void updateConstantBuffer(void);
+	void updateConstantBuffer(Vector3 p_Position);
 
 	void initializeMatrices(int p_ScreenWidth, int p_ScreenHeight, float p_NearZ, float p_FarZ);
 };

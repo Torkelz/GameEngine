@@ -57,6 +57,9 @@
     <ClCompile Include="Source\WICTextureLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Particles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\BaseApp.h">
@@ -122,9 +125,13 @@
     <ClInclude Include="Source\WICTextureLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Particles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Shader\Box.hlsl" />
     <FxCompile Include="Source\Shader\Lamp.hlsl" />
+    <FxCompile Include="Source\Shader\Particle.hlsl" />
   </ItemGroup>
 </Project>
