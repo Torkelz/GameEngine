@@ -26,9 +26,9 @@ namespace AssetPackager
             Stream myStream;
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-            openFileDialog1.InitialDirectory = "";
-            openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-            openFileDialog1.FilterIndex = 2;
+            openFileDialog1.InitialDirectory = "C:\\Git\\GameEngine\\GameEngine\\Resources";
+            openFileDialog1.Filter = "All files (*.*)|*.*";
+            openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = true;
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
