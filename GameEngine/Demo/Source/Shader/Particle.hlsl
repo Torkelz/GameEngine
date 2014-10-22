@@ -67,8 +67,8 @@ void GS(point GSIn gIn[1], inout TriangleStream<PSIn> triStream)
 	float4x4 WVP = mul(projection, mul(view, world));
 	//compute 4 triangle strip vertices (quad) in local space.
 	//the quad faces down the +Z axis in local space.
-	float halfWidth = 0.5f*5;
-	float halfHeight = 0.5f*5;
+	float halfWidth = 0.5f*0.5f;
+	float halfHeight = 0.5f*0.5f;
 	float4 v[4];
 	v[0] = float4(-halfWidth, -halfHeight, 0.0f, 1.0f);
 	v[1] = float4(+halfWidth, -halfHeight, 0.0f, 1.0f);

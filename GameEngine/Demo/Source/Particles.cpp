@@ -56,6 +56,11 @@ void Particles::update(float p_Dt)
 	for (Particle *p : m_Particles)
 	{
 		p->elapsedTime += p_Dt;
+		using DirectX::operator+;
+		using DirectX::operator*;
+
+		
+		DirectX::XMStoreFloat3(&p->position, DirectX::XMLoadFloat3(&p->position) + (DirectX::XMLoadFloat3(&p->velocity) * p_Dt * 2));
 	}
 	killOldParticles();
 }
@@ -80,6 +85,7 @@ void Particles::render()
 	m_Buffer->setBuffer(0);
 	m_Shader->setShader();
 
+	m_Render->getGraphics()->getDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	m_Render->getGraphics()->getDeviceContext()->Draw(m_Particles.size(), 0);
 

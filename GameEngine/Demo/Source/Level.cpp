@@ -36,7 +36,7 @@ void Level::initialize(Render *p_Render, Res::ResourceManager *p_ResourceManager
 	m_LinAlloc = new Allocator::LinearAllocator(sizeof(Particles::Particle) * maxParticles * 2);
 
 	m_Particles.initialize((char*)m_LinAlloc->allocate(sizeof(Particles::Particle) * maxParticles), maxParticles,
-		DirectX::XMFLOAT3(0, 0, 0), 100.f, 0.00001f, m_Render);
+		DirectX::XMFLOAT3(0, 0, 0), 10.f, 0.00001f, m_Render);
 }
 
 void Level::update(float p_Dt)
