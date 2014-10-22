@@ -3,6 +3,9 @@
 
 #include <algorithm>
 
+#include "Render.h"
+#include "Graphics.h"
+
 Particles::Particles() :
 m_PoolAllocator(nullptr),
 m_AccumulatedTime(0.f)
@@ -16,7 +19,7 @@ Particles::~Particles()
 }
 
 void Particles::initialize(char *p_Buffer, unsigned int p_MaxParticles, 
-	DirectX::XMFLOAT3 p_EmitPosition, float p_MaxLife, float p_TimePerParticle)
+	DirectX::XMFLOAT3 p_EmitPosition, float p_MaxLife, float p_TimePerParticle, Render *p_Render)
 {
 	m_PoolAllocator = new Allocator::PoolAllocator(sizeof(Particle), p_MaxParticles + 1);
 
@@ -24,9 +27,21 @@ void Particles::initialize(char *p_Buffer, unsigned int p_MaxParticles,
 	m_ParticleMaxLife = p_MaxLife;
 	m_MaxParticles = p_MaxParticles;
 	m_TimePerParticle = p_TimePerParticle;
+	m_Render = p_Render;
 
-	//color = std::uniform_real_distribution<float>(0.f, 1.f);
-	//velocity = std::uniform_real_distribution<float>(-1.f, 1.f);
+
+	Buffer::Description bDesc = {};
+	bDesc.initData = nullptr;
+	bDesc.numOfElements = m_MaxParticles;
+	bDesc.sizeOfElement = sizeof(renderParticle);
+	bDesc.type = Buffer::Type::VERTEX_BUFFER;
+	bDesc.usage = Buffer::Usage::CPU_WRITE_DISCARD;
+
+	m_Buffer = WrapperFactory::getInstance()->createBuffer(bDesc);
+
+	m_Shader = (WrapperFactory::getInstance()->createShader(L".\\Source\\Shader\\Particle.hlsl", 
+		"VS,PS,GS", "5_0", ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER | ShaderType::GEOMETRY_SHADER));
+	
 }
 
 void Particles::update(float p_Dt)
@@ -47,7 +62,31 @@ void Particles::update(float p_Dt)
 
 void Particles::render()
 {
+	D3D11_MAPPED_SUBRESOURCE resource = {};
+	m_Render->getGraphics()->getDeviceContext()->Map(m_Buffer->getBufferPointer(), 0, D3D11_MAP_WRITE_DISCARD, NULL, &resource);
+	renderParticle* mappedShaderParticle = (renderParticle*)resource.pData;
+	for (Particle *part : m_Particles)
+	{
+		mappedShaderParticle->position = part->position;
+		mappedShaderParticle->color = part->color;
 
+		mappedShaderParticle++;
+	}
+	m_Render->getGraphics()->getDeviceContext()->Unmap(m_Buffer->getBufferPointer(), 0);
+
+
+	m_Render->setCameraBuffers();
+
+	m_Buffer->setBuffer(0);
+	m_Shader->setShader();
+
+
+	m_Render->getGraphics()->getDeviceContext()->Draw(m_Particles.size(), 0);
+
+	m_Shader->unSetShader();
+	m_Buffer->unsetBuffer(0);
+
+	m_Render->unsetCameraBuffers();
 }
 
 void Particles::emitNewParticle()
@@ -68,19 +107,6 @@ void Particles::emitNewParticle()
 
 void Particles::killOldParticles()
 {
-	//std::vector<Particle*>::iterator removeIt = std::remove_if(m_Particles.begin(), m_Particles.end(), [&](Particle *p)
-	//{
-	//	return p->elapsedTime >= m_ParticleMaxLife;
-	//});
-
-	//for (unsigned int i = std::distance(m_Particles.begin(), removeIt); i < m_Particles.size(); ++i)
-	//{
-	//	operator delete(m_Particles.at(i), *m_PoolAllocator);
-	//	//*it = nullptr;
-	//}
-	//if (removeIt != m_Particles.end())
-	//	m_Particles.erase(removeIt, m_Particles.end());
-
 	for (int i = 0; i < m_Particles.size(); ++i)
 	{
 		if (m_Particles.at(i)->elapsedTime >= m_ParticleMaxLife)

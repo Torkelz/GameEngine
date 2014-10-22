@@ -132,5 +132,6 @@
   <ItemGroup>
     <FxCompile Include="Source\Shader\Box.hlsl" />
     <FxCompile Include="Source\Shader\Lamp.hlsl" />
+    <FxCompile Include="Source\Shader\Particle.hlsl" />
   </ItemGroup>
 </Project>

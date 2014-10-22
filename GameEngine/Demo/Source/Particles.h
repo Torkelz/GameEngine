@@ -5,6 +5,10 @@
 
 #include "IAllocators.h"
 
+class Render;
+class Shader;
+class Buffer;
+
 class Particles
 {
 public:
@@ -17,6 +21,13 @@ public:
 	};
 
 private:
+
+	struct renderParticle
+	{
+		DirectX::XMFLOAT3 position;
+		DirectX::XMFLOAT3 color;
+	};
+
 	DirectX::XMFLOAT3 m_EmitPosition;
 
 	float m_TimePerParticle;
@@ -30,14 +41,17 @@ private:
 	Allocator::PoolAllocator *m_PoolAllocator;
 	std::default_random_engine generator;
 
-	
+	Render *m_Render;
+
+	Shader *m_Shader;
+	Buffer *m_Buffer;
 
 public:
 	Particles();
 	~Particles();
 
 	void initialize(char *p_Buffer, unsigned int p_MaxParticles, 
-		DirectX::XMFLOAT3 p_EmitPosition, float p_MaxLife, float p_TimePerParticle);
+		DirectX::XMFLOAT3 p_EmitPosition, float p_MaxLife, float p_TimePerParticle, Render *p_Render);
 
 	void update(float p_Dt);
 	void render();

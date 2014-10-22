@@ -106,10 +106,11 @@ void BaseApp::run()
 			XMStoreFloat3(&m_CameraPosition, cPos);
 		}
 		m_Level.update(m_DeltaTime);
-		m_Level.draw();
 		m_Render.updateCamera(m_CameraPosition, m_CameraDirection, Vector3(0, 1, 0));
+		m_Render.begin();
+		m_Level.draw();
 		m_Render.draw();
-		
+		m_Render.end();
 		updateDebugInfo();
 	}
 }

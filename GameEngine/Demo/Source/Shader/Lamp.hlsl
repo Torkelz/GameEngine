@@ -10,6 +10,7 @@ cbuffer b0 : register(c0)
 cbuffer b1 : register(c1)
 {
 	float4x4 view;
+	float4 eyePos;
 };
 cbuffer b2 : register(c2)
 {
