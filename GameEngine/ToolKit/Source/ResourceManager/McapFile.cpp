@@ -1,4 +1,5 @@
 #include <cctype>			// for std::tolower
+#include <algorithm>
 #include <sstream>
 #include <fstream>
 
@@ -35,16 +36,18 @@ namespace Res
 		std::string line;
 		int index = 0;
 		int headerSize = 0;
+		int lineBreaks = 0;
 		try{
 			while (std::getline(fileStream, line))
 			{
+				lineBreaks++;
 				if (line == "# Header")
 				{
 					continue;
 				}
 				else if (line == "# End of Header")
 				{
-					headerSize = fileStream.tellg();
+					headerSize = (int)fileStream.tellg() - lineBreaks;
 					break;
 				}
 
@@ -54,6 +57,8 @@ namespace Res
 				std::stringstream stream;
 				stream << line;
 				stream >> name >> header.start >> header.size;
+
+				std::transform(name.begin(), name.end(), name.begin(), (int(*)(int)) std::tolower);
 
 				m_McapContentsMap.insert(std::make_pair(name, index++));
 				m_AppDir.push_back(header);

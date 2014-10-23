@@ -70,7 +70,13 @@ namespace Res
 				std::string s;
 				lineStream >> s;
 				std::string filepath = p_Handle->getName();
-				std::string materialPath = filepath.substr(0, filepath.find_last_of("\\/")) + "\\" + s;
+
+				size_t lastPath = filepath.find_last_of("\\/");
+
+				std::string materialPath = filepath.substr(0, lastPath) + "\\" + s;
+				if (lastPath == std::string::npos)
+					materialPath = s;
+				
 				std::string c = p_Handle->getContainerName();
 
 				extra->setMTLFile(Resource(materialPath, c));

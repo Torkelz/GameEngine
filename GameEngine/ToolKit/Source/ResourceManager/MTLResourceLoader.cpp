@@ -94,7 +94,11 @@ namespace Res
 				lineStream >> s;
 
 				std::string filepath = p_Handle->getName();
-				std::string materialPath = filepath.substr(0, filepath.find_last_of("\\/")) + "\\" + s;
+				size_t lastPath = filepath.find_last_of("\\/");
+
+				std::string materialPath = filepath.substr(0, lastPath) + "\\" + s;
+				if (lastPath == std::string::npos)
+					materialPath = s;
 
 				mats.back().map_Kd = Resource(materialPath, p_Handle->getContainerName());
 			}

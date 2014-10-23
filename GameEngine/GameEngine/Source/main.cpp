@@ -45,6 +45,20 @@ int main(int /*argc*/, char* /*argv*/[])
 
 	//man.Free(texture.lock());
 	*/
+
+	using namespace Res;
+	ResourceMcapFile file = ResourceMcapFile();
+	file.initialize(L"..\\Resources\\hobba.mcap");
+	ResourceManager man(TOTAL_SIZE);
+
+	man.init();
+	man.loadZipLib(&file, "hobba");
+
+	Resource halo("halo.jpg", "hobba");
+	std::shared_ptr<ResourceHandle> texture = man.getHandle(&halo);
+	int size = texture->size();
+	man.Free(texture);
+	texture.reset();
 	
 	Assignment2 scenario1;
 	scenario1.initialize(TOTAL_SIZE);
