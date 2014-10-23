@@ -55,7 +55,7 @@ void GS(point GSIn gIn[1], inout TriangleStream<PSIn> triStream)
 	t_position.y = gIn[0].position.y;
 	t_position.z = gIn[0].position.z;
 
-	float3 look = normalize(eyePosW.xyz - t_position);
+	float3 look = normalize(float3(10, 5, 10) - t_position);
 	float3 right = normalize(cross(float3(0, 1, 0), look));
 	float3 up = cross(look, right);
 
