@@ -28,6 +28,12 @@ namespace Allocator
 		 */
 		UINT m_NumItems;
 
+		/**
+		* Describes if memory should be returned to OS or not when deallocated.
+		* true, return to OS. false, nullptr
+		*/
+		bool m_Original;
+
 	public:
 		/**
 		 * Constructor if the pool allocator is not going to use memory already allocated.

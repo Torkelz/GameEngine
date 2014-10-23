@@ -6,6 +6,7 @@
 namespace Allocator
 {
 	PoolAllocator::PoolAllocator(UINT p_ItemSize, UINT p_NumItems)
+		: m_Original(true)
 	{
 		UINT totalSize = p_ItemSize * p_NumItems;
 		m_Data = (char*)malloc(totalSize);
@@ -20,6 +21,7 @@ namespace Allocator
 	}
 
 	PoolAllocator::PoolAllocator(UINT p_ItemSize, UINT p_ObjectAlignment, UINT p_NumItems)
+		: m_Original(true)
 	{
 		UINT totalSize = p_ItemSize * p_NumItems;
 		m_Data = (char*)malloc(totalSize);
@@ -46,6 +48,7 @@ namespace Allocator
 	}
 
 	PoolAllocator::PoolAllocator(char *p_Buffer, UINT p_ItemSize, UINT p_NumItems)
+		: m_Original(false)
 	{
 		m_Data = p_Buffer;
 		
@@ -59,9 +62,9 @@ namespace Allocator
 
 	PoolAllocator::~PoolAllocator()
 	{
-		if(m_Data)
+		if(m_Data && m_Original)
 			free(m_Data);
-
+		m_Data = nullptr;
 		m_Marker = nullptr;
 	}
 
