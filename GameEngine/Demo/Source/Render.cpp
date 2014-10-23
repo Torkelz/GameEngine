@@ -174,7 +174,7 @@ void Render::updateConstantBuffer(Vector3 p_Position)
 	c.view = m_ViewMatrix;
 	c.eyePos = DirectX::XMFLOAT4(p_Position.x, p_Position.y, p_Position.z, 1.f);
 
-	m_Graphics->getDeviceContext()->UpdateSubresource(m_CBCamera->getBufferPointer(), NULL, NULL, &m_ViewMatrix, sizeof(DirectX::XMFLOAT4X4), NULL);
+	m_Graphics->getDeviceContext()->UpdateSubresource(m_CBCamera->getBufferPointer(), NULL, NULL, &c, sizeof(DirectX::XMFLOAT4X4), NULL);
 }
 
 
