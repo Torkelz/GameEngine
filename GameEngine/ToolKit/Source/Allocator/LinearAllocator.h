@@ -60,26 +60,25 @@ namespace Allocator
 		 * @return If able to allocate memory it returns a pointer to the allocated chunk.
 		 * @return If failed to allocate memory it returns nullptr.
 		 */
-		void *allocate(UINT p_Size, uint8_t p_Alignment);
+		void *allocate(UINT p_Size);
 
 		template<typename T>
-		T *allocate(uint8_t p_Alignment = 0)
+		T *allocate(UINT p_Alignment = 0)
 		{
-			UINT tempMarker = m_Marker.load();//_add(p_Size, std::memory_order_acquire);
+			UINT tempMarker = m_Marker.load();
 
 			void* address = m_Buffer + tempMarker;
 
-			uint8_t adjustment = alignForwardAdjustment(address, p_Alignment);
+			UINT adjustment = alignForwardAdjustment(address, p_Alignment);
 
 			if (tempMarker + sizeof(T) + adjustment >= m_Size)
 			{
-				//m_Marker.fetch_sub(sizeof(T), std::memory_order_release);
 				return nullptr;
 			}
 
-			void *alignedAdress = m_Buffer + tempMarker + adjustment;// + sizeof(T);
-			//void *currentAdress = m_Buffer + cSize + p_Size;
-			m_Marker = tempMarker + (adjustment == 0) ? sizeof(T) : adjustment;
+			void *alignedAdress = m_Buffer + tempMarker + adjustment;
+
+			m_Marker = tempMarker + adjustment + sizeof(T);
 			return (T*)alignedAdress;
 		}
 
@@ -103,12 +102,12 @@ namespace Allocator
 	private:
 		LinearAllocator(const LinearAllocator& p_Other) = delete; // non construction-copyable
 		LinearAllocator& operator=(const LinearAllocator&) = delete; // non copyable
-		void *alignForward(void* p_Address, uint8_t p_Alignment);
-		uint8_t alignForwardAdjustment(const void *Address, uint8_t p_Alignment);
+		void *alignForward(void* p_Address, UINT p_Alignment);
+		UINT alignForwardAdjustment(const void *Address, UINT p_Alignment);
 	};
 }
 
 inline void* operator new (size_t p_Size, Allocator::LinearAllocator &p_Allocator)
 {
-	return p_Allocator.allocate(p_Size, 4);
+	return p_Allocator.allocate(p_Size);
 }

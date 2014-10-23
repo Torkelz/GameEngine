@@ -15,15 +15,6 @@ int main(int /*argc*/, char* /*argv*/[])
 
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	Allocator::LinearAllocator alloc(1024);
-
-	std::vector<short*> buffer(128, nullptr);
-
-	for (unsigned int i = 0; i < buffer.size(); i++)
-	{
-		buffer.at(i) = alloc.allocate<short>(8);
-	}
-	int lol = 0;
 	//Assignment1 ass1;
 
 	//OLD STUFF

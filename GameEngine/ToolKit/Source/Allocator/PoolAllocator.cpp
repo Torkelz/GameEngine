@@ -19,6 +19,24 @@ namespace Allocator
 		clear();
 	}
 
+	PoolAllocator::PoolAllocator(UINT p_ItemSize, UINT p_ObjectAlignment, UINT p_NumItems)
+	{
+		UINT totalSize = p_ItemSize * p_NumItems;
+		m_Data = (char*)malloc(totalSize);
+		if (!m_Data)
+			throw MemoryException("Bad allocation at: ", __LINE__, __FILE__);
+
+		UINT adjustment = alignForwardAdjustment(m_Data, p_ObjectAlignment);
+
+
+
+		m_ItemSize = p_ItemSize;
+		m_NumItems = (totalSize - adjustment) / m_ItemSize;
+		m_Marker = (void**)m_Data + adjustment;
+
+		clear();
+	}
+
 	PoolAllocator::PoolAllocator(char *p_Buffer, UINT p_ItemSize, UINT p_NumItems)
 	{
 		m_Data = p_Buffer;
@@ -29,6 +47,7 @@ namespace Allocator
 
 		clear();
 	}
+
 
 	PoolAllocator::~PoolAllocator()
 	{
@@ -74,5 +93,16 @@ namespace Allocator
 		}
 		//The last pointer in the list is set to nullptr
 		*p = nullptr;
+	}
+
+
+	PoolAllocator::UINT PoolAllocator::alignForwardAdjustment(const void *p_Address, UINT p_Alignment)
+	{
+		UINT adjustment = p_Alignment - (reinterpret_cast<uintptr_t>(p_Address)& static_cast<uintptr_t>(p_Alignment - 1));
+
+		if (adjustment == p_Alignment)
+			return 0; // already aligned
+
+		return adjustment;
 	}
 }

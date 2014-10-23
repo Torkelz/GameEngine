@@ -42,24 +42,18 @@ namespace Allocator
 		m_Buffer = nullptr;
 	}
 
-	void *LinearAllocator::allocate(UINT p_Size, uint8_t p_Alignment)
+	void *LinearAllocator::allocate(UINT p_Size)
 	{
-		UINT tempMarker = m_Marker.load();//_add(p_Size, std::memory_order_acquire);
+		UINT cSize = m_Marker.fetch_add(p_Size, std::memory_order_acquire);
 
-		void* address = m_Buffer + tempMarker;
-
-		uint8_t adjustment = alignForwardAdjustment(address, p_Alignment);
-
-		if (tempMarker + p_Size + adjustment >= m_Size)
+		if (cSize + p_Size  >= m_Size)
 		{
 			m_Marker.fetch_sub(p_Size, std::memory_order_release);
 			return nullptr;
 		}
 
-		void *alignedAdress = m_Buffer + tempMarker + adjustment + p_Size;
-		//void *currentAdress = m_Buffer + cSize + p_Size;
-		m_Marker = tempMarker + adjustment + p_Size;
-		return alignedAdress;
+		void *currentAddress = m_Buffer + cSize +  p_Size;
+		return currentAddress;
 	}
 
 	void LinearAllocator::freeMarkerTo(UINT p_Marker)
@@ -78,14 +72,14 @@ namespace Allocator
 		return m_Marker.load();
 	}
 
-	void *LinearAllocator::alignForward(void* p_Address, uint8_t p_Alignment)
+	void *LinearAllocator::alignForward(void *p_Address, UINT p_Alignment)
 	{
 		return (void*)((reinterpret_cast<uintptr_t>(p_Address) + static_cast<uintptr_t>(p_Alignment - 1)) & static_cast<uintptr_t>(~(p_Alignment - 1)));
 	}
 
-	uint8_t LinearAllocator::alignForwardAdjustment(const void *p_Address, uint8_t p_Alignment)
+	LinearAllocator::UINT LinearAllocator::alignForwardAdjustment(const void *p_Address, UINT p_Alignment)
 	{
-		uint8_t adjustment = p_Alignment - (reinterpret_cast<uintptr_t>(p_Address)& static_cast<uintptr_t>(p_Alignment - 1));
+		UINT adjustment = p_Alignment - (reinterpret_cast<uintptr_t>(p_Address)& static_cast<uintptr_t>(p_Alignment - 1));
 
 		if (adjustment == p_Alignment)
 			return 0; // already aligned
