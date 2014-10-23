@@ -111,7 +111,6 @@ namespace AssetPackager
                             position += size;
                         }
                         writer.Write(System.Text.Encoding.ASCII.GetBytes("# End of Header\n"));
-                        writer.Write((int)writer.BaseStream.Length + 4);
 
                         //Fill with data
                         for (int i = 0; i < filePaths.Count(); ++i)

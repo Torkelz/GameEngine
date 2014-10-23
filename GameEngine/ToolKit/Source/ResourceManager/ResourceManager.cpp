@@ -1,3 +1,6 @@
+#include <cctype>			// for std::tolower
+#include <algorithm>
+
 #include "ResourceManager.h"
 #include "IResourceFile.h"
 #include "IResourceLoader.h"
@@ -55,6 +58,7 @@ namespace Res
 				internalPath = std::string(p_ZipLibr + "/" + internalPath);
 				while (std::getline(fileStream, line))
 				{
+					std::transform(internalPath.begin(), internalPath.end(), internalPath.begin(), (int(*)(int)) std::tolower);
 					m_GUID_Table.insert(std::pair<std::string, UINT>(internalPath, std::atoi(guid.c_str())));
 					fileStream >> guid >> internalPath;
 					internalPath = std::string(p_ZipLibr + "/" + internalPath);

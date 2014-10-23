@@ -24,7 +24,9 @@ private:
 	bool red;
 	bool blue;
 	Res::ResourceManager *m_ResourceManager;
-	Res::ResourceZipFile m_zip;
+	//Res::ResourceZipFile m_zip;
+	Res::ResourceMcapFile m_mcap;
+
 	Res::Resource m_OptimusRed;
 	Res::Resource m_OptimusGreen;
 	Res::Resource m_OptimusBlue;

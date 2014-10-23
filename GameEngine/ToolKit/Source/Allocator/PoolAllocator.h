@@ -98,7 +98,6 @@ namespace Allocator
 
 
 		UINT alignForwardAdjustment(const void *p_Address, UINT p_Alignment);
-		void *alignForward(void *p_Address, UINT p_Alignment);
 	};
 }
 
