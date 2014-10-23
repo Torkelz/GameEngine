@@ -63,12 +63,7 @@ void Render::shutdown(void)
 
 void Render::draw(void)
 {
-	static float normal[] = { 0.5f, 0.5f, 0.5f, 1.f };
-	m_Graphics->begin(normal);
-
-	
-	m_CBCameraFixed->setBuffer(0);
-	m_CBCamera->setBuffer(1);
+	setCameraBuffers();
 	m_CBWorld->setBuffer(2);
 
 	m_Graphics->getDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -111,11 +106,8 @@ void Render::draw(void)
 	}
 	
 
-	m_CBCameraFixed->unsetBuffer(0);
-	m_CBCamera->unsetBuffer(1);
+	unsetCameraBuffers();
 	m_CBWorld->unsetBuffer(2);
-
-	m_Graphics->end();
 
 	m_RenderList.clear();
 }
@@ -134,7 +126,7 @@ void Render::updateCamera(Vector3 p_Position, Vector3 p_Forward, Vector3 p_Up)
 	XMVECTOR forwardVec = XMVectorSet(p_Forward.x, p_Forward.y, p_Forward.z, 0.f);
 	XMVECTOR pos = XMVectorSet(p_Position.x, p_Position.y, p_Position.z, 1.f);
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixTranspose(XMMatrixLookToLH(pos, forwardVec, upVec)));
-	updateConstantBuffer();
+	updateConstantBuffer(p_Position);
 }
 
 void Render::createConstantBuffers()
@@ -148,7 +140,12 @@ void Render::createConstantBuffers()
 
 	m_CBCameraFixed = WrapperFactory::getInstance()->createBuffer(bDesc);
 
-	bDesc.initData = &m_ViewMatrix;
+
+	cbCamera c;
+	c.view = m_ViewMatrix;
+	c.eyePos = DirectX::XMFLOAT4(0, 0, 0, 1);
+	bDesc.initData = &c;
+	bDesc.sizeOfElement = sizeof(cbCamera);
 	bDesc.usage = Buffer::Usage::DEFAULT;
 
 	m_CBCamera = WrapperFactory::getInstance()->createBuffer(bDesc);
@@ -171,8 +168,12 @@ void Render::createSamplerState()
 	m_Graphics->getDevice()->CreateSamplerState(&sd, &m_SamplerState);
 }
 
-void Render::updateConstantBuffer(void)
+void Render::updateConstantBuffer(Vector3 p_Position)
 {
+	cbCamera c;
+	c.view = m_ViewMatrix;
+	c.eyePos = DirectX::XMFLOAT4(p_Position.x, p_Position.y, p_Position.z, 1.f);
+
 	m_Graphics->getDeviceContext()->UpdateSubresource(m_CBCamera->getBufferPointer(), NULL, NULL, &m_ViewMatrix, sizeof(DirectX::XMFLOAT4X4), NULL);
 }
 
@@ -316,4 +317,32 @@ void Render::changeTexture(std::string p_MeshName, int p_DiffuseIndex, std::shar
 		}
 		m_MeshList.at(p_MeshName).setSRV(srv, p_DiffuseIndex);
 	}
+}
+
+Graphics *Render::getGraphics()
+{
+	return m_Graphics;
+}
+
+void Render::begin(void)
+{
+	static float normal[] = { 0.5f, 0.5f, 0.5f, 1.f };
+	m_Graphics->begin(normal);
+}
+
+void Render::end(void)
+{
+	m_Graphics->end();
+}
+
+void Render::setCameraBuffers()
+{
+	m_CBCameraFixed->setBuffer(0);
+	m_CBCamera->setBuffer(1);
+}
+
+void Render::unsetCameraBuffers()
+{
+	m_CBCameraFixed->unsetBuffer(0);
+	m_CBCamera->unsetBuffer(1);
 }
