@@ -21,11 +21,12 @@ Particles::~Particles()
 void Particles::initialize(char *p_Buffer, unsigned int p_MaxParticles, 
 	DirectX::XMFLOAT3 p_EmitPosition, float p_MaxLife, float p_TimePerParticle, Render *p_Render)
 {
-	m_PoolAllocator = new Allocator::PoolAllocator(sizeof(Particle), 64, p_MaxParticles + 1);
+	//m_PoolAllocator = new Allocator::PoolAllocator(sizeof(Particle), 64, p_MaxParticles + 1);
+	m_PoolAllocator = new Allocator::PoolAllocator(p_Buffer, sizeof(Particle), p_MaxParticles);
 
 	m_EmitPosition = p_EmitPosition;
 	m_ParticleMaxLife = p_MaxLife;
-	m_MaxParticles = p_MaxParticles;
+	m_MaxParticles = p_MaxParticles-1;
 	m_TimePerParticle = p_TimePerParticle;
 	m_Render = p_Render;
 
@@ -113,7 +114,7 @@ void Particles::emitNewParticle()
 
 void Particles::killOldParticles()
 {
-	for (int i = 0; i < m_Particles.size(); ++i)
+	for (int i = 0; i < (int)m_Particles.size(); ++i)
 	{
 		if (m_Particles.at(i)->elapsedTime >= m_ParticleMaxLife)
 		{
