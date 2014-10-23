@@ -59,5 +59,11 @@ public:
 private:
 	void emitNewParticle();
 	void killOldParticles();
+
+	//Boid
+	DirectX::XMVECTOR cohesion(Particle *p, int p_index);
+	DirectX::XMVECTOR alignment(Particle *p, int p_index);
+	DirectX::XMVECTOR separation(Particle *p, int p_index);
+	DirectX::XMVECTOR goal(Particle *p);
 };
 

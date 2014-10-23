@@ -54,14 +54,25 @@ void Particles::update(float p_Dt)
 
 		emitNewParticle();
 	}
+	int index = 0;
 	for (Particle *p : m_Particles)
 	{
 		p->elapsedTime += p_Dt;
 		using DirectX::operator+;
 		using DirectX::operator*;
 
+		DirectX::XMVECTOR v1 = cohesion(p, index);
+		DirectX::XMVECTOR v2 = alignment(p, index);
+		DirectX::XMVECTOR v3 = separation(p, index);
+		DirectX::XMVECTOR v4 = goal(p);
+
+		DirectX::XMVECTOR velocity = XMLoadFloat3(&p->velocity) + v1 + v2 + v3 + v4;
+
+		DirectX::XMStoreFloat3(&p->velocity, DirectX::XMVector3Normalize(velocity));
+
 		
 		DirectX::XMStoreFloat3(&p->position, DirectX::XMLoadFloat3(&p->position) + (DirectX::XMLoadFloat3(&p->velocity) * p_Dt * 2));
+		index++;
 	}
 	killOldParticles();
 }
@@ -123,4 +134,82 @@ void Particles::killOldParticles()
 			--i;
 		}
 	}
+}
+
+
+DirectX::XMVECTOR Particles::cohesion(Particle *p, int p_index)
+{
+	using namespace DirectX;
+
+	int index = 0;
+	XMVECTOR ret = XMVectorSet(0,0,0,0);
+	for (Particle *particle : m_Particles)
+	{
+		if (index == p_index)
+		{
+			index++;
+			continue;
+		}
+		
+		ret += XMLoadFloat3(&particle->position);
+		index++;
+	}
+	if (m_Particles.size() > 1)
+		ret /= (m_Particles.size() - 1);
+
+	return (ret - XMLoadFloat3(&p->position)) / 100;
+}
+DirectX::XMVECTOR Particles::alignment(Particle *p, int p_index)
+{
+	using namespace DirectX;
+
+	int index = 0;
+	XMVECTOR ret = XMVectorSet(0, 0, 0, 0);;
+	for (Particle *particle : m_Particles)
+	{
+		if (index == p_index)
+		{
+			index++;
+			continue;
+		}
+
+		ret += XMLoadFloat3(&particle->velocity);
+		index++;
+	}
+	if (m_Particles.size() > 1)
+		ret /= (m_Particles.size() - 1);
+
+	return (ret - XMLoadFloat3(&p->velocity)) / 8;
+}
+DirectX::XMVECTOR Particles::separation(Particle *p, int p_index)
+{
+	using namespace DirectX;
+
+	int index = 0;
+	XMVECTOR ret = XMVectorSet(0, 0, 0, 0);;
+	for (Particle *particle : m_Particles)
+	{
+		if (index == p_index)
+		{
+			index++;
+			continue;
+		}
+
+		XMVECTOR v = XMLoadFloat3(&particle->position) - XMLoadFloat3(&p->position);
+		XMVECTOR length = XMVector3Length(v);
+		if (XMVectorGetX(length) < 2)
+			ret -= v;
+		
+		index++;
+	}
+
+	return ret;
+}
+DirectX::XMVECTOR Particles::goal(Particle *p)
+{
+	using namespace DirectX;
+
+	XMVECTOR ret = XMVectorSet(10, 5, 10, 0);
+
+	return (ret - XMLoadFloat3(&p->position)) / 100;
 }

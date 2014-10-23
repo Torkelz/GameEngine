@@ -41,11 +41,11 @@ void Level::initialize(Render *p_Render, Res::ResourceManager *p_ResourceManager
 	ModifyMesh::setMeshScale(lamp, Vector3(3, 3, 3));
 	ModifyMesh::setMeshRotation(lamp, Vector3(0, -45, 0));
 
-	const unsigned int maxParticles = 1000;
+	const unsigned int maxParticles = 100;
 	m_LinAlloc = new Allocator::LinearAllocator(sizeof(Particles::Particle) * maxParticles * 2);
 
 	m_Particles.initialize((char*)m_LinAlloc->allocate(sizeof(Particles::Particle) * maxParticles), maxParticles,
-		DirectX::XMFLOAT3(0, 0, 0), 10.f, 0.00001f, m_Render);
+		DirectX::XMFLOAT3(0, 0, 0), 100.f, 0.001f, m_Render);
 }
 
 void Level::update(float p_Dt)
