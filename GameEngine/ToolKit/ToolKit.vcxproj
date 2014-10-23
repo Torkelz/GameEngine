@@ -94,6 +94,8 @@
     <ClInclude Include="include\ILogger.h" />
     <ClInclude Include="libs\zconf.h" />
     <ClInclude Include="libs\zlib.h" />
+    <ClInclude Include="Source\ResourceManager\McapFile.h" />
+    <ClInclude Include="Source\ResourceManager\ResourceMcapFile.h" />
     <ClInclude Include="Source\ResourceManager\Material.h" />
     <ClInclude Include="Source\ResourceManager\MTLResourceExtraData.h" />
     <ClInclude Include="Source\ResourceManager\MTLResourceLoader.h" />
@@ -121,6 +123,8 @@
     <ClInclude Include="Source\ResourceManager\ZipFile.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\ResourceManager\McapFile.cpp" />
+    <ClCompile Include="Source\ResourceManager\ResourceMcapFile.cpp" />
     <ClCompile Include="Source\ResourceManager\MTLResourceLoader.cpp" />
     <ClCompile Include="Source\Logger\Logger.cpp" />
     <ClCompile Include="Source\ResourceManager\OBJResourceLoader.cpp" />

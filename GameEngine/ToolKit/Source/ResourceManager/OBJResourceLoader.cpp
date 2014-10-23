@@ -165,7 +165,6 @@ namespace Res
 				}
 			}
 		}
-
 		if (index.empty() || vertices.empty())
 		{
 			throw std::length_error("Error while parsing " + p_Handle->getName() + ", probably cause is carrier returns in the file. Replace all \r\n with \n.");

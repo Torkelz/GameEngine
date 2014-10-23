@@ -6,3 +6,4 @@
 #include "../Source/ResourceManager/ResourceHandle.h"
 #include "../Source/ResourceManager/OBJResourceLoader.h"
 #include "../Source/ResourceManager/MTLResourceLoader.h"
+#include "../Source/ResourceManager/ResourceMcapFile.h"
