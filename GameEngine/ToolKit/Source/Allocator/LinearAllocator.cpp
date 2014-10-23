@@ -71,12 +71,6 @@ namespace Allocator
 	{
 		return m_Marker.load();
 	}
-
-	void *LinearAllocator::alignForward(void *p_Address, UINT p_Alignment)
-	{
-		return (void*)((reinterpret_cast<uintptr_t>(p_Address) + static_cast<uintptr_t>(p_Alignment - 1)) & static_cast<uintptr_t>(~(p_Alignment - 1)));
-	}
-
 	LinearAllocator::UINT LinearAllocator::alignForwardAdjustment(const void *p_Address, UINT p_Alignment)
 	{
 		UINT adjustment = p_Alignment - (reinterpret_cast<uintptr_t>(p_Address)& static_cast<uintptr_t>(p_Alignment - 1));

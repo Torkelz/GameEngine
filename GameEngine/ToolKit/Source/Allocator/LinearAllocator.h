@@ -102,7 +102,6 @@ namespace Allocator
 	private:
 		LinearAllocator(const LinearAllocator& p_Other) = delete; // non construction-copyable
 		LinearAllocator& operator=(const LinearAllocator&) = delete; // non copyable
-		void *alignForward(void* p_Address, UINT p_Alignment);
 		UINT alignForwardAdjustment(const void *Address, UINT p_Alignment);
 	};
 }

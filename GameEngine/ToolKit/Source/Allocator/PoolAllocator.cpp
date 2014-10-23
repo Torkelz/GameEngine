@@ -26,15 +26,23 @@ namespace Allocator
 		if (!m_Data)
 			throw MemoryException("Bad allocation at: ", __LINE__, __FILE__);
 
-		UINT adjustment = alignForwardAdjustment(m_Data, p_ObjectAlignment);
-
-
+		UINT adjustment = alignForwardAdjustment((void*)m_Data, p_ObjectAlignment);
 
 		m_ItemSize = p_ItemSize;
 		m_NumItems = (totalSize - adjustment) / m_ItemSize;
-		m_Marker = (void**)m_Data + adjustment;
+		m_Marker = (void**)((uintptr_t)m_Data + adjustment);
 
-		clear();
+		//Setting each segment to mark where next segment starts.
+		void** p = (void**)((uintptr_t)m_Data + adjustment);
+
+		//Initialize free blocks list
+		for (size_t i = 0; i < m_NumItems - 1; i++)
+		{
+			*p = (void*)(reinterpret_cast<uintptr_t>(p)+m_ItemSize);
+			p = (void**)*p;
+		}
+		//The last pointer in the list is set to nullptr
+		*p = nullptr;
 	}
 
 	PoolAllocator::PoolAllocator(char *p_Buffer, UINT p_ItemSize, UINT p_NumItems)
