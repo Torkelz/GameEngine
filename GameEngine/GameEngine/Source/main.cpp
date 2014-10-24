@@ -14,11 +14,6 @@ int main(int /*argc*/, char* /*argv*/[])
 {
 
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
-	Allocator::DoubleEdgeAllocator alloc(256);
-
-
-
 	//Assignment1 ass1;
 
 	//OLD STUFF

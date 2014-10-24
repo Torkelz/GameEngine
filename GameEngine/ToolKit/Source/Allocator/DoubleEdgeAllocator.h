@@ -83,7 +83,7 @@ namespace Allocator
 
 				void *alignedAdress = m_Buffer + m_TopMarker.fetch_sub(sizeof(T) + adjustment) - adjustment - sizeof(T);
 
-				return alignedAdress;
+				return (T*)alignedAdress;
 			}
 			case Edge::BOTTOM:
 			{
@@ -94,7 +94,7 @@ namespace Allocator
 
 				UINT adjustment = alignForwardAdjustment(currentAddress, p_Alignment);
 
-				if (m_BottomMarker.load() + adjustment + sizeof(T) <= m_TopMarker.load())
+				if (m_BottomMarker.load() + adjustment + sizeof(T) >= m_TopMarker.load())
 					return nullptr;
 
 				void *alignedAddress = m_Buffer + m_BottomMarker.fetch_add(adjustment + sizeof(T)) + adjustment;
