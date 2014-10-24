@@ -62,6 +62,13 @@ namespace Allocator
 		 */
 		void *allocate(UINT p_Size);
 
+		/**
+		* Allocates a new aligned memory chunk.
+		*
+		* @param p_Alignment, The size of the alignemnt. Has to be a powe of 2.
+		* @return, If able to allocate memory it returns a pointer to the allocated chunk.
+		* @return, If failed to allocate memory it returns nullptr.
+		*/
 		template<typename T>
 		T *allocateAligned(UINT p_Alignment = 0)
 		{

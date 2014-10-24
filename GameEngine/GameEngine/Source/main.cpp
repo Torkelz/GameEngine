@@ -15,6 +15,10 @@ int main(int /*argc*/, char* /*argv*/[])
 
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
+	Allocator::DoubleEdgeAllocator alloc(256);
+
+
+
 	//Assignment1 ass1;
 
 	//OLD STUFF
@@ -47,19 +51,19 @@ int main(int /*argc*/, char* /*argv*/[])
 	//man.Free(texture.lock());
 	//*/
 
-	using namespace Res;
-	ResourceMcapFile file = ResourceMcapFile();
-	file.initialize(L"..\\Resources\\hobba.mcap");
-	ResourceManager man(TOTAL_SIZE);
+	//using namespace Res;
+	//ResourceMcapFile file = ResourceMcapFile();
+	//file.initialize(L"..\\Resources\\hobba.mcap");
+	//ResourceManager man(TOTAL_SIZE);
 
-	man.init();
-	man.loadZipLib(&file, "hobba");
+	//man.init();
+	//man.loadZipLib(&file, "hobba");
 
-	Resource halo("halo.jpg", "hobba");
-	std::shared_ptr<ResourceHandle> texture = man.getHandle(&halo);
-	int size = texture->size();
-	man.Free(texture);
-	texture.reset();
+	//Resource halo("halo.jpg", "hobba");
+	//std::shared_ptr<ResourceHandle> texture = man.getHandle(&halo);
+	//int size = texture->size();
+	//man.Free(texture);
+	//texture.reset();
 	
 
 	//int result = EXIT_SUCCESS;

@@ -50,11 +50,8 @@ namespace Allocator
 		 */
 		PoolAllocator(char *p_Buffer, UINT p_ItemSize, UINT p_NumItems);
 
-
-
 		/**
 		* Constructor if the pool allocator is going to use memory alignment
-		* @param Buffer, pointer to the memory where the allocators memory pool will be placed
 		* @param ItemSize, the size of one item
 		* @param p_ObjectAlignment, the size of the alignment. Has to be a power of 2.
 		* @param NumItems, the desired number of items to fit in memory

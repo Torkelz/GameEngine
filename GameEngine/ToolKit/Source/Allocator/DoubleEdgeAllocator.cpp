@@ -62,47 +62,6 @@ namespace Allocator
 		}
 	}
 
-	void *DoubleEdgeAllocator::allocateAligned(UINT p_Size, UINT p_Alignment ,DoubleEdgeAllocator::Edge p_Edge)
-	{
-		switch (p_Edge)
-		{
-		case Edge::TOP:
-		{
-			if (m_TopMarker.load() - p_Size <= m_BottomMarker.load())
-				return nullptr;
-
-			void *currentAddress = m_Buffer + m_TopMarker.load();
-
-			UINT adjustment = alignBackwardAdjustment(currentAddress, p_Alignment);
-
-			if (m_TopMarker.load() - adjustment - p_Size <= m_BottomMarker.load())
-				return nullptr;
-
-			void *alignedAdress = m_Buffer + m_TopMarker.fetch_sub(p_Size + adjustment) - adjustment - p_Size;
-
-			return alignedAdress;
-		}
-		case Edge::BOTTOM:
-		{
-			if (m_BottomMarker.load() + p_Size >= m_TopMarker.load())
-				return nullptr;
-
-			void *currentAddress = (void*)((UINT*)m_Buffer + m_BottomMarker.load());
-			
-			UINT adjustment = alignForwardAdjustment(currentAddress, p_Alignment);
-
-			if (m_BottomMarker.load() + adjustment + p_Size <= m_TopMarker.load())
-				return nullptr;
-
-			void *alignedAddress = m_Buffer + m_BottomMarker.fetch_add(adjustment + p_Size) + adjustment;
-
-			return alignedAddress;
-		}
-		default:
-			return nullptr;
-		}
-	}
-
 	void DoubleEdgeAllocator::freeTopMarkerTo(UINT p_Marker)
 	{
 		m_TopMarker = p_Marker;

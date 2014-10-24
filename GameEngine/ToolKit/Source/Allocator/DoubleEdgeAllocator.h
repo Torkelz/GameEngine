@@ -56,14 +56,55 @@ namespace Allocator
 		void *allocate(UINT p_Size, DoubleEdgeAllocator::Edge p_Edge);
 
 		/**
-		* Allocates a new memory chunk.
+		* Allocates a new aligned memory chunk.
 		*
-		* @param p_Size The amount of memory to be allocated in bytes.
-		* @param p_Edge The end part of the buffer the allocation should be made in.
-		* @return If able to allocate memory it returns a pointer to the allocated chunk.
-		* @return If failed to allocate memory it returns nullptr.
+		* @param p_Size, The amount of memory to be allocated in bytes.
+		* @param p_Alignemnt, The size of the alignment. Has to be a power of 2.
+		* @param p_Edge, The end part of the buffer the allocation should be made in.
+		* @return, If able to allocate memory it returns a pointer to the allocated chunk.
+		* @return, If failed to allocate memory it returns nullptr.
 		*/
-		void *allocateAligned(UINT p_Size, UINT p_Alignment, DoubleEdgeAllocator::Edge p_Edge);
+		template<typename T>
+		T *allocateAligned(UINT p_Alignment = 0, DoubleEdgeAllocator::Edge p_Edge = DoubleEdgeAllocator::Edge::TOP)
+		{
+			switch (p_Edge)
+			{
+			case Edge::TOP:
+			{
+				if (m_TopMarker.load() - sizeof(T) <= m_BottomMarker.load())
+					return nullptr;
+
+				void *currentAddress = m_Buffer + m_TopMarker.load();
+
+				UINT adjustment = alignBackwardAdjustment(currentAddress, p_Alignment);
+
+				if (m_TopMarker.load() - adjustment - sizeof(T) <= m_BottomMarker.load())
+					return nullptr;
+
+				void *alignedAdress = m_Buffer + m_TopMarker.fetch_sub(sizeof(T) + adjustment) - adjustment - sizeof(T);
+
+				return alignedAdress;
+			}
+			case Edge::BOTTOM:
+			{
+				if (m_BottomMarker.load() + sizeof(T) >= m_TopMarker.load())
+					return nullptr;
+
+				void *currentAddress = m_Buffer + m_BottomMarker.load();
+
+				UINT adjustment = alignForwardAdjustment(currentAddress, p_Alignment);
+
+				if (m_BottomMarker.load() + adjustment + sizeof(T) <= m_TopMarker.load())
+					return nullptr;
+
+				void *alignedAddress = m_Buffer + m_BottomMarker.fetch_add(adjustment + sizeof(T)) + adjustment;
+
+				return (T*)alignedAddress;
+			}
+			default:
+				return nullptr;
+			}
+		}
 
 		/**
 		 * Moves the top memory marker back to a previous state.
