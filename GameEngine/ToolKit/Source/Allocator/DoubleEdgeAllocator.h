@@ -56,6 +56,16 @@ namespace Allocator
 		void *allocate(UINT p_Size, DoubleEdgeAllocator::Edge p_Edge);
 
 		/**
+		* Allocates a new memory chunk.
+		*
+		* @param p_Size The amount of memory to be allocated in bytes.
+		* @param p_Edge The end part of the buffer the allocation should be made in.
+		* @return If able to allocate memory it returns a pointer to the allocated chunk.
+		* @return If failed to allocate memory it returns nullptr.
+		*/
+		void *allocateAligned(UINT p_Size, UINT p_Alignment, DoubleEdgeAllocator::Edge p_Edge);
+
+		/**
 		 * Moves the top memory marker back to a previous state.
 		 *
 		 * @param p_Marker The positon the stack should be rolled back to.
@@ -91,6 +101,8 @@ namespace Allocator
 	private:
 		DoubleEdgeAllocator(const DoubleEdgeAllocator& p_Other) = delete; // non construction-copyable
 		DoubleEdgeAllocator& operator=(const DoubleEdgeAllocator&) = delete; // non copyable
+		UINT alignForwardAdjustment(const void *p_Address, UINT p_Alignment);
+		UINT alignBackwardAdjustment(const void *p_Address, UINT p_Alignment);
 	};
 }
 

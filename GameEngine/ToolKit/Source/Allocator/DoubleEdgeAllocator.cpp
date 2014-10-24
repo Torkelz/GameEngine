@@ -34,14 +34,14 @@ namespace Allocator
 
 		m_Buffer = nullptr;
 	}
-
+	
 	void *DoubleEdgeAllocator::allocate(UINT p_Size, DoubleEdgeAllocator::Edge p_Edge)
 	{
 		switch (p_Edge)
 		{
 		case Edge::TOP:
 		{
-			if (m_TopMarker.load() - p_Size <= m_BottomMarker)
+			if (m_TopMarker.load() - p_Size <= m_BottomMarker.load())
 				return nullptr;
 
 			void *currentAdress = m_Buffer + m_TopMarker.fetch_sub(p_Size) - p_Size;
@@ -50,12 +50,53 @@ namespace Allocator
 		}
 		case Edge::BOTTOM:
 		{
-			if (m_BottomMarker.load() + p_Size >= m_TopMarker)
+			if (m_BottomMarker.load() + p_Size >= m_TopMarker.load())
 				return nullptr;
 
 			void *currentAdress = m_Buffer + m_BottomMarker.fetch_add(p_Size) + p_Size;
 
 			return currentAdress;
+		}
+		default:
+			return nullptr;
+		}
+	}
+
+	void *DoubleEdgeAllocator::allocateAligned(UINT p_Size, UINT p_Alignment ,DoubleEdgeAllocator::Edge p_Edge)
+	{
+		switch (p_Edge)
+		{
+		case Edge::TOP:
+		{
+			if (m_TopMarker.load() - p_Size <= m_BottomMarker.load())
+				return nullptr;
+
+			void *currentAddress = m_Buffer + m_TopMarker.load();
+
+			UINT adjustment = alignBackwardAdjustment(currentAddress, p_Alignment);
+
+			if (m_TopMarker.load() - adjustment - p_Size <= m_BottomMarker.load())
+				return nullptr;
+
+			void *alignedAdress = m_Buffer + m_TopMarker.fetch_sub(p_Size + adjustment) - adjustment - p_Size;
+
+			return alignedAdress;
+		}
+		case Edge::BOTTOM:
+		{
+			if (m_BottomMarker.load() + p_Size >= m_TopMarker.load())
+				return nullptr;
+
+			void *currentAddress = (void*)((UINT*)m_Buffer + m_BottomMarker.load());
+			
+			UINT adjustment = alignForwardAdjustment(currentAddress, p_Alignment);
+
+			if (m_BottomMarker.load() + adjustment + p_Size <= m_TopMarker.load())
+				return nullptr;
+
+			void *alignedAddress = m_Buffer + m_BottomMarker.fetch_add(adjustment + p_Size) + adjustment;
+
+			return alignedAddress;
 		}
 		default:
 			return nullptr;
@@ -86,5 +127,24 @@ namespace Allocator
 	DoubleEdgeAllocator::UINT DoubleEdgeAllocator::getBottomMarker(void) const
 	{
 		return m_BottomMarker.load();
+	}
+
+	DoubleEdgeAllocator::UINT DoubleEdgeAllocator::alignForwardAdjustment(const void *p_Address, UINT p_Alignment)
+	{
+		UINT adjustment = p_Alignment - (reinterpret_cast<uintptr_t>(p_Address)& static_cast<uintptr_t>(p_Alignment - 1));
+
+		if (adjustment == p_Alignment)
+			return 0; // already aligned
+
+		return adjustment;
+	}
+	DoubleEdgeAllocator::UINT DoubleEdgeAllocator::alignBackwardAdjustment(const void *p_Adress, UINT p_Alignemnt)
+	{
+		UINT adjustment = reinterpret_cast<uintptr_t>(p_Adress) & static_cast<uintptr_t>(p_Alignemnt - 1);
+
+		if (adjustment == p_Alignemnt)
+			return 0; //already aligned
+
+		return adjustment;
 	}
 }

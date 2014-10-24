@@ -63,26 +63,19 @@ namespace Allocator
 		void *allocate(UINT p_Size);
 
 		template<typename T>
-		T *allocate(UINT p_Alignment = 0)
+		T *allocateAligned(UINT p_Alignment = 0)
 		{
-			UINT tempMarker = m_Marker.load();
+			void* currentAddress = m_Buffer + m_Marker.load();
 
-			void* address = m_Buffer + tempMarker;
+			UINT adjustment = alignForwardAdjustment(currentAddress, p_Alignment);
 
-			UINT adjustment = alignForwardAdjustment(address, p_Alignment);
-
-			if (tempMarker + sizeof(T) + adjustment >= m_Size)
-			{
+			if (m_Marker.load() + sizeof(T) + adjustment >= m_Size)
 				return nullptr;
-			}
 
-			void *alignedAdress = m_Buffer + tempMarker + adjustment;
+			void *alignedAddress = m_Buffer + m_Marker.fetch_add(adjustment + sizeof(T)) + adjustment;
 
-			m_Marker = tempMarker + adjustment + sizeof(T);
-			return (T*)alignedAdress;
+			return (T*)alignedAddress;
 		}
-
-
 		/**
 		 * Moves the memory marker back to a previous state.
 		 * @param p_Marker The positon the stack should be rolled back to.
@@ -102,7 +95,7 @@ namespace Allocator
 	private:
 		LinearAllocator(const LinearAllocator& p_Other) = delete; // non construction-copyable
 		LinearAllocator& operator=(const LinearAllocator&) = delete; // non copyable
-		UINT alignForwardAdjustment(const void *Address, UINT p_Alignment);
+		UINT alignForwardAdjustment(const void *p_Address, UINT p_Alignment);
 	};
 }
 
