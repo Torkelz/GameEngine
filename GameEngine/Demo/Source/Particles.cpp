@@ -155,7 +155,7 @@ DirectX::XMVECTOR Particles::cohesion(Particle *p, int p_index)
 		index++;
 	}
 	if (m_Particles.size() > 1)
-		ret /= (m_Particles.size() - 1);
+		ret /= (float)(m_Particles.size() - 1);
 
 	return (ret - XMLoadFloat3(&p->position)) / 100;
 }
@@ -177,7 +177,7 @@ DirectX::XMVECTOR Particles::alignment(Particle *p, int p_index)
 		index++;
 	}
 	if (m_Particles.size() > 1)
-		ret /= (m_Particles.size() - 1);
+		ret /= (float)(m_Particles.size() - 1);
 
 	return (ret - XMLoadFloat3(&p->velocity)) / 8;
 }
