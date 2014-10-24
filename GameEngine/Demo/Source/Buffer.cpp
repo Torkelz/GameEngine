@@ -260,7 +260,7 @@ HRESULT Buffer::unsetBuffer(UINT32 p_StartSlot)
 	}
 	case Type::CONSTANT_BUFFER_GS:
 	{
-									 ID3D11Buffer* none;
+									 ID3D11Buffer* none = nullptr;
 									 m_DeviceContext->GSSetConstantBuffers(p_StartSlot, 1, &none);
 									 break;
 	}
@@ -360,7 +360,7 @@ HRESULT Buffer::createBuffer(D3D11_BUFFER_DESC *p_BufferDescription, D3D11_SUBRE
 
 ID3D11ShaderResourceView* Buffer::CreateBufferSRV(ID3D11Buffer* pBuffer)
 {
-	ID3D11ShaderResourceView* pSRVOut = NULL;
+	ID3D11ShaderResourceView* pSRVOut = nullptr;
 
 	D3D11_BUFFER_DESC descBuf;
 	ZeroMemory(&descBuf, sizeof(descBuf));
