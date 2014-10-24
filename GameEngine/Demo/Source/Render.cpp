@@ -1,3 +1,5 @@
+#include <memory>
+
 #include "Render.h"
 #include "Graphics.h"
 #include "Utilities.h"
@@ -5,9 +7,6 @@
 #include "IResourceManager.h"
 #include "WICTextureLoader.h"
 #include "UserExceptions.h"
-
-
-#include <memory>
 
 Render::Render(void) :
 	m_Graphics(nullptr),
@@ -19,7 +18,6 @@ Render::Render(void) :
 	m_SamplerState(nullptr)
 {
 }
-
 
 Render::~Render(void)
 {
@@ -97,7 +95,6 @@ void Render::draw(void)
 			m_Graphics->getDeviceContext()->PSSetShaderResources(0, 1, &m->diffusemaps.at(i));
 
 			m_Graphics->getDeviceContext()->DrawIndexed(numelements, m->faceGroups.at(i), 0);
-			
 		}		
 		
 		m->buffer->unsetBuffer(0);
@@ -105,7 +102,6 @@ void Render::draw(void)
 		m->shader->unSetShader();
 	}
 	
-
 	unsetCameraBuffers();
 	m_CBWorld->unsetBuffer(2);
 
@@ -129,7 +125,7 @@ void Render::updateCamera(Vector3 p_Position, Vector3 p_Forward, Vector3 p_Up)
 	updateConstantBuffer(p_Position);
 }
 
-void Render::createConstantBuffers()
+void Render::createConstantBuffers(void)
 {
 	Buffer::Description bDesc = {};
 	bDesc.initData = &m_ProjectionMatrix;
@@ -139,8 +135,7 @@ void Render::createConstantBuffers()
 	bDesc.usage = Buffer::Usage::USAGE_IMMUTABLE;
 
 	m_CBCameraFixed = WrapperFactory::getInstance()->createBuffer(bDesc);
-
-
+	
 	cbCamera c;
 	c.view = m_ViewMatrix;
 	c.eyePos = DirectX::XMFLOAT4(0, 0, 0, 1);
@@ -154,7 +149,7 @@ void Render::createConstantBuffers()
 	m_CBWorld = WrapperFactory::getInstance()->createBuffer(bDesc);
 }
 
-void Render::createSamplerState()
+void Render::createSamplerState(void)
 {
 	D3D11_SAMPLER_DESC sd;
 	ZeroMemory(&sd, sizeof(sd));
@@ -207,9 +202,7 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 	{
 		std::shared_ptr<Res::OBJResourceExtraData> extra =
 			std::static_pointer_cast<Res::OBJResourceExtraData>(p_ResourceHandle.lock()->getExtra());
-
-
-
+		
 		Mesh m;
 		Buffer::Description bDesc = {};
 		bDesc.initData = p_ResourceHandle.lock()->buffer();
@@ -267,8 +260,7 @@ void Render::createMesh(std::weak_ptr<Res::ResourceHandle> p_ResourceHandle)
 			
 			m.diffusemaps.push_back(view);
 		}
-
-
+		
 		m_MeshList.insert(std::make_pair(name, std::move(m)));
 	}
 }
@@ -319,7 +311,7 @@ void Render::changeTexture(std::string p_MeshName, int p_DiffuseIndex, std::shar
 	}
 }
 
-Graphics *Render::getGraphics()
+Graphics *Render::getGraphics(void)
 {
 	return m_Graphics;
 }
@@ -335,13 +327,13 @@ void Render::end(void)
 	m_Graphics->end();
 }
 
-void Render::setCameraBuffers()
+void Render::setCameraBuffers(void)
 {
 	m_CBCameraFixed->setBuffer(0);
 	m_CBCamera->setBuffer(1);
 }
 
-void Render::unsetCameraBuffers()
+void Render::unsetCameraBuffers(void)
 {
 	m_CBCameraFixed->unsetBuffer(0);
 	m_CBCamera->unsetBuffer(1);

@@ -38,12 +38,11 @@ public:
 	* @param p_ScreenWidth, the windows width.
 	* @param p_ScreenHeight, the windows height.
 	* @param p_Fullscreen, true if it should be in fullscreen.
-
 	*/
 	void initialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bool p_Fullscreen);
 	
 	/**
-	* Cleans upp all DirectX components.
+	* Cleans up all DirectX components.
 	*/
 	void shutdown(void);
 
