@@ -1,46 +1,54 @@
 #include "Level.h"
 #include "ModifyMesh.h"
 
-Level::Level() :
-	m_Render(nullptr)
+Level::Level(void) :
+	m_Render(nullptr), m_CameraPos(nullptr),
+	m_Green(false),	m_Red(false), m_Blue(true),
+	m_ResourceManager(nullptr),
+	m_LinAlloc(nullptr)
 {
 }
 
-
-Level::~Level()
+Level::~Level(void)
 {
+	m_Render = nullptr;
+	m_CameraPos = nullptr;
+	m_ResourceManager = nullptr;
+	SAFE_DELETE(m_LinAlloc);
 }
 
 void Level::initialize(Render *p_Render, Res::ResourceManager *p_ResourceManager, Vector3 *p_CameraPos)
 {
-	green = false;
-	red = false;
-	blue = true;
 	m_Render = p_Render;
 	m_ResourceManager = p_ResourceManager;
 	m_CameraPos = p_CameraPos;
+
 	using namespace Res;
+	//Create file resources.
 	m_OptimusRed = Resource("optimusred.bmp", "hobba");
 	m_OptimusGreen = Resource("optimusgreen.bmp", "hobba");
 	m_OptimusObj = Resource("optimus.obj", "hobba");
 	m_OptimusBlue = Resource("optimusp.bmp", "hobba");
-
-
-	//m_zip.initialize(L"..\\Resources\\hobba.mcap");
-	m_mcap.initialize(L"..\\Resources\\hobba.mcap");
 	
-	m_ResourceManager->loadZipLib(&m_mcap, "hobba");
+	//Create and read the mcap header from specified file.
+	m_Mcap.initialize(L"..\\Resources\\hobba.mcap");
 	
+	//Loading the mcap file into the resource manager.
+	m_ResourceManager->loadZipLib(&m_Mcap, "hobba");
 	
+	//Gets handle for the Optimus obj file.
 	std::shared_ptr<ResourceHandle> model = m_ResourceManager->getHandle(&m_OptimusObj);
 
 	m_Render->createMesh(model);
 
-	lamp = m_Render->createMeshInstance(model->getName());
-	ModifyMesh::setMeshPosition(lamp, Vector3(0, 0, 0));
-	ModifyMesh::setMeshScale(lamp, Vector3(3, 3, 3));
-	ModifyMesh::setMeshRotation(lamp, Vector3(0, -45, 0));
+	m_OptimusHandle = m_Render->createMeshInstance(model->getName());
 
+	//Sets MeshInstance properties.
+	ModifyMesh::setMeshPosition(m_OptimusHandle, Vector3(0, 0, 0));
+	ModifyMesh::setMeshScale(m_OptimusHandle, Vector3(3, 3, 3));
+	ModifyMesh::setMeshRotation(m_OptimusHandle, Vector3(0, -45, 0));
+
+	//Particle setup.
 	const unsigned int maxParticles = 1000;
 	m_LinAlloc = new Allocator::LinearAllocator(sizeof(Particles::Particle) * maxParticles * 2);
 
@@ -51,39 +59,40 @@ void Level::initialize(Render *p_Render, Res::ResourceManager *p_ResourceManager
 void Level::update(float p_Dt)
 {
 	m_Particles.update(p_Dt);
-	Vector3 meshPos = m_Render->getMeshInstance(lamp)->position;
+
+	//Optimus texture change depending on distance.
+	Vector3 meshPos = m_Render->getMeshInstance(m_OptimusHandle)->position;
 	using DirectX::operator-;
 	DirectX::XMVECTOR vDist = DirectX::XMLoadFloat3(&meshPos) - DirectX::XMLoadFloat3(m_CameraPos);
 	float dist = DirectX::XMVector3Length(vDist).m128_f32[0];
 
-	if (dist < 10 && !blue)
+	if (dist < 10 && !m_Blue)
 	{
 		m_Render->changeTexture("optimus.obj", 0, m_ResourceManager->getHandle(&m_OptimusBlue));
-		green = false;
-		red = false;
-		blue = true;
+		m_Green = false;
+		m_Red = false;
+		m_Blue = true;
 	}
-	if (dist > 10 && dist < 20 && !green)
+	if (dist > 10 && dist < 20 && !m_Green)
 	{
 
 		m_Render->changeTexture("optimus.obj", 0, m_ResourceManager->getHandle(&m_OptimusGreen));
-		green = true;
-		red = false;
-		blue = false;
+		m_Green = true;
+		m_Red = false;
+		m_Blue = false;
 	}
-
-	if (dist > 20 && !red)
+	if (dist > 20 && !m_Red)
 	{
 		m_Render->changeTexture("optimus.obj", 0, m_ResourceManager->getHandle(&m_OptimusRed));
-		green = false;
-		red = true;
-		blue = false;
+		m_Green = false;
+		m_Red = true;
+		m_Blue = false;
 
 	}
 }
 
-void Level::draw()
+void Level::draw(void)
 {
-	m_Render->drawMeshInstance(lamp);
+	m_Render->drawMeshInstance(m_OptimusHandle);
 	m_Particles.render();
 }
