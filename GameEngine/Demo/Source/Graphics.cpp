@@ -4,23 +4,19 @@
 #include "WrapperFactory.h"
 
 
-Graphics::Graphics(void)
-{
-	m_Device = nullptr;
-	m_DeviceContext = nullptr;
-
-	m_SwapChain = nullptr;
-	m_RenderTargetView = nullptr;
-	m_Sampler = nullptr;
-
-	m_RasterState = nullptr;
-
-	m_DepthStencilBuffer = nullptr;
-	m_DepthStencilState = nullptr;
-	m_DepthStencilView = nullptr;
-	m_VSyncEnabled = true;
+Graphics::Graphics(void) :
+	m_Device(nullptr),
+	m_DeviceContext(nullptr),
+	m_SwapChain(nullptr),
+	m_RenderTargetView(nullptr),
+	m_Sampler(nullptr),
+	m_RasterState(nullptr),
+	m_DepthStencilBuffer(nullptr),
+	m_DepthStencilState(nullptr),
+	m_DepthStencilView(nullptr),
+	m_VSyncEnabled(true)
+{	
 }
-
 
 Graphics::~Graphics(void)
 {
@@ -33,7 +29,6 @@ Graphics::~Graphics(void)
 	SAFE_RELEASE(m_DepthStencilBuffer);
 	SAFE_RELEASE(m_DepthStencilState);
 	SAFE_RELEASE(m_DepthStencilView);
-
 }
 
 void Graphics::initialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bool p_Fullscreen)
@@ -43,7 +38,7 @@ void Graphics::initialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bo
 	IDXGIAdapter *adapter = nullptr;
 	IDXGIOutput *adapterOutput = nullptr;
 
-	unsigned int numModes;
+	unsigned int numModes = 0;
 	unsigned int stringLength;
 
 	DXGI_MODE_DESC *displayModeList = nullptr;
@@ -171,7 +166,7 @@ void Graphics::initialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bo
 	WrapperFactory::initialize(m_Device, m_DeviceContext);
 }
 
-void Graphics::shutdown()
+void Graphics::shutdown(void)
 {
 	WrapperFactory::getInstance()->shutdown();
 }
@@ -272,7 +267,7 @@ HRESULT Graphics::createDeviceAndSwapChain(HWND p_Hwnd, int p_ScreenWidth, int p
 HRESULT Graphics::createRenderTargetView(void)
 {
 	HRESULT result;
-	ID3D11Texture2D *backBufferPtr;
+	ID3D11Texture2D *backBufferPtr = nullptr;
 
 	//Get the pointer to the back buffer.
 	result = m_SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBufferPtr);
@@ -381,12 +376,12 @@ HRESULT Graphics::createRasterizerState(void)
 	return m_Device->CreateRasterizerState(&rasterDesc, &m_RasterState);
 }
 
-ID3D11DeviceContext *Graphics::getDeviceContext()
+ID3D11DeviceContext *Graphics::getDeviceContext(void)
 {
 	return m_DeviceContext;
 }
 
-ID3D11Device *Graphics::getDevice()
+ID3D11Device *Graphics::getDevice(void)
 {
 	return m_Device;
 }

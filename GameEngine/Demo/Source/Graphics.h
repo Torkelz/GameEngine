@@ -31,15 +31,44 @@ private:
 public:
 	Graphics(void);
 	~Graphics(void);
-
+	
+	/**
+	* Initializes all the required DirectX components.
+	* @param p_Hwnd, a handle to a window.
+	* @param p_ScreenWidth, the windows width.
+	* @param p_ScreenHeight, the windows height.
+	* @param p_Fullscreen, true if it should be in fullscreen.
+	*/
 	void initialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bool p_Fullscreen);
-	void shutdown();
+	
+	/**
+	* Cleans up all DirectX components.
+	*/
+	void shutdown(void);
 
+	/**
+	* Prepares the graphics for a new frame, e.g. clearing rendertarget.
+	* @param color[4], the clearcolor for the backbuffer.
+	*/
 	void Graphics::begin(float color[4]);
+
+	/**
+	* Swaps the rendertarget with the backbuffer.
+	* @param p_Dt, the programs delta time in seconds.
+	*/
 	void end(void);
 
-	ID3D11DeviceContext *getDeviceContext();
-	ID3D11Device *getDevice();
+	/**
+	* Get the ID3D11DeviceContext pointer.
+	* @return, returns the pointer. Could be nullptr.
+	*/
+	ID3D11DeviceContext *getDeviceContext(void);
+
+	/**
+	* Get the ID3D11Device pointer.
+	* @return, returns the pointer. Could be nullptr.
+	*/
+	ID3D11Device *getDevice(void);
 
 private:
 	HRESULT createDeviceAndSwapChain(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bool p_Fullscreen);

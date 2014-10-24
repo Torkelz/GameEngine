@@ -27,7 +27,7 @@ void ModifyMesh::initialize(Render *p_Render)
 	m_Instance.get()->m_Render = p_Render;
 }
 
-ModifyMesh *ModifyMesh::getInstance()
+ModifyMesh *ModifyMesh::getInstance(void)
 {
 
 	if (!m_Instance)

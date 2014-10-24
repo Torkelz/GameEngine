@@ -25,7 +25,6 @@ private:
 	Render m_Render;
 	Level	m_Level;
 
-
 	Vector3 m_CameraPosition;
 	Vector3 m_CameraDirection;
 	Vector3 m_CameraUp;
@@ -35,23 +34,34 @@ public:
 	BaseApp(void);
 	~BaseApp(void);
 
-	void init();
-	void run();
-	void shutdown();
+	/**
+	* Initialize all the necessary components.
+	*/
+	void init(void);
+
+	/**
+	* The programs main loop, eg. update and render.
+	*/
+	void run(void);
+
+	/**
+	* Shutdowns all the components initialized.
+	*/
+	void shutdown(void);
 
 private:
 	bool handleWindowClose(WPARAM /*p_WParam*/, LPARAM /*p_LParam*/, LRESULT& p_Result);
 	bool handleWindowExitSizeMove(WPARAM /*p_WParam*/, LPARAM p_LParam, LRESULT& p_Result);
 	bool handleWindowSize(WPARAM p_WParam, LPARAM p_LParam, LRESULT& p_Result);
 	
-	void updateDebugInfo();
-	void resetTimer();
-	void updateTimer();
-	void handleInput();
+	void updateDebugInfo(void);
+	void resetTimer(void);
+	void updateTimer(void);
+	void handleInput(void);
 	void movePlayerView(float p_Yaw, float p_Pitch);
 
-	std::string getGameTitle() const;
+	std::string getGameTitle(void) const;
 
-	Vector2 getWindowSize() const;
+	Vector2 getWindowSize(void) const;
 };
 

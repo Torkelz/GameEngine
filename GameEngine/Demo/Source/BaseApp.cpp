@@ -1,9 +1,9 @@
 #include "BaseApp.h"
 #include "ILogger.h"
+#include "ModifyMesh.h"
+
 #include <sstream>
 #include <iomanip>
-
-#include "ModifyMesh.h"
 
 const std::string BaseApp::m_GameTitle = "Demo 1.45";
 
@@ -11,13 +11,12 @@ BaseApp::BaseApp(void)
 {
 }
 
-
 BaseApp::~BaseApp(void)
 {
 	SAFE_DELETE(m_Resourcemanager);
 }
 
-void BaseApp::init()
+void BaseApp::init(void)
 {
 	m_MemUpdateDelay = 10.f;
 	m_TimeToNextMemUpdate = 0.f;
@@ -25,11 +24,13 @@ void BaseApp::init()
 	m_Window.init(getGameTitle(), getWindowSize());
 	m_NewWindowSize = m_Window.getSize();
 
+	//Created the resourceManager.
 	m_Resourcemanager = new Res::ResourceManager(1024 * 15000);
 	m_Resourcemanager->init();
 	m_Resourcemanager->registerLoader(std::shared_ptr<Res::IResourceLoader>(new Res::OBJResourceLoader()));
 	m_Resourcemanager->registerLoader(std::shared_ptr<Res::IResourceLoader>(new Res::MTLResourceLoader()));
 
+	//Create the rendering component.
 	bool fullscreen = false;
 	m_Render.initialize(m_Window.getHandle(), m_Resourcemanager, (int)m_Window.getSize().x, (int)m_Window.getSize().y, fullscreen);
 	ModifyMesh::initialize(&m_Render);
@@ -40,8 +41,8 @@ void BaseApp::init()
 		std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	m_Window.registerCallback(WM_SIZE, std::bind(&BaseApp::handleWindowSize, this, std::placeholders::_1,
 		std::placeholders::_2, std::placeholders::_3));
-
-
+	
+	//Setup user input mapping.
 	InputTranslator::ptr translator(new InputTranslator);
 	translator->init(&m_Window);
 
@@ -52,8 +53,7 @@ void BaseApp::init()
 	translator->addKeyboardMapping(68, "moveRight");
 	translator->addKeyboardMapping(32, "moveUp");
 	translator->addKeyboardMapping(VK_LCONTROL, "moveDown");
-
-
+	
 	translator->addMouseMapping(Axis::HORIZONTAL, false, "lookLeft");
 	translator->addMouseMapping(Axis::HORIZONTAL, true, "lookRight");
 	translator->addMouseMapping(Axis::VERTICAL, true, "lookUp");
@@ -64,14 +64,17 @@ void BaseApp::init()
 
 	m_InputQueue.init(std::move(translator));
 
+	//Default camera variables.
 	m_CameraDirection = Vector3(1, 0, 0);
 	m_CameraPosition = Vector3(0, 0, 0);
 	m_CameraUp = Vector3(0,1,0);
 	m_CameraSpeed = 0.5f;
+
+	//Creating the level.
 	m_Level.initialize(&m_Render, m_Resourcemanager, &m_CameraPosition);
 }
 
-void BaseApp::run()
+void BaseApp::run(void)
 {
 	m_ShouldQuit = false;
 
@@ -85,6 +88,8 @@ void BaseApp::run()
 
 		handleInput();
 
+
+		//Camera movement.
 		const InputState& state = m_InputQueue.getCurrentState();
 		float forward = state.getValue("moveForward") - state.getValue("moveBackward");
 		float right = state.getValue("moveRight") - state.getValue("moveLeft");
@@ -106,17 +111,21 @@ void BaseApp::run()
 			cPos = cPos + dir * m_CameraSpeed;
 			XMStoreFloat3(&m_CameraPosition, cPos);
 		}
+
 		m_Level.update(m_DeltaTime);
 		m_Render.updateCamera(m_CameraPosition, m_CameraDirection, Vector3(0, 1, 0));
+
+		//Render.
 		m_Render.begin();
 		m_Level.draw();
 		m_Render.draw();
 		m_Render.end();
+
 		updateDebugInfo();
 	}
 }
 
-void BaseApp::shutdown()
+void BaseApp::shutdown(void)
 {
 	m_InputQueue.destroy();
 }
@@ -168,7 +177,7 @@ bool BaseApp::handleWindowSize( WPARAM p_WParam, LPARAM p_LParam, LRESULT& p_Res
 	}
 }
 
-void BaseApp::updateDebugInfo()
+void BaseApp::updateDebugInfo(void)
 {
 	m_TimeToNextMemUpdate -= m_DeltaTime;
 	if (m_TimeToNextMemUpdate > 0.f)
@@ -183,7 +192,7 @@ void BaseApp::updateDebugInfo()
 	m_Window.setTitle(getGameTitle() + " | " + speed);
 }
 
-void BaseApp::resetTimer()
+void BaseApp::resetTimer(void)
 {
 	__int64 cntsPerSec = 0;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&cntsPerSec);
@@ -195,7 +204,7 @@ void BaseApp::resetTimer()
 	m_CurrTimeStamp--;
 }
 
-void BaseApp::updateTimer()
+void BaseApp::updateTimer(void)
 {
 	m_PrevTimeStamp = m_CurrTimeStamp;
 	QueryPerformanceCounter((LARGE_INTEGER*)&m_CurrTimeStamp);
@@ -207,7 +216,7 @@ void BaseApp::updateTimer()
 	}
 }
 
-void BaseApp::handleInput()
+void BaseApp::handleInput(void)
 {
 	const InputState& state = m_InputQueue.getCurrentState();
 
@@ -224,8 +233,7 @@ void BaseApp::handleInput()
 			if (in.m_Action == "Esc")
 			{
 				m_ShouldQuit = true;
-			}
-			
+			}			
 		}
 		if (in.m_Action == "moveDown" && state.getValue("moveDown") > 0.5f)
 		{
@@ -255,21 +263,18 @@ void BaseApp::handleInput()
 			{
 				movePlayerView(0.f, in.m_Value * viewSensitivity);
 			}
-			
-			
 		}
 		else 
-			m_InputQueue.lockMouse(false);
-		
+			m_InputQueue.lockMouse(false);		
 	}
 }
 
-std::string BaseApp::getGameTitle() const
+std::string BaseApp::getGameTitle(void) const
 {
 	return m_GameTitle;
 }
 
-Vector2 BaseApp::getWindowSize() const
+Vector2 BaseApp::getWindowSize(void) const
 {
 	// TODO: Read from user option
 
@@ -300,10 +305,7 @@ void BaseApp::movePlayerView(float p_Yaw, float p_Pitch)
 		return;
 	}
 
-	//XMStoreFloat3(&m_CameraDirection, vForward);
 	m_CameraDirection = forward;
 
 	m_Render.updateCamera(m_CameraPosition, m_CameraDirection, m_CameraUp);
-	//look->setLookForward(forward);
-	//look->setLookUp(up);
 }
