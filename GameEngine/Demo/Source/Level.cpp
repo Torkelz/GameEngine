@@ -49,7 +49,7 @@ void Level::initialize(Render *p_Render, Res::ResourceManager *p_ResourceManager
 	ModifyMesh::setMeshRotation(m_OptimusHandle, Vector3(0, -45, 0));
 
 	//Particle setup.
-	const unsigned int maxParticles = 1000;
+	const unsigned int maxParticles = 250;
 	m_LinAlloc = new Allocator::LinearAllocator(sizeof(Particles::Particle) * maxParticles * 2);
 
 	m_Particles.initialize((char*)m_LinAlloc->allocate(sizeof(Particles::Particle) * maxParticles), maxParticles,

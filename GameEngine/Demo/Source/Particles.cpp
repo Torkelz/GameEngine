@@ -201,7 +201,7 @@ DirectX::XMVECTOR Particles::separation(Particle *p_Particle, int p_index)
 
 		XMVECTOR v = XMLoadFloat3(&particle->position) - XMLoadFloat3(&p_Particle->position);
 		XMVECTOR length = XMVector3Length(v);
-		if (XMVectorGetX(length) < 2)
+		if (XMVectorGetX(length) < 1)
 			ret -= v;
 		
 		index++;
