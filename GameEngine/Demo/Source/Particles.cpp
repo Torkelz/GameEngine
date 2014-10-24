@@ -71,7 +71,7 @@ void Particles::update(float p_Dt)
 		DirectX::XMStoreFloat3(&p->velocity, DirectX::XMVector3Normalize(velocity));
 
 		
-		DirectX::XMStoreFloat3(&p->position, DirectX::XMLoadFloat3(&p->position) + (DirectX::XMLoadFloat3(&p->velocity) * p_Dt * 2));
+		DirectX::XMStoreFloat3(&p->position, DirectX::XMLoadFloat3(&p->position) + (DirectX::XMLoadFloat3(&p->velocity) * p_Dt * 4));
 		index++;
 	}
 	killOldParticles();
