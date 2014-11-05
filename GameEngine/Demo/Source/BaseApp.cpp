@@ -66,7 +66,7 @@ void BaseApp::init(void)
 
 	//Default camera variables.
 	m_CameraDirection = Vector3(1, 0, 0);
-	m_CameraPosition = Vector3(0, 0, 0);
+	m_CameraPosition = Vector3(-30, 0, 0);
 	m_CameraUp = Vector3(0,1,0);
 	m_CameraSpeed = 0.5f;
 

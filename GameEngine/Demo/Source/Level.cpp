@@ -66,14 +66,14 @@ void Level::update(float p_Dt)
 	DirectX::XMVECTOR vDist = DirectX::XMLoadFloat3(&meshPos) - DirectX::XMLoadFloat3(m_CameraPos);
 	float dist = DirectX::XMVector3Length(vDist).m128_f32[0];
 
-	if (dist < 10 && !m_Blue)
+	if (dist < 32 && !m_Blue)
 	{
 		m_Render->changeTexture("optimus.obj", 0, m_ResourceManager->getHandle(&m_OptimusBlue));
 		m_Green = false;
 		m_Red = false;
 		m_Blue = true;
 	}
-	if (dist > 10 && dist < 20 && !m_Green)
+	if (dist > 32 && dist < 40 && !m_Green)
 	{
 
 		m_Render->changeTexture("optimus.obj", 0, m_ResourceManager->getHandle(&m_OptimusGreen));
@@ -81,7 +81,7 @@ void Level::update(float p_Dt)
 		m_Red = false;
 		m_Blue = false;
 	}
-	if (dist > 20 && !m_Red)
+	if (dist > 40 && !m_Red)
 	{
 		m_Render->changeTexture("optimus.obj", 0, m_ResourceManager->getHandle(&m_OptimusRed));
 		m_Green = false;
